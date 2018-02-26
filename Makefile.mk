@@ -1,6 +1,6 @@
 TC_PATH = ../../../gccToolchain/easybutton/gcc-arm-none-eabi-5_2-2015q4
 TOOLCHAIN = arm-none-eabi
-ARMGNU = $(TC_PATH)/bin/$(TOOLCHAIN);
+ARMGNU = $(TC_PATH)/bin/$(TOOLCHAIN)
 CC = $ arm-none-eabi-gcc
 CHIP = cortex-m0plus
 OPTLVL = -O3
