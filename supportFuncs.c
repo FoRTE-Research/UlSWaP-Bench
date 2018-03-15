@@ -1,4 +1,6 @@
 void putchar(char);
+void initLED();
+void LED();
 void exit(int);
 
 unsigned int heapCurrent = 0x40000000;
