@@ -14,7 +14,8 @@ int main(void)
   //benchmark();
   for(run = 0; run < RUNS; ++run)
   {
-    printf("Run %d\n\r", run+1);
+    //puts("Trial\n\r");
+    //printf("Run %d\n\r", run+1);
     benchmark();
   }
 
