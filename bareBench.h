@@ -24,6 +24,7 @@ int main(void)
 
 #define printf(...)
 #define fprintf(...)
+#define fflush(...)
 #define main(...) benchmark(__VA_ARGS__)
 
 #endif
