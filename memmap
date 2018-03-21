@@ -12,7 +12,6 @@ SECTIONS
     .bss : { *(.bss*) } > ram
     .heap : { *(.heap*) } > h
 }
-
     end = ORIGIN(h) + LENGTH(h);
 
 _stacktop = ORIGIN(ram) + LENGTH(ram);
