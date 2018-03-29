@@ -35,7 +35,7 @@ void * _sbrk(int increment)
 {
     heapCurrent += increment;
     
-    if(heapCurrent >= 0x20008000)
+    if(heapCurrent >= end)
     {
 	LED(1);
         exit(1);
