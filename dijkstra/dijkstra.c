@@ -2,7 +2,7 @@
 #include "../bareBench.h"
 #include "input.h"
 
-#define NUM_NODES                          25
+#define NUM_NODES                          100
 #define NONE                               9999
 
 struct _NODE
