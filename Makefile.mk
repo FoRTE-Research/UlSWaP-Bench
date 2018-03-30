@@ -30,8 +30,8 @@ all: main.elf
 
 main.elf: $(OBJS) ../vectors.s ../putget.s ../supportFuncs.c ../LED.s
 	$(CC) $(FLAGS) -u _printf_float -T ../memmap $(LINKDIR) $(OBJS) -o main.elf $(LIBS)
-	$ arm-none-eabi-objdump -d main.elf > main.lst
-	$ arm-none-eabi-objcopy main.elf main.bin -O binary
+	$(TOOLCHAIN)-objdump -d main.elf > main.lst
+	$(TOOLCHAIN)-objcopy main.elf main.bin -O binary
 
 clean: more_clean
 	rm -rf *.o *.elf output* *.lst *.bin *~
