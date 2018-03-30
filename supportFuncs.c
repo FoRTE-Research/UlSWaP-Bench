@@ -1,9 +1,7 @@
 void putchar(char);
-void initLED();
-void LED();
 void exit(int);
 
-unsigned int heapCurrent = 0x20000000;
+unsigned int heapCurrent = 0x40000000;
 extern unsigned int end;
 
 void _fini() {}
@@ -31,18 +29,18 @@ void puts(char *string)
     }
 }
 
-void * _sbrk(int increment)
+/*void * _sbrk(int increment)
 {
     heapCurrent += increment;
     
     if(heapCurrent >= end)
     {
-	LED(1);
+        puts("ERROR: Heap overflow!\n");
         exit(1);
     }
     
     return (void *)heapCurrent;
-}
+}*/
 
 int rand(void)
 {
