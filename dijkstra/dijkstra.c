@@ -83,7 +83,7 @@ void dequeue (int *piNode, int *piDist, int *piPrev)
       *piDist = qHead->iDist;
       *piPrev = qHead->iPrev;
       qHead = qHead->qNext;
-      free(qKill);
+      //free(qKill);
       g_qCount--;
     }
 }
