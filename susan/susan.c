@@ -293,7 +293,7 @@ typedef float      TOTAL_TYPE; /* for my PowerPC accelerator only */
 
 /*#define FOPENB*/           /* uncomment if using djgpp gnu C for DOS or certain Win95 compilers */
 #define SEVEN_SUPP           /* size for non-max corner suppression; SEVEN_SUPP or FIVE_SUPP */
-#define MAX_CORNERS   15000  /* max corners per frame */
+#define MAX_CORNERS   150  /* max corners per frame */
 
 /* ********** Leave the rest - but you may need to remove one or both of sys/file.h and malloc.h lines */
 
@@ -367,9 +367,6 @@ char header [100];
 
   header[0]=fgetc2();
   header[1]=fgetc2();
-    
-    putchar(header[0]);
-    putchar(header[1]);
     
   if(!(header[0]=='P' && header[1]=='5'))
     exit_error("Image does %s have binary PGM header.\n", "not");
@@ -1918,7 +1915,6 @@ corner_list[n].info=7;
 
 int main() {
 /* {{{ vars */
-
 char   *tcp;
 uchar  *in, *bp, *mid;
 float  dt=4.0;
@@ -1937,7 +1933,7 @@ int    *r,
 CORNER_LIST corner_list;
 
 /* }}} */
-    fakeFile = test_data;
+  fakeFile = test_data;
 
   get_image(&in,&x_size,&y_size);
 
@@ -2066,7 +2062,6 @@ CORNER_LIST corner_list;
 /* }}} */
 
   put_image(in,x_size,y_size);
-    
     return 0;
 }
 
