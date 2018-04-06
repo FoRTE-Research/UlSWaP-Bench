@@ -313,6 +313,7 @@ char *argv[] = {"susan", "input.pgm", "output.pgm", "-s"};
 #define  FTOI(a) ( (a) < 0 ? ((int)(a-0.5)) : ((int)(a+0.5)) )
 typedef  unsigned char uchar;
 typedef  struct {int x,y,info, dx, dy, I;} CORNER_LIST[MAX_CORNERS];
+static uint8_t *fakeFile;
 
 
 /* }}} */
@@ -320,7 +321,7 @@ typedef  struct {int x,y,info, dx, dy, I;} CORNER_LIST[MAX_CORNERS];
 
 char fgetc2() {
     char ret = *fakeFile;
-    fakeFile++;
+    ++fakeFile;
     return ret;
 }
 
