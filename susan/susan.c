@@ -314,7 +314,9 @@ char *argv[] = {"susan", "input.pgm", "output.pgm", "-s"};
 typedef  unsigned char uchar;
 typedef  struct {int x,y,info, dx, dy, I;} CORNER_LIST[MAX_CORNERS];
 static uint8_t *fakeFile;
-
+volatile unsigned char setbrightness[516];
+volatile uchar smoothening[9810];
+volatile unsigned char smoothening2[225];
 
 /* }}} */
 /* {{{ get_image(filename,in,x_size,y_size) */
@@ -431,8 +433,9 @@ void setup_brightness_lut(bp,thresh,form)
 {
 int   k;
 float temp;
-
-  *bp=(unsigned char *)malloc(516);
+ 
+  //*bp=(unsigned char *)malloc(516);
+  *bp= setbrightness;
   *bp=*bp+258;
 
   for(k=-256;k<257;k++)
@@ -668,7 +671,8 @@ TOTAL_TYPE total;
     exit(0);
   }
 
-  tmp_image = (uchar *) malloc( (x_size+mask_size*2) * (y_size+mask_size*2) );
+  //tmp_image = (uchar *) malloc( (x_size+mask_size*2) * (y_size+mask_size*2) );
+  tmp_image = smoothening;
   enlarge(&in,tmp_image,&x_size,&y_size,mask_size);
 
 /* }}} */
@@ -681,7 +685,8 @@ TOTAL_TYPE total;
 
   increment = x_size - n_max;
 
-  dp     = (unsigned char *)malloc(n_max*n_max);
+  //dp     = (unsigned char *)malloc(n_max*n_max);
+  dp = smoothening2;
   dpt    = dp;
   temp   = -(dt*dt);
 
@@ -1932,6 +1937,7 @@ int    *r,
        mode = 0,
        x_size = -1, y_size = -1;
 CORNER_LIST corner_list;
+initLED();
 
 /* }}} */
   fakeFile = test_data;
@@ -2063,6 +2069,7 @@ CORNER_LIST corner_list;
 /* }}} */
 
   put_image(in,x_size,y_size);
+  LED(1);
     return 0;
 }
 
