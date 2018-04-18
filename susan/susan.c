@@ -314,9 +314,9 @@ char *argv[] = {"susan", "input.pgm", "output.pgm", "-s"};
 typedef  unsigned char uchar;
 typedef  struct {int x,y,info, dx, dy, I;} CORNER_LIST[MAX_CORNERS];
 static uint8_t *fakeFile;
-volatile unsigned char setbrightness[516];
-volatile uchar smoothening[9810];
-volatile unsigned char smoothening2[225];
+static unsigned char setbrightness[516];
+static uchar smoothening[9810];
+static unsigned char smoothening2[225];
 
 /* }}} */
 /* {{{ get_image(filename,in,x_size,y_size) */
@@ -1936,8 +1936,7 @@ int    *r,
        max_no_edges=2650,
        mode = 0,
        x_size = -1, y_size = -1;
-CORNER_LIST corner_list;
-initLED();
+CORNER_LIST corner_list;;
 
 /* }}} */
   fakeFile = test_data;
@@ -2069,7 +2068,6 @@ initLED();
 /* }}} */
 
   put_image(in,x_size,y_size);
-  LED(1);
     return 0;
 }
 
