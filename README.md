@@ -39,8 +39,8 @@ To build all benchmarks and move the resulting bin files to the repo's top-level
 
 ### Statically Allocated
 
-[susan](susan.c) Statically Allocated for this specific data set.
+Benchmark susan: Statically Allocated for this specific data set.
 
-[fft](fft) Statically Allocated for this specific data set.
+Benchmark fft: Statically Allocated for this specific data set.
 
 
