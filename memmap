@@ -1,18 +1,19 @@
+
 /* memmap */
 MEMORY
 {
     rom : ORIGIN = 0x00000000, LENGTH = 0x00040000
-    ram : ORIGIN = 0x20000000, LENGTH = 0x00008000
-    h : ORIGIN = 0x20000000, LENGTH = 0x00008000
-}
+        ram : ORIGIN = 0x20000000, LENGTH = 0x00008000
+	    h : ORIGIN = 0x20000000, LENGTH = 0x00008000
+	    }
 
 SECTIONS
 {
     .text : { *(.text*) } > rom
-    .bss : { *(.bss*) } > ram
-    .heap : { *(.heap*) } > h
-}
-    end = ORIGIN(h) + LENGTH(h);
+        .bss : { *(.bss*) } > ram
+	    .heap : { *(.heap*) } > h
+	    }
+	        end = ORIGIN(h) + LENGTH(h);
 
 heapCurrent = ORIGIN(h);
 

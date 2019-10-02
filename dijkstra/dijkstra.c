@@ -96,8 +96,6 @@ int qcount (void)
 
 int dijkstra(int chStart, int chEnd) 
 {
-  
-
   for (ch = 0; ch < NUM_NODES; ch++)
     {
       rgnNodes[ch].iDist = NONE;
@@ -141,15 +139,12 @@ int dijkstra(int chStart, int chEnd)
 
 int main(int argc, char *argv[]) {
   int i,j;
-  initLED();
-  LED(1);
    /* make a fully connected matrix */
    // see input.h
   /* finds 10 shortest paths between nodes */
   for (i=0,j=NUM_NODES/2;i<NUM_NODES;i++,j++) {
-			j=j%NUM_NODES;
+      j=j%NUM_NODES;
       dijkstra(i,j);
   }
-  LED(1);
   return 0;
 }

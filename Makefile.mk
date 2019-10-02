@@ -2,11 +2,11 @@ TC_PATH = /usr
 TOOLCHAIN = arm-none-eabi
 ARMGNU = $(TC_PATH)/bin/$(TOOLCHAIN)
 CC = $ arm-none-eabi-gcc
-CHIP = cortex-m0plus
-OPTLVL = -O3 
+CHIP = cortex-m4
+OPTLVL = -O1 
 
 #FLAGS = -DBARE_METAL -Wall $(OPTLVL) -target $(TOOLCHAIN) -mcpu=$(CHIP) -mthumb --specs=nosys.specs -nostartfiles -ffreestanding -std=c99 -fomit-frame-pointer -fno-optimize-sibling-calls #-static
-FLAGS = -DBARE_METAL -Wall $(OPTLVL) -march=armv6-m -mcpu=$(CHIP) -mthumb -msoft-float --specs=nosys.specs -nostartfiles -ffreestanding -std=c99 -fomit-frame-pointer -fno-optimize-sibling-calls 
+FLAGS = -DBARE_METAL -Wall $(OPTLVL) -march=armv7-m -mtune=$(CHIP) -mthumb -msoft-float --specs=nosys.specs -nostartfiles -ffreestanding -std=c99 -fomit-frame-pointer -fno-optimize-sibling-calls -g 
 #LIBS = --start-group -lm -lc -lbuiltins --end-group
 LIBS = -lnosys -lc -lm
 OBJS := vectors.o putget.o supportFuncs.o LED.o $(OBJS)
@@ -28,7 +28,7 @@ all: main.elf
 %.o: ../%.c
 	$(CC) ${FLAGS} $(INCLIB) -c -o $@ $< 
 
-main.elf: $(OBJS) ../vectors.s ../putget.s ../supportFuncs.c ../LED.s
+main.elf: $(OBJS) ../vectors.s ../putget.s ../supportFuncs.c ../LED.c
 	$(CC) $(FLAGS) -u _printf_float -T ../memmap $(LINKDIR) $(OBJS) -o main.elf $(LIBS)
 	$(TOOLCHAIN)-objdump -d main.elf > main.lst
 	$(TOOLCHAIN)-objcopy main.elf main.bin -O binary

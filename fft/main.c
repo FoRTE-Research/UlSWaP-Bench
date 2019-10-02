@@ -18,10 +18,12 @@ int old_main();
     
 // main for benchmark purposes that does fft and inverse fft
 int main() {
+    LED(0);
     MAXSIZE = 128;
     old_main();
     invfft = 1;
     MAXSIZE = 256;
+    LED(0);
     old_main();
     return 0;
 }
