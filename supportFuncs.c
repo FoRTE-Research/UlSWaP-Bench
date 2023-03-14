@@ -22,24 +22,18 @@ int _fstat()
 
 void puts(char *string)
 {
-    int index = 0;
-    while(string[index] != '\0')
-    {
-        putchar(string[index]);
-        ++index;
-    }
+  return;
+//    int index = 0;
+//    while(string[index] != '\0')
+//    {
+//        putchar(string[index]);
+//        ++index;
+//    }
 }
 
-void * _sbrk(int increment)
+void _sbrk(int increment)
 {
-    heapCurrent += increment;
-    
-    if(heapCurrent >= end)
-    {
-        exit(1);
-    }
-    
-    return (void *)heapCurrent;
+    return;
 }
 
 int rand(void)

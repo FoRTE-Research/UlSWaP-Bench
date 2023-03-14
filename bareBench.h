@@ -2,6 +2,8 @@
 
 //#include <stdio.h>
 int benchmark();
+void initLED();
+void LED();
 
 #define RUNS 1
 
