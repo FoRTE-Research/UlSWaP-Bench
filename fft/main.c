@@ -7,12 +7,12 @@
 int invfft=0;
 unsigned MAXSIZE; // small 4096, 8192 inverse, 512 for memory-limited systems
 unsigned MAXWAVES=4; //large has 8
-static float realin[1024];
-static float imagin[1024];
-static float realout[1024];
-static float imagout[1024];
-static float Coeff[16];
-static float Amp[16];
+static float realin[256];// __attribute__ ((section (".persistent")));
+static float imagin[256];// __attribute__ ((section (".persistent")));
+static float realout[256];
+static float imagout[256];
+static float Coeff[4];// __attribute__ ((section (".persistent")));
+static float Amp[4];// __attribute__ ((section (".persistent")));
 
 int old_main();
     

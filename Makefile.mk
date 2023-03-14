@@ -3,6 +3,7 @@ TOOLCHAIN = msp430-elf
 CC = $ msp430-elf-gcc
 #DEVICE = msp430g2553
 DEVICE = msp430fr5994
+OPT_LEVEL = -O0
 
 # MSP430FR5994 by default reserves have of SRAM for LEA, which we generally don't want
 ifeq ($(DEVICE), msp430fr5994)
@@ -11,7 +12,7 @@ else
 DEVICE_LD = ../ld/$(DEVICE).ld
 endif
 
-FLAGS = -DBARE_METAL -Wall -mmcu=$(DEVICE) -fdata-sections -ffunction-sections -T $(DEVICE_LD) -ffreestanding
+FLAGS = -DBARE_METAL -Wall -mmcu=$(DEVICE) $(OPT_LEVEL) -fdata-sections -ffunction-sections -T $(DEVICE_LD) -ffreestanding
 LIBS = -lnosys -lc -lm
 OBJS := putget.o supportFuncs.o LED.o $(OBJS)
 LINKDIR = -L$(TC_PATH)/include
