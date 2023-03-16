@@ -43,4 +43,6 @@ Benchmark susan: Statically Allocated for this specific data set.
 
 Benchmark fft: Statically Allocated for this specific data set.
 
+### MSP430 Changes
 
+FFT array size reduced to fit on MSP430 devices
