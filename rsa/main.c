@@ -545,7 +545,7 @@ void divide_mp_elements(uint16_t * q, uint16_t * r, uint16_t * x_in, int n,
         _tmpglobal_x[i] = x_in[i];
 	
     //1)
-    for (j = 0; j <= n - t; j++) {
+    for (j = 0; j < n - t; j++) {
         q[j] = 0x0000;
     }
     //2)
