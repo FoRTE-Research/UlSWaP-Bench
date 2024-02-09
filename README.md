@@ -13,7 +13,7 @@ Whatever toolchain you go with, update the paths and commands in the global [mak
 
 `cd` to the appropriate benchmark directory.
 
-`make`
+`make ARCH=arm`
 
 
 Running `make` produces several useful files:
@@ -24,7 +24,7 @@ Running `make` produces several useful files:
 
 Running `make clean` will remove all files produced during compilation.
 
-
+TODO: This is currently broken
 To build all benchmarks and move the resulting bin files to the repo's top-level directory, run [buildAll.sh](buildAll.sh).
 
 ### Porting
