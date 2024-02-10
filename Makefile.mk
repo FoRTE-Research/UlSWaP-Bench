@@ -1,5 +1,5 @@
-ifeq (,$(findstring $(ARCH), arm))
-$(error Usage: make ARCH=arm)
+ifeq (,$(findstring $(ARCH), arm native))
+$(error Usage: make ARCH={arm|native})
 endif
 
 ARCH_DIR=../$(ARCH)
