@@ -13,7 +13,7 @@ Whatever toolchain you go with, update the paths and commands in the global [mak
 
 `cd` to the appropriate benchmark directory.
 
-`make ARCH={arm|native}`
+`make ARCH={riscv|arm|native}`
 
 
 Running `make` produces several useful files:
