@@ -1,3 +1,7 @@
+#ifndef PICOLIBC_FLOAT_PRINTF_SCANF
+#define printf_float(_num) _num
+#endif  // PICOLIBC_FLOAT_PRINTF_SCANF
+
 #ifdef BARE_METAL
 
 //#include <stdio.h>

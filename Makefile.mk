@@ -1,5 +1,5 @@
-ifeq (,$(findstring $(ARCH), arm native))
-$(error Usage: make ARCH={arm|native})
+ifeq (,$(findstring $(ARCH), riscv arm native))
+$(error Usage: make ARCH={riscv|arm|native} [PLATFORM={device|spike}])
 endif
 
 ARCH_DIR=../$(ARCH)
