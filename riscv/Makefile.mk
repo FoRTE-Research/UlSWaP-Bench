@@ -1,7 +1,5 @@
 ifeq (,$(findstring $(PLATFORM), device spike))
-$(info Usage for RISCV: make ARCH=riscv PLATFORM={device|spike})
-$(info No target platform specified. Exiting ...)
-exit 1
+$(error Usage for RISCV: make ARCH=riscv PLATFORM={device|spike})
 endif
 
 FRANKEN_LLVM_ROOT = $(HOME)/llvm-project
