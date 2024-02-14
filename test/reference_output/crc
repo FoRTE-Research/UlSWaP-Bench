@@ -1,0 +1,3 @@
+The check value for the CRC-CCITT standard is 0x29B1
+The crcSlow() of "123456789" is 0x29B1
+The crcFast() of "123456789" is 0x29B1
