@@ -35,3 +35,6 @@
 # Debug files
 *.dSYM/
 *.su
+
+# IDE files/folders
+.vscode/
