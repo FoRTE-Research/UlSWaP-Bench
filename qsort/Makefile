@@ -1,4 +1,6 @@
-OBJS = qsort_large.c
+MAX_PRINTF_LEVEL = INTEGER
+
+OBJS = qsort_large.o
 
 include ../Makefile.mk
 

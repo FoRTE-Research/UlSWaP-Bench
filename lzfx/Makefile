@@ -1,4 +1,6 @@
-OBJS = uart.o lzfx_decomp.o lzfx.o
+MAX_PRINTF_LEVEL = INTEGER
+
+OBJS = lzfx_decomp_test.o lzfx_decomp.o
 
 include ../Makefile.mk
 

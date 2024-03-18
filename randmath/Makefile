@@ -1,3 +1,5 @@
+MAX_PRINTF_LEVEL = MINIMAL
+
 default : main.elf
 
 randmath : randmath.c

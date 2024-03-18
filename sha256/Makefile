@@ -1,6 +1,8 @@
 MAX_PRINTF_LEVEL = LONG_LONG
 
-OBJS = crc.o main.o
+OBJS = sha256.o main.o
+
+# BENCHMARK_FLAGS = -DUSE_MODIFIED_SHA
 
 include ../Makefile.mk
 
