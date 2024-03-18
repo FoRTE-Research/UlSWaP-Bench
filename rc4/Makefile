@@ -1,4 +1,6 @@
-OBJS = uart.o rc4test.o embedded.o
+MAX_PRINTF_LEVEL = INTEGER
+
+OBJS = rc4test.o
 
 include ../Makefile.mk
 

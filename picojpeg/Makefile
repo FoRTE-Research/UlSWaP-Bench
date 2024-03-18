@@ -1,3 +1,5 @@
+MAX_PRINTF_LEVEL = INTEGER
+
 all : host jpegdata.h main.elf
 
 
@@ -11,6 +13,6 @@ jpegdata.h : bintoc.c
 more_clean :
 	rm -rf host out.bmp bintoc jpegdata.h
 
-OBJS = uart.o picojpeg.o picojpegtest.o embedded.o
+OBJS = picojpeg.o picojpegtest.o
 
 include ../Makefile.mk

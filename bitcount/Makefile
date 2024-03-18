@@ -1,4 +1,6 @@
-OBJS = bitcnt_1.c bitcnt_2.c bitcnt_3.c bitcnt_4.c bitcnts.c bitfiles.c bitstrng.c bstr_i.c 
+MAX_PRINTF_LEVEL = FLOAT
+
+OBJS = bitcnt_1.o bitcnt_2.o bitcnt_3.o bitcnt_4.o bitcnts.o bitstrng.o bstr_i.o
 
 include ../Makefile.mk
 
