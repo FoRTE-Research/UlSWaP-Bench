@@ -39,7 +39,7 @@ static char bits[256] =
 **        omitted.
 */
 
-int CDECL ntbl_bitcount(long int x)
+int CDECL ntbl_bitcount(uint32_t x)
 {
       return
             bits[ (int) (x & 0x0000000FUL)       ] +
@@ -58,12 +58,12 @@ int CDECL ntbl_bitcount(long int x)
 **  by Bruce Wedding, works best on Watcom & Borland
 */
 
-int CDECL BW_btbl_bitcount(long int x)
+int CDECL BW_btbl_bitcount(uint32_t x)
 {
       union 
       { 
             unsigned char ch[4]; 
-            long y; 
+            uint32_t y; 
       } U; 
  
       U.y = x; 
@@ -78,7 +78,7 @@ int CDECL BW_btbl_bitcount(long int x)
 **  by Auke Reitsma, works best on Microsoft, Symantec, and others
 */
 
-int CDECL AR_btbl_bitcount(long int x)
+int CDECL AR_btbl_bitcount(uint32_t x)
 {
       unsigned char * Ptr = (unsigned char *) &x ;
       int Accu ;
@@ -97,7 +97,7 @@ int CDECL AR_btbl_bitcount(long int x)
 
 main(int argc, char *argv[])
 {
-      long n;
+      uint32_t n;
 
       while(--argc)
       {
