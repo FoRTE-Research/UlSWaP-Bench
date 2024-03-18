@@ -9,7 +9,7 @@ CC_PATH = $(FRANKEN_LLVM_ROOT)/build/bin
 CC = $(CC_PATH)/clang
 TOOLCHAIN = riscv64-unknown-elf
 LIB_PATH = $(PICOLIBC_ROOT)/franken-install/picolibc/rv32imafdc-unknown-elf
-OPTLVL = -O3
+OPTLVL = -O3 -fno-inline
 
 TARGET = riscv32-unknown-elf
 RV_ARCH = $(shell cat $(HOME)/arch)
@@ -21,7 +21,7 @@ PICOLIBC_FLAGS = -DPICOLIBC_$(MAX_PRINTF_LEVEL)_PRINTF_SCANF
 FLAGS = $(GENERAL_FLAGS) $(RISCV_FLAGS) $(PICOLIBC_FLAGS) $(BENCHMARK_FLAGS)
 
 LIBS = -lc -lm
-OBJS := vectors.o putget.o supportFuncs.o ../common.o $(OBJS)
+OBJS := vectors.o supportFuncs.o ../common.o $(OBJS)
 LINKDIR = -L$(LIB_PATH)/lib -L$(FRANKEN_LLVM_ROOT)/build-rt/lib/linux
 INCLIB = -I$(LIB_PATH)/include
 
@@ -39,7 +39,7 @@ all: main.elf
 %.o: $(ARCH_DIR)/%.c
 	$(CC) ${FLAGS} $(INCLIB) -c -o $@ $<
 
-main.elf: $(OBJS) $(ARCH_DIR)/vectors.s $(ARCH_DIR)/putget.s $(ARCH_DIR)/supportFuncs.c
+main.elf: $(OBJS) $(ARCH_DIR)/vectors.s $(ARCH_DIR)/supportFuncs.c
 	$(CC) $(FLAGS) -T $(ARCH_DIR)/memmap.ld $(LINKDIR) $(OBJS) $(LIBS) -o main.elf
 	$(TOOLCHAIN)-objdump -d main.elf > main.lst
 	$(TOOLCHAIN)-objcopy main.elf main.bin -O binary

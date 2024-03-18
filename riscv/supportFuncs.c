@@ -16,3 +16,24 @@ static FILE __stdio = FDEV_SETUP_STREAM(riscv_putchar,
                                         NULL,
                                         _FDEV_SETUP_WRITE);
 FILE *const stdout = &__stdio; __strong_reference(stdout, stdin); __strong_reference(stdin, stderr);
+
+
+void hexstring (unsigned int d)
+{
+    printf("%8X\r\n", d);
+}
+
+void hexstrings (unsigned int d)
+{
+    printf("%8X ", d);
+}
+
+void uart_send (unsigned int c)
+{
+    riscv_putchar_uart(c);
+}
+
+__clock_t clock (void)
+{
+    return 1234;
+}

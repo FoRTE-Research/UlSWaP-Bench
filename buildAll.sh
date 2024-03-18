@@ -1,16 +1,13 @@
 #!/bin/bash
 
-architectures="arm riscv native"
+architectures="arm riscv native spike"
 
 if [[ $# -eq 0 ]] || [[ ! $architectures == *$1* ]]; then
-    echo "Usage: buildAll.sh arm|riscv|native"
-    exit 1
-elif [ "$1" = "riscv" ] && [ $# -lt 2 ]; then
-    echo "Usage for RISCV: buildAll.sh riscv device|spike"
+    echo "Usage: buildAll.sh arm|riscv|native|spike"
     exit 1
 fi
 
-ignore_directories=("arm" "riscv" "native" "test")
+ignore_directories=("arm" "riscv" "native" "test" "spike" "vcflags")
 
 # Loop through subdirectories
 for subdir in $(dirname "$0")/*/; do
