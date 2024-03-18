@@ -1,4 +1,3 @@
-
 /* vectors.s */
 
 .extern IO_BASE
