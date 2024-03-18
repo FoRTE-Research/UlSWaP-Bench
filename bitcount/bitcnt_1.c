@@ -6,7 +6,7 @@
 
 #include "bitops.h"
 
-int CDECL bit_count(long x)
+int CDECL bit_count(uint32_t x)
 {
         int n = 0;
 /*
@@ -26,7 +26,7 @@ int CDECL bit_count(long x)
 
 main(int argc, char *argv[])
 {
-      long n;
+      uint32_t n;
 
       while(--argc)
       {

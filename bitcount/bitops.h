@@ -74,7 +74,7 @@ void    bfclose(bfile *bf);
 ** BITSTRNG.C
 */
 
-void bitstring(char *str, long byze, int biz, int strwid);
+void bitstring(char *str, uint32_t byze, int biz, int strwid);
 
 /*
 **  BSTR_I.C
@@ -86,27 +86,27 @@ unsigned int bstr_i(char *cptr);
 **  BITCNT_1.C
 */
 
-int CDECL bit_count(long x);
+int CDECL bit_count(uint32_t x);
 
 /*
 **  BITCNT_2.C
 */
 
-int CDECL bitcount(long i);
+int CDECL bitcount(uint32_t i);
 
 /*
 **  BITCNT_3.C
 */
 
-int CDECL ntbl_bitcount(long int x);
-int CDECL BW_btbl_bitcount(long int x);
-int CDECL AR_btbl_bitcount(long int x);
+int CDECL ntbl_bitcount(uint32_t x);
+int CDECL BW_btbl_bitcount(uint32_t x);
+int CDECL AR_btbl_bitcount(uint32_t x);
 
 /*
 **  BITCNT_4.C
 */
 
-int CDECL ntbl_bitcnt(long x);
-int CDECL btbl_bitcnt(long x);
+int CDECL ntbl_bitcnt(uint32_t x);
+int CDECL btbl_bitcnt(uint32_t x);
 
 #endif /*  BITOPS__H */
