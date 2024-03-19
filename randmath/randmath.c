@@ -33,7 +33,7 @@ int main ( void )
 
     prand=0x1234;
 
-    fpout=fopen("abcmath.c","wt");
+    fpout=fopen("g_abcmath.c","wt");
     if(fpout==NULL) return(1);
 
     fprintf(fpout,"\n");
