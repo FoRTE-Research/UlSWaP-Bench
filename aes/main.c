@@ -21,7 +21,7 @@ static void test_decrypt_cbc(void);
 
 int main(void)
 {
-    initLED();
+    // initLED();
     test_encrypt_cbc();
     test_decrypt_cbc();
     test_decrypt_ecb();
@@ -95,13 +95,13 @@ static void test_encrypt_ecb(void)
 
   if(0 == strncmp((char*) out, (char*) buffer, 16))
   {
-    LED(1);
-    //printf("SUCCESS!\n");
+    // LED(1);
+    printf("SUCCESS!\n");
   }
   else
   {
-    LED(0);
-    //printf("FAILURE!\n");
+    // LED(0);
+    printf("FAILURE!\n");
   }
 }
 
@@ -130,13 +130,13 @@ static void test_decrypt_cbc(void)
 
   if(0 == strncmp((char*) out, (char*) buffer, 64))
   {
-    LED(1);
-    //printf("SUCCESS!\n");
+    // LED(1);
+    printf("SUCCESS!\n");
   }
   else
   {
-    LED(0);
-    //printf("FAILURE!\n");
+    // LED(0);
+    printf("FAILURE!\n");
   }
 }
 
@@ -160,13 +160,13 @@ static void test_encrypt_cbc(void)
 
   if(0 == strncmp((char*) out, (char*) buffer, 64))
   {
-    LED(1);
-    //printf("SUCCESS!\n");
+    // LED(1);
+    printf("SUCCESS!\n");
   }
   else
   {
-    LED(0);
-    //printf("FAILURE!\n");
+    // LED(0);
+    printf("FAILURE!\n");
   }
 }
 
@@ -184,13 +184,13 @@ static void test_decrypt_ecb(void)
 
   if(0 == strncmp((char*) out, (char*) buffer, 16))
   {
-    LED(1);
-    //printf("SUCCESS!\n");
+    // LED(1);
+    printf("SUCCESS!\n");
   }
   else
   {
-    LED(0);
-    //printf("FAILURE!\n");
+    // LED(0);
+    printf("FAILURE!\n");
   }
 }
 
