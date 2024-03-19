@@ -36,5 +36,8 @@
 *.dSYM/
 *.su
 
+# Generated files
+g_*
+
 # IDE files/folders
 .vscode/

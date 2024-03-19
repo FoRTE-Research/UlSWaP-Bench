@@ -2,16 +2,16 @@ MAX_PRINTF_LEVEL = MINIMAL
 
 default : main.elf
 
-randmath : randmath.c
-	gcc -o randmath randmath.c
+g_randmath : randmath.c
+	gcc -o g_randmath randmath.c
 
-abcmath.c : randmath
-	./randmath
+g_abcmath.c : g_randmath
+	./g_randmath
 
-OBJS = abcmath.o notmain.o
+OBJS = g_abcmath.o notmain.o
 
 include ../Makefile.mk
 
 more_clean:
-	rm -rf randmath abcmath.c
+	rm -rf g_randmath g_abcmath.c
 
