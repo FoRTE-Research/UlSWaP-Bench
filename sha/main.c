@@ -11,7 +11,6 @@
 int main()
 {
   SHA_INFO sha_info;
-
   sha_stream(&sha_info, inputString);
   sha_print(&sha_info);
   

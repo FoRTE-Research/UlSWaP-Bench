@@ -1,13 +1,15 @@
 #ifndef SHA_H
 #define SHA_H
 
+#include <inttypes.h>
+
 /* NIST Secure Hash Algorithm */
 /* heavily modified from Peter C. Gutmann's implementation */
 
 /* Useful defines & typedefs */
 
-typedef unsigned char BYTE;
-typedef unsigned long LONG;
+typedef uint8_t BYTE;
+typedef uint32_t LONG;
 
 #define SHA_BLOCKSIZE		64
 #define SHA_DIGESTSIZE		20
@@ -19,10 +21,10 @@ typedef struct {
 } SHA_INFO;
 
 void sha_init(SHA_INFO *);
-void sha_update(SHA_INFO *, BYTE *, int);
+void sha_update(SHA_INFO *, BYTE *, uint32_t);
 void sha_final(SHA_INFO *);
 
-void sha_stream(SHA_INFO *, char *);
+void sha_stream(SHA_INFO *, BYTE *);
 void sha_print(SHA_INFO *);
 
 #endif /* SHA_H */
