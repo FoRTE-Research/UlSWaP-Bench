@@ -2,21 +2,7 @@
 
 unsigned int atest ( unsigned int, unsigned int );
 unsigned int stest ( unsigned int, unsigned int );
-
-
-
-
-//------------------------------------------------------------------------
-//------------------------------------------------------------------------
-void PUT32 ( unsigned int, unsigned int);
-#define THUL_UART_BASE 0xE0000000
-//------------------------------------------------------------------------
-void uart_send ( unsigned int c )
-{
-    PUT32(THUL_UART_BASE+0x0,c);
-}
-//------------------------------------------------------------------------
-
+void uart_send (unsigned int c);
 
 void show_op ( unsigned int x )
 {
