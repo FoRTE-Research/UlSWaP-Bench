@@ -3,10 +3,10 @@
 //-------------------------------------------------------------------
 
 #include "testdata.h"
+// #include "bareBench.h"
 
 void hexstring ( unsigned int d ); //printf("%08X\n");
 void hexstrings ( unsigned int d ); //printf("%08X ");
-void hexstringcr ( unsigned int d ); //printf("%08X\r");
 
 void *memcpy(void *str1, const void *str2, unsigned int n)
 {
@@ -113,7 +113,7 @@ void arcfour_encrypt(ArcfourContext *ctx, unsigned char *dest, const unsigned ch
 
 
 
-int run_tea_test ( void )
+int main ( void )
 {
     unsigned int errors;
     int ra;
