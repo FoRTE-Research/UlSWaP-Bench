@@ -35,7 +35,6 @@ int lzfx_decompress_test ( void )
 
 int main ( void )
 {
-    uart_init();
     hexstring(0x1234);
     if(lzfx_decompress_test())
     {

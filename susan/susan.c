@@ -301,6 +301,7 @@ typedef float      TOTAL_TYPE; /* for my PowerPC accelerator only */
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <stdint.h>
 #include "../bareBench.h"
 #include "input_small.h"
 
