@@ -8,15 +8,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "conio.h"
-#include <limits.h>
-#include <time.h>
-#include <float.h>
 #include "bitops.h"
 #include "../bareBench.h"
 
-#define FUNCS 8
-#define RNG_SEED 0x0C728394
+#define FUNCS      8
+#define RNG_SEED   0x0C728394
+#define ITERATIONS 1125000
 
 void my_srand(uint32_t new_seed);
 uint32_t my_rand(void);
@@ -25,11 +22,7 @@ static int CDECL bit_shifter(uint32_t x);
 
 int main(void)
 {
-    clock_t start, stop;
-    double ct, cmin = DBL_MAX, cmax = 0;
-    int i, cminix = 0, cmaxix = 0;
-    uint32_t j, n, seed;
-    int iterations;
+    uint32_t i, j, n, seed;
 
     my_srand(RNG_SEED);
 
@@ -52,34 +45,16 @@ int main(void)
         "Non-recursive bit count by bytes (AR)",
         "Shift and count bits"};
 
-    iterations = 1125000;
-
     puts("Bit counter algorithm benchmark\r\n");
 
     for (i = 0; i < FUNCS; i++)
     {
-        start = clock();
-
-        for (j = n = 0, seed = my_rand(); j < iterations; j++, seed += 13)
+        for (j = n = 0, seed = my_rand(); j < ITERATIONS; j++, seed += 13)
             n += pBitCntFunc[i](seed);
 
-        stop = clock();
-        ct = (stop - start) / (double)CLOCKS_PER_SEC;
-        if (ct < cmin)
-        {
-            cmin = ct;
-            cminix = i;
-        }
-        if (ct > cmax)
-        {
-            cmax = ct;
-            cmaxix = i;
-        }
-
-        printf("%-38s> Time: %7.3f sec.; Bits: %d\r\n", text[i], printf_float(ct), n);
+        printf("%-38s> Bits: %u\r\n", text[i], n);
     }
-    printf("\r\nBest  > %s\r\n", text[cminix]);
-    printf("Worst > %s\r\n", text[cmaxix]);
+
     return 0;
 }
 
