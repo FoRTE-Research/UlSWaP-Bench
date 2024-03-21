@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "picojpeg.h"
-#include "jpegdata.h"
+#include "g_jpegdata.h"
 unsigned int doff;
 //unsigned int dlen;
 //unsigned char odat[128][256][3];
