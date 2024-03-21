@@ -1,17 +1,17 @@
 MAX_PRINTF_LEVEL = INTEGER
 
-all : host jpegdata.h main.elf
+all : g_host g_jpegdata.h main.elf
 
 
-host : host.c picojpeg.c picojpeg.h jpegdata.h
-	gcc -O2 host.c picojpeg.c -o host
+g_host : host.c picojpeg.c picojpeg.h g_jpegdata.h
+	gcc -O2 host.c picojpeg.c -o g_host
 
-jpegdata.h : bintoc.c
-	gcc -O2 bintoc.c -o bintoc
-	./bintoc
+g_jpegdata.h : bintoc.c
+	gcc -O2 bintoc.c -o g_bintoc
+	./g_bintoc
 
 more_clean :
-	rm -rf host out.bmp bintoc jpegdata.h
+	rm -rf g_host out.bmp g_bintoc g_jpegdata.h
 
 OBJS = picojpeg.o picojpegtest.o
 

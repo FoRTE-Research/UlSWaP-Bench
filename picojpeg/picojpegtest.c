@@ -1,11 +1,10 @@
 
 void hexstring ( unsigned int d ); //printf("%08X\n");
 void hexstrings ( unsigned int d ); //printf("%08X ");
-void hexstringcr ( unsigned int d ); //printf("%08X\r");
 
 #include <stdio.h>
 #include "picojpeg.h"
-#include "jpegdata.h"
+#include "g_jpegdata.h"
 
 unsigned int doff;
 
@@ -29,7 +28,7 @@ unsigned char pjpeg_need_bytes_callback(unsigned char* pBuf, unsigned char buf_s
 }
 
 
-int run_test ( void )
+int main ( void )
 {
     unsigned char status;
     pjpeg_image_info_t pInfo;

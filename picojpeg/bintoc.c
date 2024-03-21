@@ -17,7 +17,7 @@ int main ( void )
     dlen=fread(data,1,sizeof(data),fpin);
     fclose(fpin);
     printf("%u bytes read\n",dlen);
-    fpout=fopen("jpegdata.h","wt");
+    fpout=fopen("g_jpegdata.h","wt");
     if(fpout==NULL) return(1);
     fprintf(fpout,"\n");
     fprintf(fpout,"\n");
