@@ -1,665 +1,255 @@
-/* test case mostly by Andres Molina-Markham amolina AT cs umass edu */
+/***************
+ STILL IN PRIGRESS
+ Comments are left in places where it needs work one.
+ Those comments will be removed once relevant information is filled.
+ ***************/
 
-/*
- * Copyright 2010 UMass Amherst. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- *    1. Redistributions of source code must retain the above copyright notice,
- *       this list of conditions and the following disclaimer.
- *    2. Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY UMass Amherst ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- * EVENT SHALL <COPYRIGHT HOLDER> OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/** need to choose which RSA implementation to run **/
+#define tiny_rsa
+//#define codebase
+//#define navin
+//#define bearssl_rsa
+//#define mbedtls_rsa
 
-#include "../bareBench.h"
-#include <math.h>
-// #include <signal.h>
+/** need to uncomment if the board you are using is MSP432P401R **/
+// #define msp432p401r
+// #define riscv
+
 #include <stdio.h>
-#include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include "rsa.h"
 
-/*
- * generate a public key and exponent suitable for RSA encryption like this:
- * % openssl genrsa -out foo.rsa <numbits>
- * % openssl rsa -in foo.rsa -pubout | openssl rsa -pubin -noout -text 
- *   <will output n and e>
-*/   
-#define KEYLEN 4
-uint16_t n[KEYLEN];
-uint16_t e[2];
-uint16_t plaintext[KEYLEN];
-uint16_t ciphertext[KEYLEN];
+/// DO NOT EDIT BELOW  //////////////////////////////////////////
+#ifdef msp432p401r
+#include "msp.h"
+#include "rom_map.h"
+#include "rom.h"
+#include "systick.h"
+#endif
 
-/* would be nice if we could use malloc instead of globals here */
-uint16_t _tmpglobal_ab[2*KEYLEN];
-uint16_t _tmpglobal_q[KEYLEN];
-uint16_t _tmpglobal_x[2*KEYLEN];
-uint16_t _tmpglobal_ybnt[2*KEYLEN];
-uint16_t _tmpglobal_ybit[2*KEYLEN];
-uint16_t _tmpglobal_qitybit[2*KEYLEN];
-uint16_t _tmpglobal_temp[KEYLEN];
+#ifdef msp430g2553
+#include "msp430.h"
+#endif
 
-/**
- * One word addition with a carry bit
- * c_i = (a_1 + b_i + epsilon_prime) mod 0xFFFF
- */
-uint16_t add_word(uint16_t * c_i, uint16_t a_i, uint16_t b_i, uint16_t epsilon_prime) {
-    uint16_t epsilon; //The carry bit
-    *c_i = (a_i + b_i + epsilon_prime);
-	
-    if ((*c_i >= (a_i + epsilon_prime)) && (*c_i >= b_i)) {
-        epsilon = 0;
-    } else {
-        epsilon = 1;
-    }
-    return epsilon;
+#ifdef msp430fr5994
+#include "msp430.h"
+#endif
+
+// #include "experiment_time.h"
+
+#ifdef tiny_rsa
+#include "rsa_test.h"
+#endif
+#ifdef codebase
+#include "codebase/rsa.h"
+#endif
+#ifdef navin
+#include "navin/rsa.h"
+#endif
+#ifdef bearssl_rsa
+#include "bearssl/bearssl.h"
+#include "bearssl/inner.h"
+#include "bearssl/bearssl_rsa.h"
+#endif
+#ifdef  mbedtls_rsa
+#include <rsa/mbedtls-copy/pk.h>
+#endif
+#include "bn.h"
+
+/** Globals (test inputs) **/
+//define the global variables here
+
+#ifdef tiny_rsa
+
+char resultBuffer[8192];
+char public[] = 
+    // "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ca1";
+    // "00b261a64fd5b9977efcc821a11cc8fb8f99aedb05b9055acb41b2f7cb0ad5e4e4c3471e8e3fe27d1b9a44ebc415294d608dd25cf74d61a794cc1c4642a0dd5ed529973401b383dd19678cee1bc46b855d95c0202c745f35f6f8d23b7c9d789d80337a5e01c6145a7710078bbcfbf3a0066c74f3ddb4d61ec99644f6f31b9c380d";
+    "ed6af0e36dd8f1d935913da1b6142aefad1ab8a448b8577a8afe9d477bd59cdcb0daa0f75bf7ca54e743006e19bf60ec9c0aa7005a54298c54becdf34b29753f";
+
+char private[] =
+    // "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000019d";
+    // "76819f2ebcab5eb53394759b0677938074361135fd144c9c6a1a4ebaea88ed56f950bf40fbba29297454c358f2420d30cf276931b68be0fc5e998e27e79d09c971907feae9342ef5f93fc1b7f1fef735b899df569807e3cac59dd0159d78fca6f4e9f8af57d2b5ec5c2ab83a0d5c760c12f63e3cd40c4c2958613ec3198d0d41";
+    "8b12d7e50195d1a60141012f572f5d2f64e180438beda020c286ffaebe15957a78a48de536e06498fb42ee38cfcb79a90afa646cf1e58d606f8db0b16b46ebe1";
+// const char public[] =
+//         "a15f36fc7f8d188057fc51751962a5977118fa2ad4ced249c039ce36c8d1bd275273f1edd821892fa75680b1ae38749fff9268bf06b3c2af02bbdb52a0d05c2ae2384aa1002391c4b16b87caea8296cfd43757bb51373412e8fe5df2e56370505b692cf8d966e3f16bc62629874a0464a9710e4a0718637a68442e0eb1648ec5";
+// const char private[] =
+//         "3f5cc8956a6bf773e598604faf71097e265d5d55560c038c0bdb66ba222e20ac80f69fc6f93769cb795440e2037b8d67898d6e6d9b6f180169fc6348d5761ac9e81f6b8879529bc07c28dc92609eb8a4d15ac4ba3168a331403c689b1e82f62518c38601d58fd628fcb7009f139fb98e61ef7a23bee4e3d50af709638c24133d";
+char cipher[] =
+    "21d7bfc73cdc62dfbb6ba7b28b84bd58d1689171bcdab8391d6c1527faf58bc018816f874ff80ac7e6c71b17fc7cfa9f7e625ecf9bf309d2773fcc34a5f5f9ae";
+    // "dc784361bd820b285a3aab973dc49b66c549ed6399d7842a59a36dace006bbf5f4b3f7e0c2fbece2daa56de6dbc77b7b159eb0ef1938c1eb8ea3b3194aec315b";
+    // "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009b57eb2480e24284638729e7272e546178b47ff7171bc8cd211976157cc7e3aa7237d727ab925953e0a6f3602d0c1ea773538c38795e8b0ce8e3a11f1f8937c9";
+    // "7480a6fb461120c9b12a91e9f84a891236d8ecbcfb6ee6ad25664bac621fefd9d7981467f6b3bda57cdf8535d61940b8f75aac506b308a20e4b1e672a214319b15d23278addb073d91b6e5ced99168b45cb77050703ed501b2ff7e19abbf21f63cedd57c5cab099fe06bdde7dc7f14b2ef56f1ac01e26f621c40f6a110b0d431";
+    // "1fd00be7d1ef53939e471b698d966815265cab71373cab3b5faaee0d6d4fceb0e6947e83deb485116dbae4fcda81cc30b6936323d8de755d4d0d9b02009a2ce241cb98627dc7ad0a47af80526ac3033bc92acb12d05541f7913fbcf7278af77f6c937eb6d8748955e6ebfd80f98e824bf2a84eb334d9f3891292429df5f02b83";
+    // "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080b89cc5ce40496de7f2f92df9b5f2658ee91c3b46d0a9a8c8bf7260782132df8c9c27e5834ffa70b5feb77396dedbcd547b7bcfb10f8e75ff004c1cabd7db27";
+//         "1cb1c5e45e584cb1b627cac7b0de0812dac7c1d1638785a7660f6772d219f62aa0ce3e8a853abadebe0a293d76a17d321da8b1fd25ddf807ce96006f73a0aed014b990d6025c42b6c216d8553b66e724270b6dbd654d55e368edeacbc8da30f0cbe5ccbb72a3fe44d29543a5bbb5255a404234ce53bf70f52a78170685a6e391";
+// char cipher[] =
+//     "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ae6";
+
+// "ABCDEFHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890,."
+char plaintext[] = "4142434445464748494a4b4c4d4e4f505152535455565758595a6162636465666768696a6b6c6d6e6f707172737475767778797a313233343536373839302c2e";
+// char plaintext[] = "4142434445464748494a4b4c4d4e4f505152535455565758595a6162636465666768696a6b6c6d6e6f707172737475767778797a31323334353637";
+
+int exponent = 65537;
+// char plaintext[] = "{5, 4, 3, 2, 1}";
+
+#endif
+#ifdef codebase
+
+uint64_t plaintext = 54321;
+uint64_t cipher = 351159;
+uint64_t rsaDecrypted, rsaEncrypted;
+
+#endif
+#ifdef navin
+
+uint64_t resultBuffer[1024];
+char public[] =
+        "a15f36fc7f8d188057fc51751962a5977118fa2ad4ced249c039ce36c8d1bd275273f1edd821892fa75680b1ae38749fff9268bf06b3c2af02bbdb52a0d05c2ae2384aa1002391c4b16b87caea8296cfd43757bb51373412e8fe5df2e56370505b692cf8d966e3f16bc62629874a0464a9710e4a0718637a68442e0eb1648ec5";
+char private[] =
+        "3f5cc8956a6bf773e598604faf71097e265d5d55560c038c0bdb66ba222e20ac80f69fc6f93769cb795440e2037b8d67898d6e6d9b6f180169fc6348d5761ac9e81f6b8879529bc07c28dc92609eb8a4d15ac4ba3168a331403c689b1e82f62518c38601d58fd628fcb7009f139fb98e61ef7a23bee4e3d50af709638c24133d";
+char cipher[] =
+        "1cb1c5e45e584cb1b627cac7b0de0812dac7c1d1638785a7660f6772d219f62aa0ce3e8a853abadebe0a293d76a17d321da8b1fd25ddf807ce96006f73a0aed014b990d6025c42b6c216d8553b66e724270b6dbd654d55e368edeacbc8da30f0cbe5ccbb72a3fe44d29543a5bbb5255a404234ce53bf70f52a78170685a6e391";
+uint8_t plaintext[] = {5, 4, 3, 2, 1};
+
+#endif
+
+
+/** Initialization for different RSA implementations **/
+
+#ifdef tiny_rsa
+// Nothing needs to be done.
+#endif
+#ifdef codebase
+
+// Values based on 64-bit math (huge_t = uint64_t)
+// which will result in more secure encryption, but also
+// increases the size of the encrypted text
+
+rsaPubKey_t publicKey = {21, 16484947};
+rsaPriKey_t privateKey = {15689981, 16484947};
+
+//publicKey.e = 21;
+//publicKey.n = 16484947;
+//privateKey.d = 15689981;
+//privateKey.n = 16484947;
+
+#endif
+#ifdef navin
+// Nothing needs to be done.
+#endif
+
+
+void test_encrypt()
+{
+#ifdef tiny_rsa
+    rsa1024_encrypt(public, private, resultBuffer, exponent, plaintext);
+#endif
+#ifdef codebase
+    rsaEncrypt(plaintext, &rsaEncrypted, publicKey);
+#endif
+#ifdef navin
+    uint64_t e[18] = {0};
+    e[0] = 65537;
+
+    rsa1024(resultBuffer, plaintext, public, e);
+#endif
+    // printf("plaintext %d\r\n", plaintext);
+    // printf("resultBuffer %s\r\n", resultBuffer);
 }
 
-/**
- * One word subtraction with a borrow bit
- * c_i = (a_1 - b_i - epsilon_prime) mod 0xFFFF
- */
-uint8_t subtract_word(uint16_t * c_i, uint16_t a_i, uint16_t b_i, uint8_t epsilon_prime) {
-    uint8_t epsilon; //The carry bit
-    *c_i = (a_i - b_i - epsilon_prime);
-    if (0xFFFF == b_i) {
-        epsilon = 1;
-    } else {
-        if (a_i < b_i) {
-            epsilon = 1;
-        } else {
-            epsilon = 0;
-        }
-    }
-	
-    return epsilon;
+void test_decrypt()
+{
+#ifdef tiny_rsa
+    rsa1024_decrypt(public, private, resultBuffer, cipher);
+#endif
+#ifdef codebase
+    rsaDecrypt(cipher, &rsaDecrypted, privateKey);
+#endif
+#ifdef navin
+    uint64_t e[18] = {0};
+    e[0] = 65537;
+
+    rsa1024(resultBuffer, ciphertext, private, e);
+#endif
+
 }
 
-/**
- * Multiprecision addition c.f. Alg. 2.5
- * Input: a, b \in [0,2^{Wt})
- * Output: (epsilon, c) where c = a + b mod 2^{Wt} and epsilon is the carry bit
- */
-uint16_t add_mp_elements(uint16_t * pfe_c, uint16_t * pfe_a, uint16_t * pfe_b, uint8_t wordlength) {
-    uint16_t epsilon; //The carry bit
-    int i; // index for loop
-	
-    //1.
-    epsilon = add_word(&pfe_c[0], pfe_a[0], pfe_b[0], 0);
-    //2.
-	
-    for (i = 1; i < wordlength; i++) {
-        epsilon = add_word(&pfe_c[i], pfe_a[i], pfe_b[i], epsilon);
-    }
-	
-    //3.
-    return epsilon;
+int check_encrypt()
+{
+#if defined(tiny_rsa)
+    return memcmp((char*) cipher, (char*) resultBuffer, sizeof(cipher));
+#elif defined(codebase)
+    return (cipher == rsaEncrypted);
+#elif defined(navin)
+    return memcmp((char*) cipher, (char*) resultBuffer, sizeof(cipher));
+#endif
 }
 
-/**
- * Multiprecision subtraction c.f. Alg. 2.6
- * Input: a, b \in [0,2^{Wt})
- * Output: (epsilon, c) where c = a - b mod 2^{Wt} and epsilon is the borrow bit
- */
-uint16_t subtract_mp_elements(uint16_t * pfe_c, uint16_t * pfe_a, uint16_t * pfe_b, uint8_t wordlength) {
-    uint16_t epsilon; //The carry bit
-    int i; // index for loop
-    
-    //1.
-    epsilon = subtract_word(&pfe_c[0], pfe_a[0], pfe_b[0], 0);
-    //2.
-	
-    for (i = 1; i < wordlength; i++) {
-		
-        epsilon = subtract_word(&pfe_c[i], pfe_a[i], pfe_b[i], epsilon);
-    }
-	
-    //3.
-    return epsilon;
+int check_decrypt()
+{
+#if defined(tiny_rsa)
+printf("plaintext %s\r\n", plaintext);
+printf("resultBuffer %s\r\n", resultBuffer);
+    return memcmp((char*) plaintext, (char*) resultBuffer, strlen(plaintext));
+#elif defined(codebase)
+    return (plaintext == rsaDecrypted);
+#elif defined(navin)
+    return memcmp((char*) plaintext, (char*) resultBuffer, sizeof(plaintext));
+#endif
 }
 
-/**
- * Addition in F_p c.f. Alg. 2.7
- * Input: a, b \in [0,p-1)
- * Output: c = a + b mod p
- */
-void add_mod_p(uint16_t * c, uint16_t * a, uint16_t * b, uint16_t * p, uint8_t wordlength) {
-    uint8_t epsilon;
-    
-	
-    //1.
-    epsilon = add_mp_elements(c, a, b, wordlength);
-    //2.
-    if (1 == epsilon) {
-        subtract_mp_elements(c, c, p, wordlength);
-    } else {
-        if (1 == compare_mp_elements(c, p, wordlength)) {
-            subtract_mp_elements(c, c, p, wordlength);
-        }
-    }
-}
-
-/**
- * subtraction in F_p c.f. Alg. 2.8
- * Input: a, b \in [0,p-1)
- * Output: c = a - b mod p
- */
-void subtract_mod_p(uint16_t * c, uint16_t * a, uint16_t * b, uint16_t * p, uint8_t wordlength) {
-    uint8_t epsilon; //The carry bit
-    //1.
-    epsilon = subtract_mp_elements(c, a, b, wordlength);
-    if (1 == epsilon) {
-        add_mp_elements(c, c, p, wordlength);
-    }
-}
-
-/**
- * Sets a bn to zero
- */
-void set_to_zero(uint16_t * c, uint8_t wordlength) {
-    int i;
-    for (i = 0; i < wordlength; i++) {
-        c[i] = 0x0000;
-    }
-}
-
-/**
- * Multiply two single words into a double word
- * Input: a,b words
- * Output: uv one 2-word
- */
-void multiply_words(uint16_t a, uint16_t b, uint16_t * uv) {
-    uint32_t uv_32;
-    uint16_t u,v;
-	
-	
-    uv_32 = ((uint32_t) a) * ((uint32_t) b);
-    u = (uint16_t) (uv_32 >> 16);
-    v = (uint16_t) uv_32;
-	
-    uv[1] = u;
-    uv[0] = v;
-	
-}
-
-/**
- * Multiply two single words into a double word
- * Input: a,b words
- * Output: uv one 2-word
- */
-void multiply_words_2(uint16_t a, uint16_t b, uint16_t * uv) {
-    uint16_t a0, a1, b0, b1;
-    uint16_t t[2];
-    uint16_t s[2];
-    uint16_t m;
-    uint16_t borrow;
-	
-    a0 = (a & 0xFF00) >> 8;
-    a1 = a & 0x00FF;
-    b0 = (b & 0xFF00) >> 8;
-    b1 = b & 0x00FF;
-	
-    //1.
-    m = a1 * b1;
-    t[0] = m & 0x00FF;
-    borrow = (m & 0xFF00) >> 8;
-	
-    //2.
-    m = a0 * b1 + borrow;
-    t[0] ^= ((m & 0x00FF) << 8);
-    t[1] = ((m & 0xFF00) >> 8);
-	
-    //3.
-    m = a1*b0;
-    s[0] = (m & 0x00FF) << 8;
-    borrow = (m & 0xFF00) >> 8;
-	
-    //4.
-    m = a0 * b0 + borrow;
-    s[1] = m;
-	
-	
-    //5.
-    //Add two rows s ,t
-    add_mp_elements(uv, s, t, 2);
-	
-}
-
-/**
- * Multiprecision Multiplication c.f. Alg. 2.9
- * Input: a, b \in [0,p-1]
- * Output: c = a*b
- */
-void multiply_mp_elements(uint16_t * c, uint16_t * a, uint16_t * b, uint8_t
-        wordlength) {
-    uint16_t UV[2];
-    uint16_t temp1[2];
-    uint16_t temp2[2];
-	
-    int i, j;
-    //1. Set c[i] = 0 for 0 \leq i \leq wordlength-1
-    set_to_zero(c, 2 * wordlength);
-    //2.
-    set_to_zero(UV, 2);
-    for (i = 0; i < wordlength; i++) {
-        UV[1] = 0;
-        for (j = 0; j < wordlength; j++) {
-            //UV = c[i+j] + a[i]*b[j] + UV[0];
-            temp2[0] = UV[1];
-            temp2[1] = 0x0000;
-            multiply_words(a[i], b[j], UV);
-            temp1[0] = c[i + j];
-            temp1[1] = 0x0000;
-            add_mp_elements(UV, UV, temp1, 2);
-            add_mp_elements(UV, UV, temp2, 2);
-            c[i + j] = UV[0];
-        }
-        c[i + wordlength] = UV[1];
-    }
-}
-
-/**
- * Multiprecision Multiplication c.f. Alg. 2.9
- * Input: a, b \in [0,p-1]
- * Output: c = a*b
- */
-void multiply_mp_elements2(uint16_t * c, uint16_t * a, uint8_t wordlength_a, uint16_t * b, uint8_t wordlength_b) {
-    uint16_t UV[2];
-    uint16_t temp1[2];
-    uint16_t temp2[2];
-	
-    int i, j;
-    //1. Set c[i] = 0 for 0 \leq i \leq wordlength-1
-    set_to_zero(c, wordlength_a + wordlength_b);
-    //2.
-    set_to_zero(UV, 2);
-    for (i = 0; i < wordlength_b; i++) {
-        UV[1] = 0;
-        for (j = 0; j < wordlength_a; j++) {
-            //UV = c[i+j] + a[i]*b[j] + UV[0];
-            temp2[0] = UV[1];
-            temp2[1] = 0x0000;
-            multiply_words(a[i], b[j], UV);
-            temp1[0] = c[i + j];
-            temp1[1] = 0x0000;
-            add_mp_elements(UV, UV, temp1, 2);
-            add_mp_elements(UV, UV, temp2, 2);
-            c[i + j] = UV[0];
-        }
-        c[i + wordlength_b] = UV[1];
-    }
-}
+int main(void)
+{
+    // struct bn a;
+    // bignum_init(&a);
+    // bignum_from_int(&a, 54321);
+    // bignum_dump(&a);
+    // return 0;
 
 
 
-/**
- * Compares two big nums
- * Returns 1 if a >= b 0 otherwise
- */
-uint8_t compare_mp_elements(uint16_t * a, uint16_t * b, uint8_t wordlength) {
-    int i;
-	
-    for (i = wordlength-1; i > -1; i--) {
-        //if (a[i] > b[i]) {
-        //    return 1;
-        //}
-        if (a[i] < b[i]) {
-            return 0;
-        }
-        if (a[i] > b[i]) {
-            return 1;
-        }
-    }
-    //The elements are equal
-    return 1;
-}
+#ifdef msp432p401r
+    /** Initialize the board **/
+    board_init();
+
+    /** Starting the timer to measure elapsed time **/
+    startTimer();
+#endif
+
+    /** test rsa **/
+   test_encrypt();
+   printf("Encryption complete\r\n");
+//    printf("plaintext %d\r\n", plaintext);
+//     printf("cipher %s\r\n", cipher);
+//     printf("resultBuffer %s\r\n", resultBuffer);
+    volatile unsigned int verify_encrypt = check_encrypt();
+    printf("Encryption %s\r\n", verify_encrypt ? "failed" : "successful");
 
 
+    test_decrypt();
+    printf("Decryption complete\r\n");
 
+//    printf("plaintext %d\r\n", plaintext);
+//     printf("cipher %s\r\n", cipher);
+//     printf("resultBuffer\r\n");
 
-/**
- Multiply by a power of b
- * out = a*b^k
- */
-void mult_by_power_of_b(uint16_t * out, uint16_t wordlength_out, uint16_t * a,
-						uint16_t wordlength_a, uint16_t k) {
-    int i = 0;
-    //initialize out
-    set_to_zero(out, wordlength_out);
-	
-    while(i + k < wordlength_out) {
-        if(i<wordlength_a) {
-            out[i+k] = a[i];
-        }
-        i++;
-    }
-}
+//     // print result buffer
+//     for (int i = 0; i < sizeof(resultBuffer); i++) {
+//         printf("%c", resultBuffer[i]);
+//     }
+//     printf("\r\n");
+    /** Check the result to see whether RSA algorithm is correctly working or not **/
+   
+    volatile unsigned int verify_decrypt = check_decrypt();
+    printf("Decryption %s\r\n", verify_decrypt ? "failed" : "successful");
 
-void mod_pow_of_b(uint16_t * out, uint16_t wordlength_out, uint16_t * a,
-				  uint16_t wordlength_a, uint16_t k){
-    int i;
-	
-    while(i < wordlength_out) {
-        if(i < wordlength_a) {
-            out[i] = a[i];
-        }
-        else {
-            out[i] = 0;
-        }
-        i++;
-    }
-}
+#ifdef msp432p401r
+    volatile unsigned int elapsed = getElapsedTime();
+#endif
 
-/*
- Divide by a power of b
- */
-void div_by_power_of_b(uint16_t * out, uint16_t out_len, uint16_t * a, uint16_t a_len, uint16_t k) {
-    int i;
-    //initialize z_div
-    set_to_zero(out, out_len);
-	
-	
-    if (out_len + 1 > a_len - k) {
-        for (i = 0; i < out_len; i++) {
-			if(k+i<a_len) {
-				out[i] = a[k+i];
-			}
-        }
-    }
-	
-}
+    /** Print the result **/
 
-/**
- * @param c An output BigNum such that c = a * b
- * @param a A 16-bit unsigned integer
- * @param b A BigNum of size wordlength_b in 16-bit words.
- * @param wordlength_b
- */
-void multiply_sp_by_mp_element(uint16_t * c, uint16_t a, uint16_t * b,
-							   uint16_t wordlength_b) {
-    uint32_t uv;
-    uint16_t u;
-    uint16_t v;
-    uint16_t carry;
-	
-    int j;
-    //1. Set c[i] = 0 for 0 \leq i \leq wordlength-1
-    set_to_zero(c, wordlength_b + 1);
-    //2. Perform paper and pencil multiplication
-    uv = 0;
-    carry = 0;
-    for (j = 0; j < wordlength_b; j++) {
-        uv = ((uint32_t) a) * ((uint32_t) b[j]) + ((uint32_t) carry);
-        u = (uint16_t) (uv >> 16);
-        v = (uint16_t) uv;
-        c[j] = v;
-        carry = u;
-    }
-    c[wordlength_b] = carry;
-}
-
-int are_mp_equal(uint16_t * a, uint16_t * b, uint8_t wordlength){
-    int i =0;
-    int answ = 1;
-	
-    while((1 == answ) && (i<wordlength)){
-        if(a[i] != b[i]) {
-            answ = 0;
-        }
-        i++;
-    }
-    return answ;
-}
-
-void copy_mp(uint16_t * out, uint16_t * in, int wordlength){
-    int i;
-    for(i = 0; i< wordlength; i++) {
-        out[i] = in[i];
-    }
-}
-
-int ith_bit(uint16_t e, int i){
-    uint16_t mask;
-    mask = 0x0001 << i;
-    mask = e & mask;
-    if(0x0000 == mask){
-        return 0;
-    } else {
-        return 1;
-    }
-}
-
-int bit_length(uint16_t e){
-    int i = 15;
-    int found_one = 0;
-    while(0 == found_one){
-        if(1 == ith_bit(e, i)) {
-            found_one = 1;
-        } else {
-            i--;
-        }
-    }
-    return i;
-}
-
-int mp_bit_length(uint16_t * e, uint16_t wordlength){
-    int i = wordlength - 1;
-    int length;
-    int last_non_zero_word = -1;
-    while((i>-1)&&(last_non_zero_word < 0)){
-        if(0!= e[i]){
-            last_non_zero_word = i;
-        }
-        i--;
-    }
-    length = 16*last_non_zero_word + bit_length(e[last_non_zero_word]);
-    return length;
-}
-
-int mp_ith_bit(uint16_t * e, int i){
-    uint16_t word;
-    uint16_t word_bit;
-	
-    word = (int) i/16;
-    word_bit = ith_bit(e[word],i - word *16);
-    return word_bit;
-}
-
-int mp_non_zero_words(uint16_t * e, uint16_t wordlength){
-    int i = wordlength - 1;
-    int last_non_zero_word = -1;
-    while((i>-1)&&(last_non_zero_word < 0)){
-        if(0!= e[i]){
-            last_non_zero_word = i;
-        }
-        i--;
-    }
-    return last_non_zero_word;
-}
-
-/**
- * Multiplication in F_p
- * Input: a, b \in [0,p-1)
- * Output: c = a * b mod p
- */
-void multiply_mod_p(uint16_t * c, uint16_t * a, uint16_t * b, uint16_t * p,
-        uint8_t wordlength){
-    multiply_mp_elements(_tmpglobal_ab, a, b, wordlength);
-    divide_mp_elements(_tmpglobal_q, c, _tmpglobal_ab, 2*wordlength, p, wordlength);
-}
-
-/*
- Returns floor((x1*(0xFFFF) + x0)/y)
- */
-uint16_t divide_2_word_by_1_word(uint16_t x1, uint16_t x0, uint16_t y) {
-    uint32_t result;
-    if (0 != y) {
-        //result = (uint32_t ) ((uint32_t ) x1) * (0x00010000);
-        result = (((uint32_t) x1) << 16);
-        //result = result | x0;
-        result = result + (uint32_t) x0;
-        result = (result) / ((uint32_t) y);
-        return result;
-    } else {
-        return 0;
-    }
-	
-}
-
-/**
- * Multiprecision Division c.f. Alg. 14.20 Handbook of Applied Crypto (Menezes, et.al.)
- * Input: x = (x_n . . . x_1 x_0)_b, y = (y_t . . . y_1 y_0)_b with n >= t > 1, y_t != 0
- * Output: q = (q_{n-t} . . . q_1 q_0)_b, r = (r_t . . . r_1 r_0)_b
- * such that x = qy +r, 0 \leq r < y.
- */
-void divide_mp_elements(uint16_t * q, uint16_t * r, uint16_t * x_in, int n,
-        uint16_t * y, int t) {
-    int i, j, k;
-    //For step 3.2
-    //uint64_t ls, rs;
-    uint16_t temp_ls[2];
-    //uint16_t temp_rs[2];
-    uint16_t ls[3];
-    uint16_t rs[3];
-	
-    //Just for testing
-    uint16_t temp;
-
-    //0) copy x_in to x
-    for (i = 0; i < n; i++)
-        _tmpglobal_x[i] = x_in[i];
-	
-    //1)
-    for (j = 0; j < n - t; j++) {
-        q[j] = 0x0000;
-    }
-    //2)
-    mult_by_power_of_b(_tmpglobal_ybnt, n, y, t, n - t);
-	
-    while (1 == compare_mp_elements(_tmpglobal_x, _tmpglobal_ybnt, (int) n)) {
-        q[n - t] = q[n - t] + 1;
-        subtract_mp_elements(_tmpglobal_x, _tmpglobal_x, _tmpglobal_ybnt, n);
-    }
-    //3)
-    for (i = n - 1; i > t - 1; i--) { //<--- check index here
-        temp = _tmpglobal_x[i] - y[t - 1];
-        //3.1)
-        if (0 == temp) {
-            q[i - t] = 0xFFFF; //<--- check index here
-        } else {
-            q[i - t] = divide_2_word_by_1_word(_tmpglobal_x[i], _tmpglobal_x[i - 1], y[t - 1]);
-        }
-        //3.2)
-        //ls = ((uint64_t) q[i - t])*((((uint64_t) y[t - 1]) << 16) + ((uint64_t) y[t - 2]));
-        temp_ls[0] = y[t - 2];
-        temp_ls[1] = y[t - 1];
-        multiply_sp_by_mp_element(ls, q[i - t], temp_ls, 2);
-		
-        //rs = (((uint64_t) x[i]) << 32) + (((uint64_t) x[i - 1]) << 16) + ((uint64_t) x[i - 2]);
-        rs[0] = _tmpglobal_x[i - 2];
-        rs[1] = _tmpglobal_x[i - 1];
-        rs[2] = _tmpglobal_x[i];
-		
-        //if((0xBCD3 != rs[2]) && (0x78FC != rs[1]) && (0x1917 != rs[0])) {
-		
-        //while (ls > rs) {
-        while (0 == compare_mp_elements(rs, ls, 3)) {
-            q[i - t] = q[i - t] - 1;
-            //ls = ((uint64_t) q[i - t])*((((uint64_t) y[t - 1]) << 16)+ ((uint64_t) y[t - 2]));
-            multiply_sp_by_mp_element(ls, q[i - t], temp_ls, 2);
-        }
-        //3.3)
-        mult_by_power_of_b(_tmpglobal_ybit, n, y, t, i - t);
-        multiply_sp_by_mp_element(_tmpglobal_qitybit, q[i - t], _tmpglobal_ybit, n);
-        //3.3 + 3.4) Last part of 3.3 merged with 3.4 to avoid negative comparisons
-        if (0 == compare_mp_elements(_tmpglobal_x, _tmpglobal_qitybit, n)) {
-            add_mp_elements(_tmpglobal_x, _tmpglobal_x, _tmpglobal_ybit, n);
-            subtract_mp_elements(_tmpglobal_x, _tmpglobal_x, _tmpglobal_qitybit, n);
-            q[i - t] = q[i - t] - 1;
-        } else {
-            subtract_mp_elements(_tmpglobal_x, _tmpglobal_x, _tmpglobal_qitybit, n);
-        }
-        //4
-        for (k = 0; k < t; k++) {
-            r[k] = _tmpglobal_x[k];
-        }
-	}
-    //}
-	
-}
-
-/**
- * Implementation of the left to right modular exponentiation algorithm
- * as described in the HAC book by Menezes et.al.
- *
- * @param A The result of raising g to the power of e
- * @param g an element of Z*_p
- * @param e a multi-precission exponent
- * @param e_legth the wordlength of the multi-precission exponent
- */
-
-void mod_exp(uint16_t * A, uint16_t * g, uint16_t * e, uint16_t e_length,
-        uint16_t * p, uint16_t p_length) {
-    int i;
-    int t = mp_bit_length(e,e_length);
-	
-    set_to_zero(A, p_length);
-    A[0] = 1;
-	
-    for (i = t; i >= 0; i--) { // Note, first decrease, then work
-        //2.1 A = A*A mod p
-        multiply_mod_p(_tmpglobal_temp, A, A, p, p_length);
-        copy_mp(A, _tmpglobal_temp, p_length);
-        //2.2 If e_i = 1 then A = Mont(A,x_hat)
-        if (1 == mp_ith_bit(e, i)) {
-            multiply_mod_p(_tmpglobal_temp, A, g, p, p_length);
-            copy_mp(A, _tmpglobal_temp, p_length);
-        }
-    }
-	
-    //3.
-    //copy_mp(out,A,12); // no need to copy the result, alreade stored in A
-}
-
-void test_rsa_encrypt(){
-    mod_exp(ciphertext, plaintext, e, 1, n, KEYLEN);
-}
-
-int main (void) {
-    /* see above comment about generating these */
-    n[0] = 0xab78; n[1] = 0xafba; n[2] = 0x88e7; n[3] = 0x496d;
-    e[0] = 0x0001; e[1] = 0x0001; // e = 65537
-
-    plaintext[0] = 0x4d65; // Me
-    plaintext[1] = 0x6d65; // me
-    plaintext[2] = 0x6e74; // nt
-    plaintext[3] = 0x6f73; // os
-
-    int cnt;
-    printf("Plaintext:\n\r");
-    for(cnt = 0; cnt < KEYLEN; ++cnt)
-      printf("0x%08X\n\r", plaintext[cnt]);
-
-    test_rsa_encrypt();
-
-    printf("Cipertext:\n\r");
-    for(cnt = 0; cnt < KEYLEN; ++cnt)
-      printf("0x%08X\n\r", ciphertext[cnt]);
-
-    return 11;
+    // while (1);
+    return 0;
 }
