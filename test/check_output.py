@@ -2,7 +2,7 @@ import argparse
 
 def compare_files(file1_name:str, file2_name:str, max_delta:float) -> bool:
     align = max(len(file1_name), len(file2_name)) + 1
-    match = True
+    files_match = True
 
     try:
         with open(file1_name, 'r') as file1, open(file2_name, 'r') as file2:
@@ -11,25 +11,29 @@ def compare_files(file1_name:str, file2_name:str, max_delta:float) -> bool:
 
             try:
                 for line1, line2 in zip(lines1, lines2, strict=True):
+                    lines_match = True
                     words1 = line1.split()
                     words2 = line2.split()
 
                     if len(words1) != len(words2):
-                        match = False
+                        lines_match = False
+                        files_match = False
 
                     for word1, word2 in zip(words1, words2):
                         try:
                             float1 = float(word1)
                             float2 = float(word2)
                             if abs(float1 - float2) > max_delta:
-                                match = False
+                                lines_match = False
+                                files_match = False
                                 break
                         except ValueError:
                             if word1 != word2:
-                                match = False
+                                lines_match = False
+                                files_match = False
                                 break
 
-                    if not match:
+                    if not lines_match:
                         print('{0:{1}}: {2}'.format(file1_name, align, line1.strip()))
                         print('{0:{1}}: {2}'.format(file2_name, align, line2.strip()))
                         print()
@@ -45,7 +49,7 @@ def compare_files(file1_name:str, file2_name:str, max_delta:float) -> bool:
         print("One or both files not found.")
         return False
 
-    return match
+    return files_match
 
 
 def main():
