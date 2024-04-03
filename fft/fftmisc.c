@@ -52,7 +52,7 @@ unsigned NumberOfBitsNeeded ( unsigned PowerOfTwo )
     {
         fprintf (
             stderr,
-            ">>> Error in fftmisc.c: argument %d to NumberOfBitsNeeded is too small.\n",
+            ">>> Error in fftmisc.c: argument %d to NumberOfBitsNeeded is too small.\r\n",
             PowerOfTwo );
 
         exit(1);
