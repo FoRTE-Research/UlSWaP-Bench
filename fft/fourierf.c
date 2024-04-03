@@ -30,7 +30,7 @@ static void CheckPointer ( void *p, char *name )
 {
     if ( p == NULL )
     {
-        fprintf ( stderr, "Error in fft_float():  %s == NULL\n", name );
+        fprintf ( stderr, "Error in fft_float():  %s == NULL\r\n", name );
         exit(1);
     }
 }
@@ -55,7 +55,7 @@ void fft_float (
     {
         fprintf (
             stderr,
-            "Error in fft():  NumSamples=%u is not power of two\n",
+            "Error in fft():  NumSamples=%u is not power of two\r\n",
             NumSamples );
 
         exit(1);
