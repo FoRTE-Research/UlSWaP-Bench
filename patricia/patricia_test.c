@@ -53,10 +53,10 @@
 #include <ctype.h>
 
 struct in_addr {
-    unsigned long s_addr;  // load with inet_aton()
+    uint32_t s_addr;  // load with inet_aton()
 };
 
-int isascii(char c) { return 1;}
+// int isascii (char c) { return 1;}
 
 unsigned int htonl(unsigned int x)
 {
@@ -167,7 +167,7 @@ main()
 	struct ptree *p,*pfind;
 	struct ptree_mask *pm;
 	struct in_addr addr;
-	unsigned long mask=0xffffffff;
+	uint32_t mask=0xffffffff;
 	float time;
 
 	/*
@@ -180,13 +180,13 @@ main()
 	 *   5. Point the head's 'left' and 'right' pointers to itself.
 	 * NOTE: This should go into an intialization function.
 	 */
-	phead = (struct ptree *)malloc(sizeof(struct ptree));
+	phead = (struct ptree *)alloca(sizeof(struct ptree));
 	if (!phead) {
 		perror("Allocating p-trie node");
 		return(0);
 	}
 	bzero(phead, sizeof(*phead));
-	phead->p_m = (struct ptree_mask *)malloc(
+	phead->p_m = (struct ptree_mask *)alloca(
 			sizeof(struct ptree_mask));
 	if (!phead->p_m) {
 		perror("Allocating p-trie mask data");
@@ -194,7 +194,7 @@ main()
 	}
 	bzero(phead->p_m, sizeof(*phead->p_m));
 	pm = phead->p_m;
-	pm->pm_data = (struct MyNode *)malloc(sizeof(struct MyNode));
+	pm->pm_data = (struct MyNode *)alloca(sizeof(struct MyNode));
 	if (!pm->pm_data) {
 		perror("Allocating p-trie mask's node data");
 		return(0);
@@ -225,7 +225,7 @@ main()
 		/*
 		 * Create a Patricia trie node to insert.
 		 */
-		p = (struct ptree *)malloc(sizeof(struct ptree));
+		p = (struct ptree *)alloca(sizeof(struct ptree));
 		if (!p) {
 			perror("Allocating p-trie node");
 			return(0);
@@ -235,7 +235,7 @@ main()
 		/*
 		 * Allocate the mask data.
 		 */
-		p->p_m = (struct ptree_mask *)malloc(
+		p->p_m = (struct ptree_mask *)alloca(
 				sizeof(struct ptree_mask));
 		if (!p->p_m) {
 			perror("Allocating p-trie mask data");
@@ -248,7 +248,7 @@ main()
 		 * Replace 'struct MyNode' with whatever you'd like.
 		 */
 		pm = p->p_m;
-		pm->pm_data = (struct MyNode *)malloc(sizeof(struct MyNode));
+		pm->pm_data = (struct MyNode *)alloca(sizeof(struct MyNode));
 		if (!pm->pm_data) {
 			perror("Allocating p-trie mask's node data");
 			return(0);
@@ -263,12 +263,12 @@ main()
 		p->p_m->pm_mask = htonl(mask);
 
 		pfind=pat_search(addr.s_addr,phead);
-		//printf("%08x %08x %08x\n",p->p_key, addr.s_addr, p->p_m->pm_mask);
+		//printf("%08x %08x %08x\r\n",p->p_key, addr.s_addr, p->p_m->pm_mask);
 		//if(pfind->p_key==(addr.s_addr&pfind->p_m->pm_mask))
 		if(pfind->p_key==addr.s_addr)
 		{
-			printf("%f %08x: ", time, addr.s_addr);
-			printf("Found.\n");
+			printf("%f %08x: ", printf_float(time), addr.s_addr);
+			printf("Found.\r\n");
 		}
 		else
 		{
@@ -277,11 +277,11 @@ main()
 		 	* Returns the node it inserted on success, 0 on failure.
 		 	*/
 			//printf("%08x: ", addr.s_addr);
-			//printf("Inserted.\n");
+			//printf("Inserted.\r\n");
 			p = pat_insert(p, phead);
 		}
 		if (!p) {
-			printf("Failed on pat_insert\n");
+			printf("Failed on pat_insert\r\n");
 			return(0);
 		}
 	}
