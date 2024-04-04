@@ -22,7 +22,7 @@
  * $Id: patricia.c,v 1.1.1.1 2000/11/06 19:53:17 mguthaus Exp $
  */
 
-#include <stdlib.h>	/* free(), malloc() */
+#include <stdlib.h>	/* free(), alloca() */
 #include <string.h>	/* bcopy() */
 #include "patricia.h"
 
@@ -32,8 +32,8 @@
  * or not bit 'i' is set in 'key'.
  */
 static __inline
-unsigned long
-bit(int i, unsigned long key)
+uint32_t
+bit(int i, uint32_t key)
 {
 	return key & (1 << (31-i));
 }
@@ -133,7 +133,7 @@ pat_insert(struct ptree *n, struct ptree *head)
 		/*
 		 * Allocate space for a new set of masks.
 		 */
-		buf = (struct ptree_mask *)malloc(
+		buf = (struct ptree_mask *)alloca(
 		       sizeof(struct ptree_mask)*(t->p_mlen+1));
 
 		/*
@@ -289,7 +289,7 @@ pat_remove(struct ptree *n, struct ptree *head)
 	/*
 	 * Allocate space for a new set of masks.
 	 */
-	buf = (struct ptree_mask *)malloc(
+	buf = (struct ptree_mask *)alloca(
 	       sizeof(struct ptree_mask)*(t->p_mlen-1));
 
 	for (i=0, pm=buf; i < t->p_mlen; i++) {
@@ -312,7 +312,7 @@ pat_remove(struct ptree *n, struct ptree *head)
  * Find an entry given a key in a Patricia trie.
  */
 struct ptree *
-pat_search(unsigned long key, struct ptree *head)
+pat_search(uint32_t key, struct ptree *head)
 {
 	struct ptree *p = 0, *t = head;
 	int i;
