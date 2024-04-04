@@ -23,7 +23,7 @@ There may well be room for performance-optimizations and improvements.
 #include <assert.h>
 #include "bn.h"
 
-
+#define MAX_WORDS_PER_LINE 8
 
 /* Functions for shifting number in-place. */
 static void _lshift_one_bit(struct bn* a);
@@ -663,14 +663,20 @@ static void _rshift_one_bit(struct bn* a)
 }
 
 
-void bignum_dump(struct bn* n)
+void bignum_dump(struct bn* n, uint32_t nwords)
 {
   require(n, "n is null");
 
-  int i;
-  for (i = BN_ARRAY_SIZE - 1; i >= 0; --i)
+  int i, wpl = 0;
+  for (i = nwords - 1; i >= 0; --i)
   {
     printf("%08x ", n->array[i]);
+    wpl += 1;
+    if (wpl == MAX_WORDS_PER_LINE)
+    {
+      printf("\r\n");
+      wpl = 0;
+    }
   }
   printf("\r\n");
 }

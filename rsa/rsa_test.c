@@ -39,6 +39,7 @@ void pow_mod_faster(struct bn* a, struct bn* b, struct bn* n, struct bn* res)
 
 void rsa1024_encrypt(char *public, char *private, char *buff, int exponent, char *plaintext_hex)
 {
+    printf("Encrypting...\r\n");
 
     char buf[8192];
 
@@ -48,36 +49,35 @@ void rsa1024_encrypt(char *public, char *private, char *buff, int exponent, char
     struct bn m; /* clear text message */
     struct bn c; /* cipher text */
 
-//    int len_pub = strlen(public);
-//    int len_prv = strlen(private);
-
     bignum_init(&n);
     bignum_init(&d);
     bignum_init(&e);
     bignum_init(&m);
     bignum_init(&c);
 
-    bignum_from_string(&n, public,  128);
-    bignum_from_string(&d, private, 128);
+    bignum_from_string(&n, public,  256);
+    bignum_from_string(&d, private, 256);
     bignum_from_int(&e, exponent);
     bignum_init(&m);
     bignum_init(&c);
 
-    printf("Public key:\r\n");
-    bignum_dump(&n);
-    printf("Exponent:\r\n");
-    bignum_dump(&e);
+    printf("Public key (bignum):\r\n");
+    bignum_dump(&n, 32);
+    printf("Exponent (bignum):\r\n");
+    bignum_dump(&e, 32);
 
-    bignum_from_string(&m, plaintext_hex, 128);
+    bignum_from_string(&m, plaintext_hex, 256);
     bignum_to_string(&m, buf, sizeof(buf));
-    printf("Plaintext:\r\n");
-    bignum_dump(&m);
+
+    printf("Plaintext (bignum):\r\n");
+    bignum_dump(&m, 32);
 
     /** Encrypting **/
     pow_mod_faster(&m, &e, &n, &c);
     bignum_to_string(&c, buf, sizeof(buf));
-    printf("Ciphertext:\r\n");
-    bignum_dump(&c);
+
+    printf("Ciphertext (bignum):\r\n");
+    bignum_dump(&c, 32);
 
     for(int i = 0; i < sizeof(buf); i++) {
         buff[i] = buf[i];
@@ -87,6 +87,7 @@ void rsa1024_encrypt(char *public, char *private, char *buff, int exponent, char
 
 void rsa1024_decrypt(char *public, char *private, char *buff, char *cipher)
 {
+    printf("Decrypting...\r\n");
 
     char buf[8192];
 
@@ -103,24 +104,19 @@ void rsa1024_decrypt(char *public, char *private, char *buff, char *cipher)
     bignum_init(&m);
     bignum_init(&c);
 
-    bignum_from_string(&n, public,  128);
-    bignum_from_string(&d, private, 128);
-    bignum_from_string(&c, cipher, 128);
+    bignum_from_string(&n, public,  256);
+    bignum_from_string(&d, private, 256);
+    bignum_from_string(&c, cipher, 256);
 
-    printf("Public key:\r\n");
-    bignum_dump(&n);
-    printf("Private key:\r\n");
-    bignum_dump(&d);
-    printf("Ciphertext:\r\n");
-    bignum_dump(&c);
+    printf("Private key (bignum):\r\n");
+    bignum_dump(&d, 32);
 
     pow_mod_faster(&c, &d, &n, &m);
 
-    printf("Decrypted:\r\n");
-    bignum_dump(&m);
+    printf("Decrypted plaintext (bignum):\r\n");
+    bignum_dump(&m, 32);
+
     bignum_to_string(&m, buf, sizeof(buf));
-    // int x = bignum_to_int(&m);
-    // printf("Decrypted: %d\r\n", x);
 
     for(int i = 0; i < sizeof(buf); i++) {
         buff[i] = buf[i];
