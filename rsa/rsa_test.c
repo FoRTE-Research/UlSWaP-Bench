@@ -9,7 +9,11 @@
 
 /* O(log n) */
 // res = a^b mod n
-void pow_mod_faster(struct bn* a, struct bn* b, struct bn* n, struct bn* res)
+void pow_mod_faster(
+    struct bn* a,
+    struct bn* b,
+    struct bn* n,
+    struct bn* res)
 {
     bignum_from_int(res, 1); /* r = 1 */
 
@@ -37,7 +41,11 @@ void pow_mod_faster(struct bn* a, struct bn* b, struct bn* n, struct bn* res)
     }
 }
 
-void rsa1024_encrypt(char *public, char *private, char *buff, int exponent, char *plaintext_hex)
+void rsa1024_encrypt(
+    const char* public_key,
+    uint64_t    exponent,
+    const char* plaintext_hex,
+    char*       output)
 {
     printf("Encrypting...\r\n");
 
@@ -55,8 +63,7 @@ void rsa1024_encrypt(char *public, char *private, char *buff, int exponent, char
     bignum_init(&m);
     bignum_init(&c);
 
-    bignum_from_string(&n, public,  256);
-    bignum_from_string(&d, private, 256);
+    bignum_from_string(&n, public_key,  256);
     bignum_from_int(&e, exponent);
     bignum_init(&m);
     bignum_init(&c);
@@ -72,7 +79,6 @@ void rsa1024_encrypt(char *public, char *private, char *buff, int exponent, char
     printf("Plaintext (bignum):\r\n");
     bignum_dump(&m, 32);
 
-    /** Encrypting **/
     pow_mod_faster(&m, &e, &n, &c);
     bignum_to_string(&c, buf, sizeof(buf));
 
@@ -80,12 +86,15 @@ void rsa1024_encrypt(char *public, char *private, char *buff, int exponent, char
     bignum_dump(&c, 32);
 
     for(int i = 0; i < sizeof(buf); i++) {
-        buff[i] = buf[i];
+        output[i] = buf[i];
     }
-
 }
 
-void rsa1024_decrypt(char *public, char *private, char *buff, char *cipher)
+void rsa1024_decrypt(
+    const char* public_key,
+    const char* private_key,
+    const char* cipher,
+    char*       output)
 {
     printf("Decrypting...\r\n");
 
@@ -96,16 +105,13 @@ void rsa1024_decrypt(char *public, char *private, char *buff, char *cipher)
     struct bn m; /* clear text message */
     struct bn c; /* cipher text */
 
-    //int len_pub = strlen(public);
-    //int len_prv = strlen(private);
-
     bignum_init(&n);
     bignum_init(&d);
     bignum_init(&m);
     bignum_init(&c);
 
-    bignum_from_string(&n, public,  256);
-    bignum_from_string(&d, private, 256);
+    bignum_from_string(&n, public_key,  256);
+    bignum_from_string(&d, private_key, 256);
     bignum_from_string(&c, cipher, 256);
 
     printf("Private key (bignum):\r\n");
@@ -119,6 +125,6 @@ void rsa1024_decrypt(char *public, char *private, char *buff, char *cipher)
     bignum_to_string(&m, buf, sizeof(buf));
 
     for(int i = 0; i < sizeof(buf); i++) {
-        buff[i] = buf[i];
+        output[i] = buf[i];
     }
 }

@@ -18,6 +18,7 @@ embedded applications.
 The current state is correct functionality and adequate performance.
 There may well be room for performance-optimizations and improvements.
 
+Taken from https://github.com/kokke/tiny-bignum-c with monor modifications.
 */
 
 #include <stdint.h>
@@ -90,7 +91,7 @@ enum { SMALLER = -1, EQUAL = 0, LARGER = 1 };
 void bignum_init(struct bn* n);
 void bignum_from_int(struct bn* n, DTYPE_TMP i);
 int  bignum_to_int(struct bn* n);
-void bignum_from_string(struct bn* n, char* str, int nbytes);
+void bignum_from_string(struct bn* n, const char* str, int nbytes);
 void bignum_to_string(struct bn* n, char* str, int maxsize);
 
 /* Basic arithmetic operations: */
@@ -122,4 +123,3 @@ void bignum_dump(struct bn* n, uint32_t nwords);           /* Output in hex to s
 
 
 #endif /* #ifndef __BIGNUM_H__ */
-
