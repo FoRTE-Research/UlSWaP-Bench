@@ -15,7 +15,7 @@ riscv_putchar_uart:
     ret
 
 
-.ifdef DEBUG
+.if DEBUG
 .macro wait_uart_ready
 1:
     lw t1, IO_UART_CNTL(gp)

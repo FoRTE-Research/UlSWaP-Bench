@@ -13,8 +13,11 @@ _start:
 
 .global _exit
 _exit:
-.ifdef DEBUG
+.if DEBUG
     call print_uint_uart
 .endif  // DEBUG
+.if VERILATOR
+    ebreak
+.else
     j .
-.end
+.endif  // VERILATOR
