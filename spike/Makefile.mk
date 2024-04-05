@@ -15,7 +15,7 @@ TARGET = riscv32-unknown-elf
 RV_ARCH = $(shell cat $(HOME)/arch)
 
 GENERAL_FLAGS = $(OPTLVL) -Wall -DBARE_METAL \
-				-fno-builtin -ffreestanding -fomit-frame-pointer -fno-optimize-sibling-calls -fno-builtin-fma -ffp-contract=off -v
+				-fno-builtin -ffreestanding -fomit-frame-pointer -fno-optimize-sibling-calls -fno-builtin-fma -ffp-contract=off
 RISCV_FLAGS = --target=$(TARGET) -march=$(RV_ARCH) -mno-relax
 PICOLIBC_FLAGS = -DPICOLIBC_$(MAX_PRINTF_LEVEL)_PRINTF_SCANF
 FLAGS = $(GENERAL_FLAGS) $(RISCV_FLAGS) $(PICOLIBC_FLAGS) $(BENCHMARK_FLAGS)
@@ -27,10 +27,10 @@ INCLIB = -I$(LIB_PATH)/include
 
 all: main.elf
 
-%.o: %.s
+%.o: %.S
 	$(CC) $(FLAGS) $(INCLIB) -Wno-unused-command-line-argument -c -o $@ $<
 
-%.o: $(ARCH_DIR)/%.s
+%.o: $(ARCH_DIR)/%.S
 	$(CC) $(FLAGS) $(INCLIB) -Wno-unused-command-line-argument -c -o $@ $<
 
 %.o: %.c
@@ -39,10 +39,10 @@ all: main.elf
 %.o: $(ARCH_DIR)/%.c
 	$(CC) ${FLAGS} $(INCLIB) -c -o $@ $<
 
-main.elf: $(OBJS) $(ARCH_DIR)/vectors.s $(ARCH_DIR)/supportFuncs.c
+main.elf: $(OBJS) $(ARCH_DIR)/vectors.S $(ARCH_DIR)/supportFuncs.c
 	$(CC) $(FLAGS) -T $(ARCH_DIR)/memmap.ld $(LINKDIR) $(OBJS) $(LIBS) -o main.elf
 	$(TOOLCHAIN)-objdump -d main.elf > main.lst
 	$(TOOLCHAIN)-objcopy main.elf main.bin -O binary
 
 clean: more_clean
-	rm -rf *.o *.elf output* *.lst *.bin *~ ../*.o
+	rm -rf *.o *.elf *.lst *.bin *~ ../*.o

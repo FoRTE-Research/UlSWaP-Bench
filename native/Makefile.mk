@@ -1,6 +1,6 @@
 CC = cc
 LIBS = -lc -lm
-FLAGS = -O3 -static -v -Wall -g
+FLAGS = -O3 -static -Wall -g
 OBJS := supportFuncs.o ../common.o $(OBJS)
 
 all: main.elf
@@ -23,4 +23,4 @@ main.elf: $(OBJS) $(ARCH_DIR)/supportFuncs.c
 	objcopy main.elf main.bin -O binary
 
 clean: more_clean
-	rm -rf *.o *.elf output* *.lst *.bin *~ ../*.o
+	rm -rf *.o *.elf *.lst *.bin *~ ../*.o

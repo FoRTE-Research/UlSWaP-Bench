@@ -49,17 +49,17 @@ static FILE __stdio = FDEV_SETUP_STREAM(riscv_putchar_spike,
 FILE *const stdout = &__stdio; __strong_reference(stdout, stdin); __strong_reference(stdin, stderr);
 
 
-void hexstring (unsigned int d)
+void hexstring (uint32_t d)
 {
     printf("%8X\r\n", d);
 }
 
-void hexstrings (unsigned int d)
+void hexstrings (uint32_t d)
 {
     printf("%8X ", d);
 }
 
-void uart_send (unsigned int c)
+void uart_send (uint32_t c)
 {
     riscv_putchar_spike(c, NULL);
 }
