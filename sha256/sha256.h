@@ -36,31 +36,25 @@
 /* Hash size in 32-bit words */
 #define SHA256_HASH_WORDS 8
 
-struct _SHA256Context {
-  uint64_t totalLength;
-  uint32_t hash[SHA256_HASH_WORDS];
-  uint32_t bufferLength;
-  union {
-    uint32_t words[16];
-    uint8_t bytes[64];
-  } buffer;
+struct _SHA256Context
+{
+    uint64_t totalLength;
+    uint32_t hash[SHA256_HASH_WORDS];
+    uint32_t bufferLength;
+    union
+    {
+        uint32_t words[16];
+        uint8_t  bytes[64];
+    } buffer;
 #ifdef RUNTIME_ENDIAN
-  int littleEndian;
+    int littleEndian;
 #endif /* RUNTIME_ENDIAN */
 };
 
 typedef struct _SHA256Context SHA256_CTX;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void sha256_init (SHA256_CTX *sc);
-void sha256_update (SHA256_CTX *sc, const void *data, uint32_t len);
-void sha256_final (SHA256_CTX *sc, uint8_t hash[SHA256_HASH_SIZE]);
-
-#ifdef __cplusplus
-}
-#endif
+void sha256_init(SHA256_CTX *sc);
+void sha256_update(SHA256_CTX *sc, const void *data, uint32_t len);
+void sha256_final(SHA256_CTX *sc, uint8_t hash[SHA256_HASH_SIZE]);
 
 #endif /* !_SHA256_H */
