@@ -50,9 +50,6 @@ typedef struct
 	uint32_t state[4*4];
 } ChaCha20_Ctx;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /**
  * @brief Initialize the ChaCha20 Context
@@ -87,7 +84,7 @@ void ChaCha20_init(ChaCha20_Ctx* ctx, const key256_t key, const nonce96_t nonce,
  * @param buffer   Pointer to buffer
  * @param bufflen  Length of the buffer
  */
-void ChaCha20_xor(ChaCha20_Ctx* ctx, uint8_t* buffer, size_t bufflen);
+void ChaCha20_xor(ChaCha20_Ctx* ctx, const uint8_t* input_buffer, uint8_t* output_buffer, const size_t bufflen);
 
 #ifdef __cplusplus
 } // extern "C"
@@ -255,7 +252,7 @@ void ChaCha20_init(ChaCha20_Ctx* ctx, const key256_t key, const nonce96_t nonce,
 	ctx->state[15] = pack4(nonce + 2 * 4);
 }
 
-void ChaCha20_xor(ChaCha20_Ctx* ctx, uint8_t* buffer, size_t bufflen)
+void ChaCha20_xor(ChaCha20_Ctx* ctx, const uint8_t* input_buffer, uint8_t* output_buffer, const size_t bufflen)
 {
 	uint32_t tmp[4*4];
 	uint8_t* keystream = NULL;
@@ -276,14 +273,11 @@ void ChaCha20_xor(ChaCha20_Ctx* ctx, uint8_t* buffer, size_t bufflen)
 			if(j >= bufflen)
 				break;
 
-			buffer[j] = buffer[j] ^ keystream[j - i];
+			output_buffer[j] = input_buffer[j] ^ keystream[j - i];
 		}
 	}
 }
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
 
 #ifndef CHACHA20_NO_UNDEF
 	#undef CHACHA20_CONSTANT
