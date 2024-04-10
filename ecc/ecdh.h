@@ -44,10 +44,6 @@
 #include <stdint.h>
 #include "curve.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
 #if defined(ECC_CURVE) && (ECC_CURVE != 0)
  #if   (ECC_CURVE == NIST_K163) || (ECC_CURVE == NIST_B163)
   #define CURVE_DEGREE       163
@@ -96,9 +92,4 @@ uint32_t prng_rotate(uint32_t x, uint32_t k);
 uint32_t prng_next(void);
 void prng_init(uint32_t seed);
 
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
 #endif /* #ifndef _ECDH_H__ */
-
