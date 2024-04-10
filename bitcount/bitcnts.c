@@ -18,7 +18,7 @@
 void my_srand(uint32_t new_seed);
 uint32_t my_rand(void);
 
-static int CDECL bit_shifter(uint32_t x);
+static uint32_t bit_shifter(uint32_t x);
 
 int main(void)
 {
@@ -26,7 +26,7 @@ int main(void)
 
     my_srand(RNG_SEED);
 
-    static int (*CDECL pBitCntFunc[FUNCS])(uint32_t) = {
+    static uint32_t (*pBitCntFunc[FUNCS])(uint32_t) = {
         bit_count,
         bitcount,
         ntbl_bitcnt,
@@ -50,7 +50,9 @@ int main(void)
     for (i = 0; i < FUNCS; i++)
     {
         for (j = n = 0, seed = my_rand(); j < ITERATIONS; j++, seed += 13)
+        {
             n += pBitCntFunc[i](seed);
+        }
 
         printf("%-38s> Bits: %u\r\n", text[i], n);
     }
@@ -58,11 +60,14 @@ int main(void)
     return 0;
 }
 
-static int CDECL bit_shifter(uint32_t x)
+static uint32_t bit_shifter(uint32_t x)
 {
-    int i, n;
+    uint32_t i, n;
 
     for (i = n = 0; x && (i < (sizeof(uint32_t) * CHAR_BIT)); ++i, x >>= 1)
-        n += (int)(x & 1L);
+    {
+        n += (uint32_t)(x & 1);
+    }
+
     return n;
 }
