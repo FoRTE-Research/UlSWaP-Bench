@@ -22,17 +22,16 @@
 #define uECC_SUPPORTS_secp256k1 1
 #endif
 
-
 /*Tiny ECC Support Curve*/
-#define NIST_B163  1
-#define NIST_B233  3
-#define NIST_B283  5
-#define NIST_B409  7
-#define NIST_B571  9
+#define NIST_B163 1
+#define NIST_B233 3
+#define NIST_B283 5
+#define NIST_B409 7
+#define NIST_B571 9
 
 /* What is the default curve to use? */
 #ifndef ECC_CURVE
- #define ECC_CURVE NIST_B283  //change this name to switch curve  ex NIST_B163 -> NIST_B233
+#define ECC_CURVE NIST_B571 // change this name to switch curve  ex NIST_B163 -> NIST_B233
 #endif
 
 /* MbedTLS ECC */
@@ -43,7 +42,7 @@
 // 25519    32
 // SECP384  48
 // SECP521  66
-#define BUF_BYTES 32    // Safe to use the largest buffer size
+#define BUF_BYTES 32 // Safe to use the largest buffer size
 
 #define CURVE25519 1
 #define SECP384R1 0
@@ -54,8 +53,7 @@
 #elif SECP384R1
 #define ELLIPTIC_CURVE MBEDTLS_ECP_DP_SECP384R1
 #elif SECP521R1
-    #define ELLIPTIC_CURVE MBEDTLS_ECP_DP_SECP521R1
+#define ELLIPTIC_CURVE MBEDTLS_ECP_DP_SECP521R1
 #endif
 
-
-#endif //AES_TEST_CURVE_H
+#endif // AES_TEST_CURVE_H
