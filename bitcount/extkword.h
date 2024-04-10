@@ -72,7 +72,7 @@
   #define FAR far
   #define NEAR near
   #define PASCAL pascal
-  #define CDECL cdecl
+  #define cdecl
   #if (defined(__ZTC__) && !defined(__SC__)) || (defined(__SC__) && \
         (__SC__ < 0x700))
    #define HUGE far
@@ -87,7 +87,7 @@
    #define NEAR _near
    #define HUGE _huge
    #define PASCAL _pascal
-   #define CDECL _cdecl
+   #define _cdecl
    #define INTERRUPT _interrupt
    #else*/
    #define FAR
