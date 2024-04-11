@@ -17,35 +17,49 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include <stdio.h>
+#include <string.h>
 #include "blowfish.h"
 #include "../bareBench.h"
 #include "input.h"
 
 unsigned char KEY[] = "1234567890abcdeffedcba0987654321";
 
-int main(void)
+void test_blowfish(void)
 {
     uint32_t L = 1, R = 2;
-    printf("size = %zu\r\n", sizeof(L));
     BLOWFISH_CTX ctx;
 
     Blowfish_Init(&ctx, (unsigned char *)"TESTKEY", 7);
 
     Blowfish_Encrypt(&ctx, &L, &R);
     printf("%08X %08X\r\n", L, R);
-    if (L == 0xDF333FD2L && R == 0x30A71BB4L)
+    if ((L == 0xDF333FD2) && (R == 0x30A71BB4))
+    {
         printf("Test encryption OK.\r\n");
+    }
     else
+    {
         printf("Test encryption failed.\r\n");
+    }
 
     Blowfish_Decrypt(&ctx, &L, &R);
-    if (L == 1 && R == 2)
+    if ((L == 1) && (R == 2))
+    {
         printf("Test decryption OK.\r\n");
+    }
     else
+    {
         printf("Test decryption failed.\r\n");
+    }
+}
 
-    printf("Encrypt message\r\n");
-    Blowfish_Init(&ctx, KEY, sizeof(KEY));
+
+int main(void)
+{
+    BLOWFISH_CTX ctx;
+
+    printf("Encrypting %zu bytes\r\n", sizeof(test_data));
+    Blowfish_Init(&ctx, KEY, strlen((const char*)KEY));
 
     uint32_t *plaintextPtr = (uint32_t *)test_data;
     while (plaintextPtr < (uint32_t *)(test_data + sizeof(test_data)))
@@ -55,8 +69,8 @@ int main(void)
         plaintextPtr += 2;
     }
 
-    printf("Decrypt message\r\n");
-    Blowfish_Init(&ctx, KEY, sizeof(KEY));
+    printf("Decrypting %zu bytes\r\n", sizeof(test_data));
+    Blowfish_Init(&ctx, KEY, strlen((const char*)KEY));
 
     plaintextPtr = (uint32_t *)test_data;
     while (plaintextPtr < (uint32_t *)(test_data + sizeof(test_data)))
