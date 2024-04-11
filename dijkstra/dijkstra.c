@@ -1,24 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../bareBench.h"
 #include "input.h"
 
-#define NUM_NODES                          100
-#define NONE                               9999
+#define NUM_NODES 100
+#define NONE 9999
 
 struct _NODE
 {
-  int iDist;
-  int iPrev;
+    uint32_t iDist;
+    uint32_t iPrev;
 };
 typedef struct _NODE NODE;
 
 struct _QITEM
 {
-  int iNode;
-  int iDist;
-  int iPrev;
-  struct _QITEM *qNext;
+    uint32_t iNode;
+    uint32_t iDist;
+    uint32_t iPrev;
+    struct _QITEM *qNext;
 };
 typedef struct _QITEM QITEM;
 
@@ -35,133 +34,125 @@ typedef struct _QITEM QITEM;
 #define ARRAY_SIZE (NUM_NODES * NUM_NODES / 2)
 QITEM allocated[ARRAY_SIZE];
 QITEM *qHead = NULL;
-int notAll = 0;
+uint32_t notAll = 0;
 
-int g_qCount = 0;
+uint32_t g_qCount = 0;
 NODE rgnNodes[NUM_NODES];
-int ch;
-int iPrev, iNode;
-int i, iCost, iDist;
+uint32_t ch;
+uint32_t iPrev, iNode;
+uint32_t i, iCost, iDist;
 
-
-void print_path (NODE *rgnNodes, int chNode)
+void print_path(NODE *rgnNodes, uint32_t chNode)
 {
-  if (rgnNodes[chNode].iPrev != NONE)
+    if (rgnNodes[chNode].iPrev != NONE)
     {
-      print_path(rgnNodes, rgnNodes[chNode].iPrev);
+        print_path(rgnNodes, rgnNodes[chNode].iPrev);
     }
-  printf (" %d", chNode);
-//   fflush(stdout);
+    printf(" %d", chNode);
 }
 
-void enqueue (int iNode, int iDist, int iPrev)
+void enqueue(uint32_t iNode, uint32_t iDist, uint32_t iPrev)
 {
-  QITEM *qNew = &allocated[notAll];
-  notAll++;
-  QITEM *qLast = qHead;
-  
-  if (notAll >= ARRAY_SIZE) 
+    QITEM *qNew = &allocated[notAll];
+    notAll++;
+    QITEM *qLast = qHead;
+
+    if (notAll >= ARRAY_SIZE)
     {
-      printf("Out of memory.\r\n");
-      exit(1);
+        printf("Out of memory.\r\n");
+        exit(1);
     }
-  qNew->iNode = iNode;
-  qNew->iDist = iDist;
-  qNew->iPrev = iPrev;
-  qNew->qNext = NULL;
-  
-  if (!qLast) 
+    qNew->iNode = iNode;
+    qNew->iDist = iDist;
+    qNew->iPrev = iPrev;
+    qNew->qNext = NULL;
+
+    if (!qLast)
     {
-      qHead = qNew;
+        qHead = qNew;
     }
-  else
+    else
     {
-      qLast = &allocated[notAll-2];
-      qLast->qNext = qNew;
+        qLast = &allocated[notAll - 2];
+        qLast->qNext = qNew;
     }
-  g_qCount++;
-  //               ASSERT(g_qCount);
+    g_qCount++;
 }
 
-
-void dequeue (int *piNode, int *piDist, int *piPrev)
+void dequeue(uint32_t *piNode, uint32_t *piDist, uint32_t *piPrev)
 {
-  QITEM *qKill = qHead;
-  
-  if (qHead)
+    if (qHead)
     {
-      //                 ASSERT(g_qCount);
-      *piNode = qHead->iNode;
-      *piDist = qHead->iDist;
-      *piPrev = qHead->iPrev;
-      qHead = qHead->qNext;
-      //free(qKill);
-      g_qCount--;
+        *piNode = qHead->iNode;
+        *piDist = qHead->iDist;
+        *piPrev = qHead->iPrev;
+        qHead = qHead->qNext;
+        g_qCount--;
     }
 }
 
-
-int qcount (void)
+uint32_t qcount(void)
 {
-  return(g_qCount);
+    return (g_qCount);
 }
 
-int dijkstra(int chStart, int chEnd) 
+uint32_t dijkstra(uint32_t chStart, uint32_t chEnd)
 {
-  notAll = 0;
+    notAll = 0;
 
-  for (ch = 0; ch < NUM_NODES; ch++)
+    for (ch = 0; ch < NUM_NODES; ch++)
     {
-      rgnNodes[ch].iDist = NONE;
-      rgnNodes[ch].iPrev = NONE;
+        rgnNodes[ch].iDist = NONE;
+        rgnNodes[ch].iPrev = NONE;
     }
-  if (chStart == chEnd) 
+    if (chStart == chEnd)
     {
-      printf("Shortest path is 0 in cost. Just stay where you are.\r\n");
+        printf("Shortest path is 0 in cost. Just stay where you are.\r\n");
     }
-  else
+    else
     {
-      rgnNodes[chStart].iDist = 0;
-      rgnNodes[chStart].iPrev = NONE;
-      enqueue (chStart, 0, NONE);
+        rgnNodes[chStart].iDist = 0;
+        rgnNodes[chStart].iPrev = NONE;
+        enqueue(chStart, 0, NONE);
 
-     while (qcount() > 0)
-	{
-	  dequeue (&iNode, &iDist, &iPrev);
-	  for (i = 0; i < NUM_NODES; i++)
-	    {
-	      if ((iCost = AdjMatrix[iNode][i]) != NONE)
-		{
-		  if ((NONE == rgnNodes[i].iDist) || 
-		      (rgnNodes[i].iDist > (iCost + iDist)))
-		    {
-		      rgnNodes[i].iDist = iDist + iCost;
-		      rgnNodes[i].iPrev = iNode;
-		      enqueue (i, iDist + iCost, iNode);
-		    }
-		}
-	    }
-	}
-      
-      printf("Shortest path is %d in cost. ", rgnNodes[chEnd].iDist);
-      printf("Path is: ");
-      print_path(rgnNodes, chEnd);
-      printf("\r\n");
+        while (qcount() > 0)
+        {
+            dequeue(&iNode, &iDist, &iPrev);
+            for (i = 0; i < NUM_NODES; i++)
+            {
+                if ((iCost = AdjMatrix[iNode][i]) != NONE)
+                {
+                    if ((NONE == rgnNodes[i].iDist) ||
+                        (rgnNodes[i].iDist > (iCost + iDist)))
+                    {
+                        rgnNodes[i].iDist = iDist + iCost;
+                        rgnNodes[i].iPrev = iNode;
+                        enqueue(i, iDist + iCost, iNode);
+                    }
+                }
+            }
+        }
+
+        printf("Shortest path is %d in cost. ", rgnNodes[chEnd].iDist);
+        printf("Path is: ");
+        print_path(rgnNodes, chEnd);
+        printf("\r\n");
     }
     return 0;
 }
 
-int main(int argc, char *argv[]) {
-  int i,j;
-//   initLED();
-//   LED(1);
-   /* make a fully connected matrix */
-   // see input.h
-  /* finds 10 shortest paths between nodes */
-  for (i=0,j=NUM_NODES/2;i<NUM_NODES;i++,j++) {
-			j=j%NUM_NODES;
-      dijkstra(i,j);
-  }
-//   LED(1);
-  return 0;
+int main(int argc, char *argv[])
+{
+    uint32_t i, j;
+
+    /* make a fully connected matrix */
+    // see input.h
+    /* finds 10 shortest paths between nodes */
+    for (i = 0, j = NUM_NODES / 2; i < NUM_NODES; i++, j++)
+    {
+        j = j % NUM_NODES;
+        dijkstra(i, j);
+    }
+
+    return 0;
 }
