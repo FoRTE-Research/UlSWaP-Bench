@@ -1,50 +1,48 @@
 /**********************************************************************
  *
  * Filename:    crc.c
- * 
+ *
  * Description: Slow and fast implementations of the CRC standards.
  *
  * Notes:       The parameters for each supported CRC standard are
  *				defined in the header file crc.h.  The implementations
  *				here should stand up to further additions to that list.
  *
- * 
+ *
  * Copyright (c) 2000 by Michael Barr.  This software is placed into
  * the public domain and may be used for any purpose.  However, this
  * notice must not be changed or removed and no warranty is either
  * expressed or implied by its publication or distribution.
  **********************************************************************/
- 
-#include "crc.h"
 
+#include "crc.h"
 
 /*
  * Derive parameters from the standard-specific parameters in crc.h.
  */
-#define WIDTH    (8 * sizeof(crc))
-#define TOPBIT   (1 << (WIDTH - 1))
+#define WIDTH (8 * sizeof(crc))
+#define TOPBIT (1 << (WIDTH - 1))
 
 #if (REFLECT_DATA == TRUE)
-#undef  REFLECT_DATA
-#define REFLECT_DATA(X)			((unsigned char) reflect((X), 8))
+#undef REFLECT_DATA
+#define REFLECT_DATA(X) ((uint8_t)reflect((X), 8))
 #else
-#undef  REFLECT_DATA
-#define REFLECT_DATA(X)			(X)
+#undef REFLECT_DATA
+#define REFLECT_DATA(X) (X)
 #endif
 
 #if (REFLECT_REMAINDER == TRUE)
-#undef  REFLECT_REMAINDER
-#define REFLECT_REMAINDER(X)	((crc) reflect((X), WIDTH))
+#undef REFLECT_REMAINDER
+#define REFLECT_REMAINDER(X) ((crc)reflect((X), WIDTH))
 #else
-#undef  REFLECT_REMAINDER
-#define REFLECT_REMAINDER(X)	(X)
+#undef REFLECT_REMAINDER
+#define REFLECT_REMAINDER(X) (X)
 #endif
-
 
 /*********************************************************************
  *
  * Function:    reflect()
- * 
+ *
  * Description: Reorder the bits of a binary sequence, by reflecting
  *				them about the middle position.
  *
@@ -53,51 +51,48 @@
  * Returns:		The reflection of the original data.
  *
  *********************************************************************/
-static unsigned long
-reflect(unsigned long data, unsigned char nBits)
+static uint32_t
+reflect(uint32_t data, uint8_t nBits)
 {
-	unsigned long  reflection = 0x00000000;
-	unsigned char  bit;
+    uint32_t reflection = 0x00000000;
+    uint8_t bit;
 
-	/*
-	 * Reflect the data about the center bit.
-	 */
-	for (bit = 0; bit < nBits; ++bit)
-	{
-		/*
-		 * If the LSB bit is set, set the reflection of it.
-		 */
-		if (data & 0x01)
-		{
-			reflection |= (1 << ((nBits - 1) - bit));
-		}
+    /*
+     * Reflect the data about the center bit.
+     */
+    for (bit = 0; bit < nBits; ++bit)
+    {
+        /*
+         * If the LSB bit is set, set the reflection of it.
+         */
+        if (data & 0x01)
+        {
+            reflection |= (1 << ((nBits - 1) - bit));
+        }
 
-		data = (data >> 1);
-	}
+        data = (data >> 1);
+    }
 
-	return (reflection);
+    return (reflection);
 
-}	/* reflect() */
-
+} /* reflect() */
 
 /*********************************************************************
  *
  * Function:    crcSlow()
- * 
+ *
  * Description: Compute the CRC of a given message.
  *
- * Notes:		
+ * Notes:
  *
  * Returns:		The CRC of the message.
  *
  *********************************************************************/
-crc
-crcSlow(unsigned char const message[], int nBytes)
+crc crcSlow(uint8_t const message[], uint32_t nBytes)
 {
-    crc            remainder = INITIAL_REMAINDER;
-	int            byte;
-	unsigned char  bit;
-
+    crc remainder = INITIAL_REMAINDER;
+    uint32_t byte;
+    uint8_t bit;
 
     /*
      * Perform modulo-2 division, a byte at a time.
@@ -133,16 +128,14 @@ crcSlow(unsigned char const message[], int nBytes)
      */
     return (REFLECT_REMAINDER(remainder) ^ FINAL_XOR_VALUE);
 
-}   /* crcSlow() */
+} /* crcSlow() */
 
-
-crc  crcTable[256];
-
+crc crcTable[256];
 
 /*********************************************************************
  *
  * Function:    crcInit()
- * 
+ *
  * Description: Populate the partial CRC lookup table.
  *
  * Notes:		This function must be rerun any time the CRC standard
@@ -152,13 +145,11 @@ crc  crcTable[256];
  * Returns:		None defined.
  *
  *********************************************************************/
-void
-crcInit(void)
+void crcInit(void)
 {
-    crc			   remainder;
-	int			   dividend;
-	unsigned char  bit;
-
+    crc remainder;
+    uint32_t dividend;
+    uint8_t bit;
 
     /*
      * Compute the remainder of each possible dividend.
@@ -177,7 +168,7 @@ crcInit(void)
         {
             /*
              * Try to divide the current data bit.
-             */			
+             */
             if (remainder & TOPBIT)
             {
                 remainder = (remainder << 1) ^ POLYNOMIAL;
@@ -194,13 +185,12 @@ crcInit(void)
         crcTable[dividend] = remainder;
     }
 
-}   /* crcInit() */
-
+} /* crcInit() */
 
 /*********************************************************************
  *
  * Function:    crcFast()
- * 
+ *
  * Description: Compute the CRC of a given message.
  *
  * Notes:		crcInit() must be called first.
@@ -208,13 +198,11 @@ crcInit(void)
  * Returns:		The CRC of the message.
  *
  *********************************************************************/
-crc
-crcFast(unsigned char const message[], int nBytes)
+crc crcFast(uint8_t const message[], uint32_t nBytes)
 {
-    crc	           remainder = INITIAL_REMAINDER;
-    unsigned char  data;
-	int            byte;
-
+    crc remainder = INITIAL_REMAINDER;
+    uint8_t data;
+    uint32_t byte;
 
     /*
      * Divide the message by the polynomial, a byte at a time.
@@ -222,7 +210,7 @@ crcFast(unsigned char const message[], int nBytes)
     for (byte = 0; byte < nBytes; ++byte)
     {
         data = REFLECT_DATA(message[byte]) ^ (remainder >> (WIDTH - 8));
-  		remainder = crcTable[data] ^ (remainder << 8);
+        remainder = crcTable[data] ^ (remainder << 8);
     }
 
     /*
@@ -230,4 +218,4 @@ crcFast(unsigned char const message[], int nBytes)
      */
     return (REFLECT_REMAINDER(remainder) ^ FINAL_XOR_VALUE);
 
-}   /* crcFast() */
+} /* crcFast() */

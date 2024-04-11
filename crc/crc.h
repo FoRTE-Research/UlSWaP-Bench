@@ -16,6 +16,7 @@
 #ifndef _crc_h
 #define _crc_h
 
+#include <stdint.h>
 
 #define FALSE	0
 #define TRUE	!FALSE
@@ -23,12 +24,12 @@
 /*
  * Select the CRC standard from the list that follows.
  */
-#define CRC_CCITT
+#define CRC32
 
 
 #if defined(CRC_CCITT)
 
-typedef unsigned short  crc;
+typedef uint16_t  crc;
 
 #define CRC_NAME			"CRC-CCITT"
 #define POLYNOMIAL			0x1021
@@ -40,7 +41,7 @@ typedef unsigned short  crc;
 
 #elif defined(CRC16)
 
-typedef unsigned short  crc;
+typedef uint16_t  crc;
 
 #define CRC_NAME			"CRC-16"
 #define POLYNOMIAL			0x8005
@@ -52,7 +53,7 @@ typedef unsigned short  crc;
 
 #elif defined(CRC32)
 
-typedef unsigned long  crc;
+typedef uint32_t  crc;
 
 #define CRC_NAME			"CRC-32"
 #define POLYNOMIAL			0x04C11DB7
@@ -70,8 +71,8 @@ typedef unsigned long  crc;
 
 
 void  crcInit(void);
-crc   crcSlow(unsigned char const message[], int nBytes);
-crc   crcFast(unsigned char const message[], int nBytes);
+crc   crcSlow(uint8_t const message[], uint32_t nBytes);
+crc   crcFast(uint8_t const message[], uint32_t nBytes);
 
 
 #endif /* _crc_h */
