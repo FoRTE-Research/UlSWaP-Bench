@@ -4,16 +4,14 @@
 ** Version 1.0, 7-Jul-92.
 */
 
-struct adpcm_state {
-    short	valprev;	/* Previous output value */
-    char	index;		/* Index into stepsize table */
+#include <stdint.h>
+
+struct adpcm_state
+{
+    int16_t valprev; /* Previous output value */
+    int8_t  index;    /* Index into stepsize table */
 };
 
-#ifdef __STDC__
-#define ARGS(x) x
-#else
-#define ARGS(x) ()
-#endif
 
-void adpcm_coder ARGS((unsigned char [], char [], int, struct adpcm_state *));
-void adpcm_decoder ARGS((unsigned char [], short [], int, struct adpcm_state *));
+void adpcm_coder (uint8_t[], int8_t[], int32_t, struct adpcm_state *);
+void adpcm_decoder (uint8_t[], int16_t[], int32_t, struct adpcm_state *);
