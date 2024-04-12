@@ -8,6 +8,7 @@
 #define ROUND__H
 
 #include <math.h>
+#include <stdint.h>
 
 #if defined(__cplusplus) && __cplusplus
 
@@ -17,16 +18,16 @@
 
 /* round to integer */
 
-inline int iround(double x)
+inline int32_t iround(double x)
 {
-      return (int)floor(x + 0.5);
+    return (int32_t)floor(x + 0.5);
 }
 
 /* round number n to d decimal points */
 
-inline double fround(double n, unsigned d)
+inline double fround(double n, uint32_t d)
 {
-      return floor(n * pow(10., d) + .5) / pow(10., d);
+    return floor(n * pow(10., d) + .5) / pow(10., d);
 }
 
 #else
@@ -48,7 +49,7 @@ inline double fround(double n, unsigned d)
 ** round number n to d decimal points
 */
 
-#define fround(n,d) (floor((n)*pow(10.,(d))+.5)/pow(10.,(d)))
+#define fround(n, d) (floor((n) * pow(10., (d)) + .5) / pow(10., (d)))
 
 #endif
 
