@@ -34,9 +34,8 @@
 #ifndef LZFX_H
 #define LZFX_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <stdint.h>
+
 
 /*  Documented behavior, including function signatures and error codes,
     is guaranteed to remain unchanged for releases with the same major
@@ -91,9 +90,5 @@ int lzfx_compress(const void* ibuf, unsigned int ilen,
 int lzfx_decompress(const void* ibuf, unsigned int ilen,
                           void* obuf, unsigned int *olen);
 
-
-#ifdef __cplusplus
-} /* extern "C" */
-#endif
 
 #endif

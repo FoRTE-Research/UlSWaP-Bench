@@ -1,6 +1,5 @@
 .section .text
 .globl riscv_putchar_uart
-.globl print_uint_uart
 
 .equ IO_UART_DAT, 8
 .equ IO_UART_CNTL, 16
@@ -23,6 +22,7 @@ riscv_putchar_uart:
     bnez t1, 1b
 .endm
 
+.globl print_uint_uart
 print_uint_uart:
     srli t1, a0, 24
     sw t1, IO_UART_DAT(gp)

@@ -2,12 +2,12 @@
 
 void hexstring (unsigned int d)
 {
-    printf("%8X\r\n", d);
+    printf("%08X\r\n", d);
 }
 
 void hexstrings (unsigned int d)
 {
-    printf("%8X ", d);
+    printf("%08X ", d);
 }
 
 void uart_send (unsigned int c)
