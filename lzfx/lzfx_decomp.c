@@ -29,81 +29,87 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTH-
  * ERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
 #include "lzfx.h"
 
 /* Decompressor */
-int lzfx_decompress_tiny
-(
-    const unsigned char *ibuf,
-    const unsigned int ilen,
-    unsigned char *obuf,
-    unsigned int *olen
-)
+int lzfx_decompress_tiny(
+    const uint8_t *ibuf,
+    const uint32_t ilen,
+    uint8_t *obuf,
+    uint32_t *olen)
 {
-    unsigned int ipoff;
-    unsigned int opoff;
+    uint32_t ipoff;
+    uint32_t opoff;
 
-    if(olen == 0) return LZFX_EARGS;
-    if(ibuf == 0) return LZFX_EARGS;
-    if(obuf == 0) return LZFX_EARGS;
+    if (olen == 0)
+        return LZFX_EARGS;
+    if (ibuf == 0)
+        return LZFX_EARGS;
+    if (obuf == 0)
+        return LZFX_EARGS;
 
-    opoff=0;
-    for(ipoff=0;ipoff<ilen;)
+    opoff = 0;
+    for (ipoff = 0; ipoff < ilen;)
     {
-        unsigned int ctrl;
+        uint32_t ctrl;
 
         ctrl = ibuf[ipoff++];
 
         /* Format 000LLLLL: a literal byte string follows, of length L+1 */
-        if(ctrl < (1 << 5))
+        if (ctrl < (1 << 5))
         {
 
             ctrl++;
 
-            if((opoff + ctrl) > *olen) return LZFX_OVERFLOW;
-            if((ipoff + ctrl) > ilen) return LZFX_ECORRUPT;
+            if ((opoff + ctrl) > *olen)
+                return LZFX_OVERFLOW;
+            if ((ipoff + ctrl) > ilen)
+                return LZFX_ECORRUPT;
 
-
-            while(ctrl--)
+            while (ctrl--)
             {
-                obuf[opoff++]=ibuf[ipoff++];
+                obuf[opoff++] = ibuf[ipoff++];
             }
 
-        /*  Format #1 [LLLooooo oooooooo]: backref of length L+1+2
-                          ^^^^^ ^^^^^^^^
-                            A      B
-                   #2 [111ooooo LLLLLLLL oooooooo] backref of length L+7+2
-                          ^^^^^          ^^^^^^^^
-                            A               B
-            In both cases the location of the backref is computed from the
-            remaining part of the data as follows:
+            /*  Format #1 [LLLooooo oooooooo]: backref of length L+1+2
+                              ^^^^^ ^^^^^^^^
+                                A      B
+                       #2 [111ooooo LLLLLLLL oooooooo] backref of length L+7+2
+                              ^^^^^          ^^^^^^^^
+                                A               B
+                In both cases the location of the backref is computed from the
+                remaining part of the data as follows:
 
-                location = op - A*256 - B - 1
-        */
+                    location = op - A*256 - B - 1
+            */
         }
         else
         {
-            unsigned int len;
-            unsigned int refoff;
+            uint32_t len;
+            uint32_t refoff;
 
             len = (ctrl >> 5);
-            refoff = opoff - ((ctrl & 0x1f) << 8) -1;
+            refoff = opoff - ((ctrl & 0x1f) << 8) - 1;
 
-            if(len==7) len += ibuf[ipoff++];    /* i.e. format #2 */
+            if (len == 7)
+                len += ibuf[ipoff++]; /* i.e. format #2 */
 
-            len += 2;    /* len is now #octets */
+            len += 2; /* len is now #octets */
 
-            if((opoff + len) > *olen) return LZFX_OVERFLOW;
-            if((ipoff >= ilen)) return LZFX_ECORRUPT;
+            if ((opoff + len) > *olen)
+                return LZFX_OVERFLOW;
+            if ((ipoff >= ilen))
+                return LZFX_ECORRUPT;
 
             refoff -= ibuf[ipoff++];
-            if(refoff > opoff) return LZFX_ECORRUPT;
+            if (refoff > opoff)
+                return LZFX_ECORRUPT;
 
-            while(len--)
+            while (len--)
             {
-                obuf[opoff++]=obuf[refoff++];
+                obuf[opoff++] = obuf[refoff++];
             }
         }
     }
@@ -112,5 +118,3 @@ int lzfx_decompress_tiny
 
     return 0;
 }
-
-

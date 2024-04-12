@@ -51,12 +51,12 @@ FILE *const stdout = &__stdio; __strong_reference(stdout, stdin); __strong_refer
 
 void hexstring (uint32_t d)
 {
-    printf("%8X\r\n", d);
+    printf("%08X\r\n", d);
 }
 
 void hexstrings (uint32_t d)
 {
-    printf("%8X ", d);
+    printf("%08X ", d);
 }
 
 void uart_send (uint32_t c)
