@@ -5,33 +5,33 @@
 #include "../bareBench.h"
 #include "input.h"
 
-
-
 #define NSAMPLES 1000
-#define NINC  (NSAMPLES * 2)
+#define NINC (NSAMPLES * 2)
 
-char	abuf[NSAMPLES/2];
+int8_t abuf[NSAMPLES / 2];
 
-int main() {
+int main()
+{
     struct adpcm_state state = {};
-    int n = 0;
-    unsigned char * currentN = test_data;
-    int maxN = sizeof(test_data);
-    
-    printf("Initial valprev=%d, index=%d\n", state.valprev, state.index);
+    uint32_t n = 0;
+    uint8_t *currentN = test_data;
+    uint32_t maxN = sizeof(test_data);
 
-    while(1) {
-        int bytesIntoRead = ((unsigned int)currentN) - ((unsigned int)test_data);
-        int testN = bytesIntoRead + NINC;
+    printf("Initial valprev=%d, index=%d\r\n", state.valprev, state.index);
+    printf("Decoding %u bytes\r\n", maxN);
+    while (1)
+    {
+        uint32_t bytesIntoRead = currentN - test_data;
+        uint32_t testN = bytesIntoRead + NINC;
         n = (testN <= maxN) ? NINC : maxN - bytesIntoRead;
 
-        if ( n == 0 ) break;
-	
-        adpcm_coder(currentN, abuf, n/2, &state);
+        if (n == 0)
+            break;
+
+        adpcm_coder(currentN, abuf, n / 2, &state);
         currentN = test_data + bytesIntoRead + n;
-        //write(1, abuf, n/4);
     }
-    
-    printf("Final valprev=%d, index=%d\n", state.valprev, state.index);
+
+    printf("Final valprev=%d, index=%d\r\n", state.valprev, state.index);
     return 0;
 }
