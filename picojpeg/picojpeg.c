@@ -4,6 +4,7 @@
 // Feb. 9, 2013 - Added H1V2/H2V1 support, cleaned up macros, signed shift fixes
 // Also integrated and tested changes from Chris Phoenix <cphoenix@gmail.com>.
 //------------------------------------------------------------------------------
+#include <stdint.h>
 #include "picojpeg.h"
 //------------------------------------------------------------------------------
 // Set to 1 if right shifts on signed ints are always unsigned (logical) shifts
@@ -14,10 +15,10 @@
 // Define PJPG_INLINE to "inline" if your C compiler supports explicit inlining
 #define PJPG_INLINE
 //------------------------------------------------------------------------------
-typedef unsigned char   uint8;
-typedef unsigned short  uint16;
-typedef signed char     int8;
-typedef signed short    int16;
+typedef uint8_t    uint8;
+typedef uint16_t   uint16;
+typedef int8_t     int8;
+typedef int16_t    int16;
 //------------------------------------------------------------------------------
 #if PJPG_RIGHT_SHIFT_IS_ALWAYS_UNSIGNED
 static int16 replicateSignBit16(int8 n)
@@ -50,11 +51,11 @@ static PJPG_INLINE int16 arithmeticRightShiftN16(int16 x, int8 n)
       r |= replicateSignBit16(n);
    return r;
 }
-static PJPG_INLINE long arithmeticRightShift8L(long x)
+static PJPG_INLINE int64_t arithmeticRightShift8L(int64_t x)
 {
-   long r = (unsigned long)x >> 8U;
+   int64_t r = (uint64_t)x >> 8U;
    if (x < 0)
-      r |= ~(~(unsigned long)0U >> 8U);
+      r |= ~(~(uint64_t)0U >> 8U);
    return r;
 }
 #define PJPG_ARITH_SHIFT_RIGHT_N_16(x, n) arithmeticRightShiftN16(x, n)
@@ -221,7 +222,7 @@ static uint8 gReduce;
 //------------------------------------------------------------------------------
 static void fillInBuf(void)
 {
-   unsigned char status;
+   uint8_t status;
 
    // Reserve a few bytes at the beginning of the buffer for putting back ("stuffing") chars.
    gInBufOfs = 4;
@@ -1232,7 +1233,7 @@ static void createWinogradQuant(int16* pQuant)
 
    for (i = 0; i < 64; i++)
    {
-      long x = pQuant[i];
+      int64_t x = pQuant[i];
       x *= gWinogradQuant[i];
       pQuant[i] = (int16)((x + (1 << (PJPG_WINOGRAD_QUANT_SCALE_BITS - PJPG_DCT_SCALE_BITS - 1))) >> (PJPG_WINOGRAD_QUANT_SCALE_BITS - PJPG_DCT_SCALE_BITS));
    }
@@ -1246,7 +1247,7 @@ static void createWinogradQuant(int16* pQuant)
 // 362, 256+106
 static PJPG_INLINE int16 imul_b1_b3(int16 w)
 {
-   long x = (w * 362L);
+   int64_t x = (w * 362L);
    x += 128L;
    return (int16)(PJPG_ARITH_SHIFT_RIGHT_8_L(x));
 }
@@ -1255,7 +1256,7 @@ static PJPG_INLINE int16 imul_b1_b3(int16 w)
 // 669, 256+256+157
 static PJPG_INLINE int16 imul_b2(int16 w)
 {
-   long x = (w * 669L);
+   int64_t x = (w * 669L);
    x += 128L;
    return (int16)(PJPG_ARITH_SHIFT_RIGHT_8_L(x));
 }
@@ -1264,7 +1265,7 @@ static PJPG_INLINE int16 imul_b2(int16 w)
 // 277, 256+21
 static PJPG_INLINE int16 imul_b4(int16 w)
 {
-   long x = (w * 277L);
+   int64_t x = (w * 277L);
    x += 128L;
    return (int16)(PJPG_ARITH_SHIFT_RIGHT_8_L(x));
 }
@@ -1273,7 +1274,7 @@ static PJPG_INLINE int16 imul_b4(int16 w)
 // 196, 196
 static PJPG_INLINE int16 imul_b5(int16 w)
 {
-   long x = (w * 196L);
+   int64_t x = (w * 196L);
    x += 128L;
    return (int16)(PJPG_ARITH_SHIFT_RIGHT_8_L(x));
 }
@@ -2258,7 +2259,7 @@ static uint8 decodeNextMCU(void)
    return 0;
 }
 //------------------------------------------------------------------------------
-unsigned char pjpeg_decode_mcu(void)
+uint8_t pjpeg_decode_mcu(void)
 {
    uint8 status;
 
@@ -2277,7 +2278,7 @@ unsigned char pjpeg_decode_mcu(void)
    return 0;
 }
 //------------------------------------------------------------------------------
-unsigned char pjpeg_decode_init(pjpeg_image_info_t *pInfo, pjpeg_need_bytes_callback_t pNeed_bytes_callback, void *pCallback_data, unsigned char reduce)
+uint8_t pjpeg_decode_init(pjpeg_image_info_t *pInfo, pjpeg_need_bytes_callback_t pNeed_bytes_callback, void *pCallback_data, uint8_t reduce)
 {
    uint8 status;
 
@@ -2285,7 +2286,7 @@ unsigned char pjpeg_decode_init(pjpeg_image_info_t *pInfo, pjpeg_need_bytes_call
    pInfo->m_MCUSPerRow = 0; pInfo->m_MCUSPerCol = 0;
    pInfo->m_scanType = PJPG_GRAYSCALE;
    pInfo->m_MCUWidth = 0; pInfo->m_MCUHeight = 0;
-   pInfo->m_pMCUBufR = (unsigned char*)0; pInfo->m_pMCUBufG = (unsigned char*)0; pInfo->m_pMCUBufB = (unsigned char*)0;
+   pInfo->m_pMCUBufR = (uint8_t*)0; pInfo->m_pMCUBufG = (uint8_t*)0; pInfo->m_pMCUBufB = (uint8_t*)0;
 
    g_pNeedBytesCallback = pNeed_bytes_callback;
    g_pCallback_data = pCallback_data;
