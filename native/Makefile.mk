@@ -1,6 +1,6 @@
 CC = cc
 LIBS = -lc -lm
-FLAGS = -O3 -static -Wall -g
+FLAGS = -O3 -static -Wall -g $(BENCHMARK_FLAGS)
 OBJS := supportFuncs.o ../common.o $(OBJS)
 
 all: main.elf
