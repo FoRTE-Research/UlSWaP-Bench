@@ -8,10 +8,9 @@ g_randmath : randmath.c
 g_abcmath.c : g_randmath
 	./g_randmath
 
-OBJS = g_abcmath.o notmain.o
+OBJS = g_abcmath.o main.o
 
 include ../Makefile.mk
 
 more_clean:
 	rm -rf g_randmath g_abcmath.c
-
