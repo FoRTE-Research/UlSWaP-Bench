@@ -1,0 +1,7 @@
+MAX_PRINTF_LEVEL = INTEGER
+
+OBJS = rawdaudio.o adpcm.o
+
+include ../../Makefile.mk
+
+more_clean:
