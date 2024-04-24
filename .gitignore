@@ -41,3 +41,9 @@ g_*
 
 # IDE files/folders
 .vscode/
+
+# Build directories
+build_*/
+
+# Temporary files
+temp
