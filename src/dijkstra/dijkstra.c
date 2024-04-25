@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "input.h"
+#include "common.h"
 
 #define NUM_NODES 100
 #define NONE 9999
@@ -141,7 +143,7 @@ uint32_t dijkstra(uint32_t chStart, uint32_t chEnd)
     return 0;
 }
 
-int main(int argc, char *argv[])
+int benchmark_main(int argc, char *argv[])
 {
     uint32_t i, j;
 

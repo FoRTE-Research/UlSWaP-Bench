@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "../bareBench.h"
+#include "common.h"
 #include "input_large.h"
 
 #define UNLIMIT
@@ -19,7 +19,7 @@ int32_t compare(const void *elem1, const void *elem2)
     return (distance1 > distance2) ? 1 : ((distance1 == distance2) ? 0 : -1);
 }
 
-int main(void)
+int benchmark_main(void)
 {
     uint32_t i, count = 0;
 

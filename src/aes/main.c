@@ -1,4 +1,4 @@
-#include "../bareBench.h"
+#include "common.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
@@ -19,7 +19,7 @@ static void test_decrypt_cbc(void);
 
 
 
-int main(void)
+int benchmark_main(void)
 {
     // initLED();
     test_encrypt_cbc();

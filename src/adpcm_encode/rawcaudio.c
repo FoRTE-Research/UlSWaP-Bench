@@ -2,7 +2,7 @@
 
 #include "adpcm.h"
 #include <stdio.h>
-#include "../bareBench.h"
+#include "common.h"
 #include "input.h"
 
 #define NSAMPLES 1000
@@ -10,7 +10,7 @@
 
 int8_t abuf[NSAMPLES / 2];
 
-int main()
+int benchmark_main()
 {
     struct adpcm_state state = {};
     uint32_t n = 0;

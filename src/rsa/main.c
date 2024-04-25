@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <string.h>
+
 #include "rsa_test.h"
 #include "bn.h"
+#include "common.h"
 
 char resultBuffer[8192];
 
@@ -43,7 +45,7 @@ int check_decrypt()
     return memcmp((char*) plaintext, (char*) resultBuffer, strlen(plaintext));
 }
 
-int main(void)
+int benchmark_main(void)
 {
     uint32_t test_result = 1;
 

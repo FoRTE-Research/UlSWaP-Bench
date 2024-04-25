@@ -1,5 +1,7 @@
 #include <stdint.h>
 
+#include "common.h"
+
 // if compiled together with the test code, the compiler optimizer
 // optimizes out the use of these funtions and simply puts the right
 // answer in the result without doing the work of the test

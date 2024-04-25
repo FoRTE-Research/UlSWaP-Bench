@@ -15,7 +15,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <limits.h>
-#include "../bareBench.h"
+#include "common.h"
 
 static size_t table[UCHAR_MAX + 1];
 static size_t len;
@@ -75,7 +75,7 @@ char *strsearch(const char *string)
 
 #include <stdio.h>
 
-int main()
+int benchmark_main()
 {
     char *here;
     char *find_strings[] = {"Kur",

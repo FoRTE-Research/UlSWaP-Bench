@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+
 #include "curve.h"
 #include "ecdh.h"
+#include "common.h"
 
 #define ECC_PUB_SIZE ECC_PUB_KEY_SIZE
 #define ECC_PRV_SIZE ECC_PRV_KEY_SIZE
@@ -152,7 +154,7 @@ int check_result()
     return memcmp(sec_a, sec_b, ECC_PUB_SIZE);
 }
 
-int main(void)
+int benchmark_main(void)
 {
     ecdh_shared_secret(prv_a, pub_b, sec_a);
     print_hex("Shared Secret A", sec_a, ECC_PUB_SIZE);

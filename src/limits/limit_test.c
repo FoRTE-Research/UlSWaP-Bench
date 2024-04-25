@@ -113,7 +113,7 @@ uint16_t limit_test(void)
     return (0);
 }
 
-int main(void)
+int benchmark_main(void)
 {
     hexstring(0x1234);
 

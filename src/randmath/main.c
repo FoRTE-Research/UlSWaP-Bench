@@ -1,7 +1,9 @@
-unsigned int abcmath(void);
-void hexstring(unsigned int d);
+#include "common.h"
 
-int main(void)
+void hexstring(unsigned int d);
+uint32_t abcmath(void);
+
+int benchmark_main(void)
 {
     hexstring(abcmath());
     return (0);

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include "common.h"
 
 #define CHACHA20_IMPLEMENTATION
 #define CHACHA20_NO_UNDEF
@@ -112,7 +113,7 @@ int check_decrypt()
 }
 
 
-int main(void)
+int benchmark_main(void)
 {
     print_hex("Key", key, sizeof(key));
     print_hex("Nonce", nonce, sizeof(nonce));
