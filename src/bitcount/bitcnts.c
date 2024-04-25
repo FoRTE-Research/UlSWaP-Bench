@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "bitops.h"
-#include "../bareBench.h"
+#include "common.h"
 
 #define FUNCS      8
 #define RNG_SEED   0x0C728394
@@ -20,7 +20,7 @@ uint32_t my_rand(void);
 
 static uint32_t bit_shifter(uint32_t x);
 
-int main(void)
+int benchmark_main(void)
 {
     uint32_t i, j, n, seed;
 

@@ -1,5 +1,7 @@
-#include "testdata.h"
 #include <stdint.h>
+
+#include "testdata.h"
+#include "common.h"
 
 void hexstring(uint32_t d);
 void hexstrings(uint32_t d);
@@ -100,7 +102,7 @@ void arcfour_encrypt(ArcfourContext *ctx, uint8_t *dest, const uint8_t *src, uin
     }
 }
 
-int main(void)
+int benchmark_main(void)
 {
     uint32_t errors = 0;
     uint32_t ra;

@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdint.h>
+
 #include "picojpeg.h"
 #include "g_jpegdata.h"
+#include "common.h"
 
 void hexstring(uint32_t d);
 
@@ -27,7 +29,7 @@ uint8_t pjpeg_need_bytes_callback(uint8_t *pBuf, uint8_t buf_size, uint8_t *pByt
     return 0;
 }
 
-int32_t main(void)
+int32_t benchmark_main(void)
 {
     uint8_t status;
     pjpeg_image_info_t pInfo;

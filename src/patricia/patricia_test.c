@@ -34,7 +34,7 @@
 #include <ctype.h>
 
 #include "patricia.h"
-#include "../bareBench.h"
+#include "common.h"
 #include "input.h"
 
 struct in_addr
@@ -155,7 +155,7 @@ struct MyNode
     double bar;
 };
 
-int32_t main()
+int32_t benchmark_main()
 {
     struct ptree *phead;
     struct ptree *p, *pfind;

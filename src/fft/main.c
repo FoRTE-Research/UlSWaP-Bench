@@ -5,7 +5,7 @@
 
 #include "fourier.h"
 #include "../common.h"
-#include "../bareBench.h"
+#include "common.h"
 
 const uint32_t MAXSIZE = 256;       // small 4096, 8192 inverse, 512 for memory-limited systems
 const uint32_t MAXWAVES = 4;        // large has 8
@@ -38,7 +38,7 @@ void printf_float_array(const char* name, float *array, uint32_t size)
     printf("\r\n");
 }
 
-int main(void)
+int benchmark_main(void)
 {
     uint32_t i, j;
     float    *RealIn;

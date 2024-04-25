@@ -296,7 +296,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdint.h>
-#include "../bareBench.h"
+#include "common.h"
 #include "input_small.h"
 
 int32_t argc = 4;
@@ -2492,7 +2492,7 @@ void susan_corners_quick(uchar *in, int32_t *r, uchar *bp, int32_t max_no, CORNE
     corner_list[n].info = 7;
 }
 
-int32_t main()
+int32_t benchmark_main()
 {
     /* {{{ vars */
     char *tcp;

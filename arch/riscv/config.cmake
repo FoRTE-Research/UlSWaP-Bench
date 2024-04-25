@@ -13,7 +13,7 @@ function(set_riscv_config)
     set(CMAKE_C_COMPILER ${CC_PATH}/clang PARENT_SCOPE)
     set(CMAKE_ASM_COMPILER ${CC_PATH}/clang PARENT_SCOPE)
 
-    set(GENERAL_FLAGS "-O3;-Wall;-DBARE_METAL;-DDEBUG=0;-DVERILATOR=0;-fno-builtin;-ffreestanding;-fomit-frame-pointer;-fno-optimize-sibling-calls;-fno-builtin-fma;-ffp-contract=off")
+    set(GENERAL_FLAGS "-O3;-Wall;-DDEBUG=0;-DVERILATOR=0;-fno-builtin;-ffreestanding;-fomit-frame-pointer;-fno-optimize-sibling-calls;-fno-builtin-fma;-ffp-contract=off")
     set(RISCV_FLAGS "--target=riscv32-unknown-elf;-mno-relax;-march=rv32i_ysll_ymul_ydiv;-DPICOLIBC_FLOAT_PRINTF_SCANF")
 
     set(ARCH_LINK_DIRS "${LIB_PATH}/lib;${FRANKEN_LLVM_ROOT}/build-rt/lib/linux" PARENT_SCOPE)

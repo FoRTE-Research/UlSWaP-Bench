@@ -19,7 +19,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <stdio.h>
 #include <string.h>
 #include "blowfish.h"
-#include "../bareBench.h"
+#include "common.h"
 #include "input.h"
 
 unsigned char KEY[] = "1234567890abcdeffedcba0987654321";
@@ -54,7 +54,7 @@ void test_blowfish(void)
 }
 
 
-int main(void)
+int benchmark_main(void)
 {
     BLOWFISH_CTX ctx;
 

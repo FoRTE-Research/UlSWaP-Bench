@@ -43,7 +43,7 @@ int32_t lzfx_decompress_test(void)
     return (0);
 }
 
-int32_t main(void)
+int32_t benchmark_main(void)
 {
     hexstring(0x1234);
     if (lzfx_decompress_test())

@@ -3,6 +3,7 @@
 
 #include "input.h"
 #include "sha256.h"
+#include "common.h"
 
 #define DIGEST_BYTES (256/8)
 
@@ -16,7 +17,7 @@ void print_hash(uint8_t *hash)
     printf("\r\n");
 }
 
-int main(int argc, char *argv[])
+int benchmark_main(int argc, char *argv[])
 {
     SHA256_CTX ctx;                 // SHA256 context
     uint8_t hash[DIGEST_BYTES];     // the output of SHA256 will be stored here
