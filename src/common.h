@@ -8,7 +8,7 @@
 #endif  // PICOLIBC_FLOAT_PRINTF_SCANF
 
 #ifdef NO_PRINT
-#define printf(...) {}
+#define printf(...)
 #endif  // NO_PRINT
 
 #define TRUE  1

@@ -1,4 +1,4 @@
-add_executable(susan_edges ${CMAKE_CURRENT_LIST_DIR}/susan.c)
+target_sources(susan_edges PRIVATE ${CMAKE_CURRENT_LIST_DIR}/susan.c)
 
 target_compile_options(susan_edges PRIVATE -Wno-array-bounds)
 

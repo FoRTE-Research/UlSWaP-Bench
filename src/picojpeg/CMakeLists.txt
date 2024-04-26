@@ -10,9 +10,9 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_LIST_DIR}/g_jpegdata.h
                    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
                    COMMENT "Generating g_jpegdata.h")
 
-add_executable(picojpeg ${CMAKE_CURRENT_LIST_DIR}/picojpeg.c
-                        ${CMAKE_CURRENT_LIST_DIR}/picojpegtest.c
-                        ${CMAKE_CURRENT_LIST_DIR}/g_jpegdata.h)
+target_sources(picojpeg PRIVATE ${CMAKE_CURRENT_LIST_DIR}/picojpeg.c
+                                ${CMAKE_CURRENT_LIST_DIR}/picojpegtest.c
+                                ${CMAKE_CURRENT_LIST_DIR}/g_jpegdata.h)
 
 target_compile_options(picojpeg PRIVATE -Wno-shift-negative-value)
 
