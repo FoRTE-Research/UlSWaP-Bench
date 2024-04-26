@@ -4,7 +4,6 @@
 #include "input.h"
 #include "common.h"
 
-#define NUM_NODES 100
 #define NONE 9999
 
 struct _NODE
@@ -135,7 +134,7 @@ uint32_t dijkstra(uint32_t chStart, uint32_t chEnd)
             }
         }
 
-        printf("Shortest path is %d in cost. ", rgnNodes[chEnd].iDist);
+        printf("Shortest path from %2u to %2u is %3u in cost. ", chStart, chEnd, rgnNodes[chEnd].iDist);
         printf("Path is: ");
         print_path(rgnNodes, chEnd);
         printf("\r\n");
@@ -143,7 +142,7 @@ uint32_t dijkstra(uint32_t chStart, uint32_t chEnd)
     return 0;
 }
 
-int benchmark_main(int argc, char *argv[])
+int benchmark_main(void)
 {
     uint32_t i, j;
 
@@ -155,6 +154,5 @@ int benchmark_main(int argc, char *argv[])
         j = j % NUM_NODES;
         dijkstra(i, j);
     }
-
     return 0;
 }

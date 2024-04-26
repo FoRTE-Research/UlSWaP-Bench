@@ -1,100 +1,100 @@
-Shortest path is 1 in cost. Path is:  0 41 45 51 50
-Shortest path is 0 in cost. Path is:  1 58 57 20 40 17 65 73 36 46 10 38 41 45 51
-Shortest path is 1 in cost. Path is:  2 71 47 79 23 77 1 58 57 20 40 17 52
-Shortest path is 2 in cost. Path is:  3 53
-Shortest path is 1 in cost. Path is:  4 85 83 58 33 13 19 79 23 77 1 54
-Shortest path is 3 in cost. Path is:  5 26 23 77 1 58 99 3 21 70 55
-Shortest path is 3 in cost. Path is:  6 42 80 77 1 58 99 3 21 70 55 56
-Shortest path is 0 in cost. Path is:  7 17 65 73 36 46 10 58 57
-Shortest path is 0 in cost. Path is:  8 37 63 72 46 10 58
-Shortest path is 1 in cost. Path is:  9 33 13 19 79 23 77 1 59
-Shortest path is 0 in cost. Path is:  10 60
-Shortest path is 5 in cost. Path is:  11 22 20 40 17 65 73 36 46 10 29 61
-Shortest path is 0 in cost. Path is:  12 37 63 72 46 10 58 99 3 21 70 62
-Shortest path is 0 in cost. Path is:  13 19 79 23 77 1 58 99 3 21 70 55 12 37 63
-Shortest path is 1 in cost. Path is:  14 38 41 45 51 68 2 71 47 79 23 77 1 58 33 13 92 64
-Shortest path is 1 in cost. Path is:  15 13 92 94 11 22 20 40 17 65
-Shortest path is 3 in cost. Path is:  16 41 45 51 68 2 71 47 79 23 77 1 58 33 32 66
-Shortest path is 0 in cost. Path is:  17 65 73 36 46 10 58 33 13 19 79 23 91 67
-Shortest path is 1 in cost. Path is:  18 15 41 45 51 68
-Shortest path is 2 in cost. Path is:  19 69
-Shortest path is 0 in cost. Path is:  20 40 17 65 73 36 46 10 58 99 3 21 70
-Shortest path is 0 in cost. Path is:  21 70 55 12 37 94 11 90 30 2 71
-Shortest path is 0 in cost. Path is:  22 20 40 17 65 73 36 46 10 58 99 3 21 70 55 12 37 63 72
-Shortest path is 0 in cost. Path is:  23 77 1 58 57 20 40 17 65 73
-Shortest path is 3 in cost. Path is:  24 11 22 20 40 17 65 73 36 46 10 29 74
-Shortest path is 2 in cost. Path is:  25 79 23 77 1 58 99 3 21 70 62 39 75
-Shortest path is 2 in cost. Path is:  26 23 91 67 88 76
-Shortest path is 0 in cost. Path is:  27 30 2 71 47 79 23 77
-Shortest path is 6 in cost. Path is:  28 20 40 17 65 73 36 46 10 58 33 13 92 94 11 22 78
-Shortest path is 2 in cost. Path is:  29 74 85 83 58 33 13 19 79
-Shortest path is 2 in cost. Path is:  30 2 71 47 79 23 77 1 54 80
-Shortest path is 3 in cost. Path is:  31 50 81
-Shortest path is 1 in cost. Path is:  32 66 20 40 17 65 73 36 46 10 58 82
-Shortest path is 0 in cost. Path is:  33 13 92 94 11 22 20 40 17 65 85 83
-Shortest path is 2 in cost. Path is:  34 41 45 51 68 2 71 47 84
-Shortest path is 1 in cost. Path is:  35 13 92 94 11 22 20 40 17 65 85
-Shortest path is 1 in cost. Path is:  36 46 10 58 99 3 21 70 62 86
-Shortest path is 1 in cost. Path is:  37 94 11 90 30 2 71 47 84 87
-Shortest path is 1 in cost. Path is:  38 41 45 51 68 2 71 47 79 23 91 67 88
-Shortest path is 2 in cost. Path is:  39 13 19 79 23 77 1 58 99 3 21 70 62 89
-Shortest path is 0 in cost. Path is:  40 17 65 73 36 46 10 58 33 13 92 94 11 90
-Shortest path is 0 in cost. Path is:  41 45 51 68 2 71 47 79 23 91
-Shortest path is 0 in cost. Path is:  42 80 77 1 58 33 13 92
-Shortest path is 3 in cost. Path is:  43 76 1 58 33 13 92 93
-Shortest path is 0 in cost. Path is:  44 23 77 1 58 33 13 92 94
-Shortest path is 1 in cost. Path is:  45 51 68 2 71 47 79 23 77 1 58 95
-Shortest path is 3 in cost. Path is:  46 10 58 96
-Shortest path is 0 in cost. Path is:  47 79 23 77 1 58 33 13 97
-Shortest path is 6 in cost. Path is:  48 30 2 71 47 79 23 77 1 58 33 13 19 98
-Shortest path is 0 in cost. Path is:  49 36 46 10 58 99
-Shortest path is 2 in cost. Path is:  50 36 46 10 58 33 13 92 64 0
-Shortest path is 0 in cost. Path is:  51 68 2 71 47 79 23 77 1
-Shortest path is 1 in cost. Path is:  52 26 23 77 1 58 57 30 2
-Shortest path is 0 in cost. Path is:  53 89 65 73 36 46 10 58 99 3
-Shortest path is 3 in cost. Path is:  54 79 23 77 1 58 33 13 92 93 4
-Shortest path is 4 in cost. Path is:  55 12 37 63 72 46 10 58 82 5
-Shortest path is 3 in cost. Path is:  56 60 17 65 73 36 46 10 58 33 13 6
-Shortest path is 1 in cost. Path is:  57 20 40 17 65 73 36 46 10 58 99 3 21 70 62 86 7
-Shortest path is 2 in cost. Path is:  58 33 13 19 79 23 77 1 59 8
-Shortest path is 1 in cost. Path is:  59 8 9
-Shortest path is 1 in cost. Path is:  60 17 65 73 36 46 10
-Shortest path is 1 in cost. Path is:  61 86 7 99 3 21 70 55 12 37 94 11
-Shortest path is 1 in cost. Path is:  62 86 7 99 3 21 70 55 12
-Shortest path is 0 in cost. Path is:  63 72 46 10 58 33 13
-Shortest path is 1 in cost. Path is:  64 0 41 45 51 68 2 71 47 79 23 77 1 58 33 13 97 14
-Shortest path is 0 in cost. Path is:  65 73 36 46 10 58 33 13 19 79 23 77 18 15
-Shortest path is 1 in cost. Path is:  66 20 40 17 65 73 36 46 10 58 99 3 21 70 55 12 27 16
-Shortest path is 1 in cost. Path is:  67 63 72 46 10 20 40 17
-Shortest path is 0 in cost. Path is:  68 2 71 47 79 23 77 18
-Shortest path is 1 in cost. Path is:  69 39 13 19
-Shortest path is 0 in cost. Path is:  70 55 12 37 94 11 22 20
-Shortest path is 0 in cost. Path is:  71 47 79 23 77 1 58 99 3 21
-Shortest path is 0 in cost. Path is:  72 46 10 58 33 13 92 94 11 22
-Shortest path is 0 in cost. Path is:  73 36 46 10 58 33 13 19 79 23
-Shortest path is 2 in cost. Path is:  74 85 83 58 99 3 21 70 24
-Shortest path is 2 in cost. Path is:  75 66 20 40 17 65 73 36 46 10 58 33 13 19 79 23 77 18 15 25
-Shortest path is 2 in cost. Path is:  76 1 58 33 13 19 79 23 77 18 26
-Shortest path is 1 in cost. Path is:  77 1 58 99 3 21 70 55 12 27
-Shortest path is 3 in cost. Path is:  78 80 77 1 58 33 13 19 79 23 28
-Shortest path is 1 in cost. Path is:  79 23 77 1 58 57 20 40 17 65 73 36 46 10 29
-Shortest path is 0 in cost. Path is:  80 77 1 58 57 30
-Shortest path is 3 in cost. Path is:  81 71 47 79 23 77 1 58 33 13 31
-Shortest path is 2 in cost. Path is:  82 68 2 71 47 79 23 77 1 58 33 32
-Shortest path is 1 in cost. Path is:  83 58 33
-Shortest path is 1 in cost. Path is:  84 92 94 11 22 34
-Shortest path is 2 in cost. Path is:  85 83 58 33 13 19 79 23 91 67 35
-Shortest path is 0 in cost. Path is:  86 7 17 65 73 36
-Shortest path is 0 in cost. Path is:  87 41 45 51 68 2 71 47 79 23 77 1 58 99 3 21 70 55 12 37
-Shortest path is 1 in cost. Path is:  88 27 30 2 71 47 79 23 77 1 58 57 20 40 17 65 73 36 46 10 38
-Shortest path is 1 in cost. Path is:  89 65 73 36 46 10 58 99 3 21 70 62 39
-Shortest path is 0 in cost. Path is:  90 30 2 71 47 79 23 77 1 58 57 20 40
-Shortest path is 1 in cost. Path is:  91 67 63 72 46 10 38 41
-Shortest path is 3 in cost. Path is:  92 94 11 90 30 2 71 47 79 23 77 18 42
-Shortest path is 3 in cost. Path is:  93 19 79 23 91 67 35 43
-Shortest path is 1 in cost. Path is:  94 11 22 20 40 17 65 73 36 46 10 38 44
-Shortest path is 2 in cost. Path is:  95 81 71 47 79 23 77 1 58 57 20 40 17 65 73 36 46 10 38 41 45
-Shortest path is 0 in cost. Path is:  96 27 30 2 71 47 79 23 77 1 58 57 20 40 17 65 73 36 46
-Shortest path is 1 in cost. Path is:  97 14 38 41 45 51 68 2 71 47
-Shortest path is 1 in cost. Path is:  98 46 10 20 40 17 65 48
-Shortest path is 3 in cost. Path is:  99 3 21 70 55 12 37 63 72 46 10 58 33 13 97 49
+Shortest path from  0 to 50 is   3 in cost. Path is:  0 50
+Shortest path from  1 to 51 is   1 in cost. Path is:  1 51
+Shortest path from  2 to 52 is   2 in cost. Path is:  2 52
+Shortest path from  3 to 53 is   2 in cost. Path is:  3 42 53
+Shortest path from  4 to 54 is   4 in cost. Path is:  4 70 54
+Shortest path from  5 to 55 is   3 in cost. Path is:  5 26 55
+Shortest path from  6 to 56 is   2 in cost. Path is:  6 86 56
+Shortest path from  7 to 57 is   1 in cost. Path is:  7 57
+Shortest path from  8 to 58 is   2 in cost. Path is:  8 14 58
+Shortest path from  9 to 59 is   2 in cost. Path is:  9 45 59
+Shortest path from 10 to 60 is   3 in cost. Path is:  10 36 60
+Shortest path from 11 to 61 is   2 in cost. Path is:  11 24 61
+Shortest path from 12 to 62 is   4 in cost. Path is:  12 3 25 62
+Shortest path from 13 to 63 is   2 in cost. Path is:  13 58 63
+Shortest path from 14 to 64 is   3 in cost. Path is:  14 46 64
+Shortest path from 15 to 65 is   3 in cost. Path is:  15 85 10 65
+Shortest path from 16 to 66 is   2 in cost. Path is:  16 2 66
+Shortest path from 17 to 67 is   3 in cost. Path is:  17 47 37 67
+Shortest path from 18 to 68 is   3 in cost. Path is:  18 44 68
+Shortest path from 19 to 69 is   2 in cost. Path is:  19 30 69
+Shortest path from 20 to 70 is   3 in cost. Path is:  20 75 59 70
+Shortest path from 21 to 71 is   3 in cost. Path is:  21 27 57 71
+Shortest path from 22 to 72 is   4 in cost. Path is:  22 87 5 72
+Shortest path from 23 to 73 is   4 in cost. Path is:  23 49 66 73
+Shortest path from 24 to 74 is   1 in cost. Path is:  24 74
+Shortest path from 25 to 75 is   2 in cost. Path is:  25 61 75
+Shortest path from 26 to 76 is   4 in cost. Path is:  26 0 19 76
+Shortest path from 27 to 77 is   4 in cost. Path is:  27 42 77
+Shortest path from 28 to 78 is   3 in cost. Path is:  28 60 88 78
+Shortest path from 29 to 79 is   4 in cost. Path is:  29 49 55 79
+Shortest path from 30 to 80 is   3 in cost. Path is:  30 32 80
+Shortest path from 31 to 81 is   3 in cost. Path is:  31 53 94 81
+Shortest path from 32 to 82 is   3 in cost. Path is:  32 10 65 82
+Shortest path from 33 to 83 is   2 in cost. Path is:  33 73 83
+Shortest path from 34 to 84 is   3 in cost. Path is:  34 23 84
+Shortest path from 35 to 85 is   3 in cost. Path is:  35 27 24 85
+Shortest path from 36 to 86 is   3 in cost. Path is:  36 9 99 86
+Shortest path from 37 to 87 is   3 in cost. Path is:  37 15 87
+Shortest path from 38 to 88 is   3 in cost. Path is:  38 2 88
+Shortest path from 39 to 89 is   5 in cost. Path is:  39 89
+Shortest path from 40 to 90 is   3 in cost. Path is:  40 53 90
+Shortest path from 41 to 91 is   3 in cost. Path is:  41 7 91
+Shortest path from 42 to 92 is   3 in cost. Path is:  42 53 50 92
+Shortest path from 43 to 93 is   1 in cost. Path is:  43 93
+Shortest path from 44 to 94 is   3 in cost. Path is:  44 15 94
+Shortest path from 45 to 95 is   2 in cost. Path is:  45 6 95
+Shortest path from 46 to 96 is   2 in cost. Path is:  46 96
+Shortest path from 47 to 97 is   3 in cost. Path is:  47 9 60 97
+Shortest path from 48 to 98 is   3 in cost. Path is:  48 98
+Shortest path from 49 to 99 is   4 in cost. Path is:  49 27 99
+Shortest path from 50 to  0 is   3 in cost. Path is:  50 92 0
+Shortest path from 51 to  1 is   3 in cost. Path is:  51 66 92 1
+Shortest path from 52 to  2 is   3 in cost. Path is:  52 31 2
+Shortest path from 53 to  3 is   4 in cost. Path is:  53 14 3
+Shortest path from 54 to  4 is   4 in cost. Path is:  54 31 4
+Shortest path from 55 to  5 is   3 in cost. Path is:  55 50 5
+Shortest path from 56 to  6 is   4 in cost. Path is:  56 2 6
+Shortest path from 57 to  7 is   2 in cost. Path is:  57 16 7
+Shortest path from 58 to  8 is   4 in cost. Path is:  58 25 8
+Shortest path from 59 to  9 is   3 in cost. Path is:  59 21 99 9
+Shortest path from 60 to 10 is   2 in cost. Path is:  60 97 10
+Shortest path from 61 to 11 is   3 in cost. Path is:  61 86 54 11
+Shortest path from 62 to 12 is   3 in cost. Path is:  62 69 12
+Shortest path from 63 to 13 is   3 in cost. Path is:  63 19 13
+Shortest path from 64 to 14 is   3 in cost. Path is:  64 32 72 14
+Shortest path from 65 to 15 is   2 in cost. Path is:  65 40 15
+Shortest path from 66 to 16 is   2 in cost. Path is:  66 57 16
+Shortest path from 67 to 17 is   2 in cost. Path is:  67 21 17
+Shortest path from 68 to 18 is   3 in cost. Path is:  68 58 50 18
+Shortest path from 69 to 19 is   2 in cost. Path is:  69 19
+Shortest path from 70 to 20 is   2 in cost. Path is:  70 80 20
+Shortest path from 71 to 21 is   3 in cost. Path is:  71 59 21
+Shortest path from 72 to 22 is   3 in cost. Path is:  72 55 22
+Shortest path from 73 to 23 is   3 in cost. Path is:  73 8 23
+Shortest path from 74 to 24 is   3 in cost. Path is:  74 0 24
+Shortest path from 75 to 25 is   2 in cost. Path is:  75 2 25
+Shortest path from 76 to 26 is   3 in cost. Path is:  76 56 26
+Shortest path from 77 to 27 is   4 in cost. Path is:  77 30 54 31 27
+Shortest path from 78 to 28 is   3 in cost. Path is:  78 84 28
+Shortest path from 79 to 29 is   4 in cost. Path is:  79 22 29
+Shortest path from 80 to 30 is   2 in cost. Path is:  80 98 30
+Shortest path from 81 to 31 is   3 in cost. Path is:  81 5 31
+Shortest path from 82 to 32 is   1 in cost. Path is:  82 32
+Shortest path from 83 to 33 is   3 in cost. Path is:  83 6 95 33
+Shortest path from 84 to 34 is   3 in cost. Path is:  84 10 48 34
+Shortest path from 85 to 35 is   2 in cost. Path is:  85 10 35
+Shortest path from 86 to 36 is   3 in cost. Path is:  86 38 10 36
+Shortest path from 87 to 37 is   4 in cost. Path is:  87 93 37
+Shortest path from 88 to 38 is   2 in cost. Path is:  88 82 38
+Shortest path from 89 to 39 is   1 in cost. Path is:  89 39
+Shortest path from 90 to 40 is   3 in cost. Path is:  90 15 85 40
+Shortest path from 91 to 41 is   2 in cost. Path is:  91 94 41
+Shortest path from 92 to 42 is   3 in cost. Path is:  92 87 42
+Shortest path from 93 to 43 is   2 in cost. Path is:  93 28 43
+Shortest path from 94 to 44 is   4 in cost. Path is:  94 45 56 44
+Shortest path from 95 to 45 is   3 in cost. Path is:  95 55 84 45
+Shortest path from 96 to 46 is   3 in cost. Path is:  96 71 44 46
+Shortest path from 97 to 47 is   2 in cost. Path is:  97 10 47
+Shortest path from 98 to 48 is   4 in cost. Path is:  98 35 48
+Shortest path from 99 to 49 is   2 in cost. Path is:  99 9 49
