@@ -41,14 +41,16 @@ foreach(benchmark ${benchmarks})
     if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/${benchmark})
         message(FATAL_ERROR "Benchmark ${benchmark} does not exist")
         message("Available benchmarks: ${available_benchmarks}")
-    else()
-        add_subdirectory(src/${benchmark})
     endif()
 endforeach()
+
+file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/lst)
 
 message("Benchmarks to build: ${benchmarks}")
 
 foreach(benchmark ${benchmarks})
+    add_executable(${benchmark})
+    add_subdirectory(src/${benchmark})
     set_target_properties(${benchmark} PROPERTIES OUTPUT_NAME ${benchmark}.elf)
     set_target_properties(${benchmark} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
     target_sources(${benchmark} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/mainmain.c ${ARCH_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/common.c)
@@ -69,5 +71,17 @@ foreach(benchmark ${benchmarks})
 
     if (DEFINED ARCH_LIBS)
         target_link_libraries(${benchmark} ${ARCH_LIBS})
+    endif()
+
+    if (DEFINED ARCH_OBJDUMP)
+        add_custom_command(
+            TARGET ${benchmark}
+            POST_BUILD
+            DEPENDS ${benchmark}
+            COMMENT "Generating disassembly for ${benchmark}"
+            COMMAND ${ARCH_OBJDUMP} -d ${PROJECT_BINARY_DIR}/bin/${benchmark}.elf > ${PROJECT_BINARY_DIR}/lst/${benchmark}.lst
+        )
+
+        set_target_properties(${benchmark} PROPERTIES ADDITIONAL_CLEAN_FILES ${PROJECT_BINARY_DIR}/lst/${benchmark}.lst)
     endif()
 endforeach()

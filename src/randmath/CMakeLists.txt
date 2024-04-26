@@ -12,7 +12,7 @@ add_custom_command(
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
     COMMENT "Generating g_abcmath.c")
 
-add_executable(randmath ${CMAKE_CURRENT_LIST_DIR}/main.c
-                        ${CMAKE_CURRENT_LIST_DIR}/g_abcmath.c)
+target_sources(randmath PRIVATE ${CMAKE_CURRENT_LIST_DIR}/main.c
+                                ${CMAKE_CURRENT_LIST_DIR}/g_abcmath.c)
 
 target_link_libraries(randmath c)
