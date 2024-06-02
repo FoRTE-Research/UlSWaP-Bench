@@ -36,7 +36,7 @@
 *.dSYM/
 *.su
 
-# Generated files
+# Generated input files
 g_*
 
 # IDE files/folders
@@ -47,3 +47,10 @@ build_*/
 
 # Temporary files
 temp
+
+# Caches
+__pycache__/
+
+# Plots
+*.png
+*.pdf

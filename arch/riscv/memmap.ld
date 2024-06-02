@@ -15,9 +15,19 @@ IO_BASE = 0x40000000;
 
 SECTIONS
 {
-    .text : ALIGN(4) { *(.text*) } > ROM
-    .bss  : ALIGN(4) { *(.bss*)  } > RAM
-    .heap : ALIGN(4) { *(.heap*) } > HEAP
+    .text : ALIGN(4)
+    {
+        *(.text.boot)
+        *(.text)
+    } > ROM
+    .bss  : ALIGN(4)
+    {
+        *(.bss*)
+    } > RAM
+    .heap : ALIGN(4)
+    {
+        *(.heap*)
+    } > HEAP
 }
 
 
