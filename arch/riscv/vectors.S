@@ -3,6 +3,7 @@
 .extern IO_BASE
 .extern _stacktop
 
+.section .text.boot,"ax"
 .global _start
 _start:
     lui gp, %hi(IO_BASE)
