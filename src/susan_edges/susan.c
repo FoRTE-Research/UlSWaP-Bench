@@ -299,11 +299,6 @@
 #include "common.h"
 #include "input_small.h"
 
-int32_t argc = 4;
-// char *argv[] = {"susan", "input.pgm", "output.pgm", "-s"};
-char *argv[] = {"susan", "input.pgm", "output.pgm", "-e"};
-// char *argv[] = {"susan", "input.pgm", "output.pgm", "-c"};
-
 #define exit_error(IFB, IFC) \
     {                        \
         printf(IFB, IFC);    \
@@ -2494,161 +2489,32 @@ void susan_corners_quick(uchar *in, int32_t *r, uchar *bp, int32_t max_no, CORNE
 
 int32_t benchmark_main()
 {
-    /* {{{ vars */
-    char *tcp;
     uchar *in, *bp, *mid;
-    float dt = 4.0;
-    int32_t *r,
-        argindex = 3,
-        bt = 20,
-        principle = 0,
-        thin_post_proc = 1,
-        three_by_three = 0,
-        drawing_mode = 0,
-        susan_quick = 0,
-        max_no_corners = 1850,
-        max_no_edges = 2650,
-        mode = 0,
-        x_size = -1, y_size = -1;
-    CORNER_LIST corner_list;
-    ;
+    int32_t *r;
+    int32_t bt = 20;
+    int32_t thin_post_proc = 1;
+    int32_t drawing_mode = 0;
+    int32_t max_no_edges = 2650;
+    int32_t x_size = -1, y_size = -1;
 
-    /* }}} */
     fakeFile = test_data;
 
     get_image(&in, &x_size, &y_size);
 
-    /* {{{ look at options */
+    puts("edges\r\n");
+    r = (int32_t *)alloca(x_size * y_size * sizeof(int32_t));
+    setup_brightness_lut(&bp, bt, 6);
 
-    while (argindex < argc)
+    mid = (uchar *)malloc(x_size * y_size);
+    memset(mid, 100, x_size * y_size); /* note not set to zero */
+
+    susan_edges(in, r, mid, bp, max_no_edges, x_size, y_size);
+    if (thin_post_proc)
     {
-        tcp = argv[argindex];
-        if (*tcp == '-')
-            switch (*++tcp)
-            {
-            case 's': /* smoothing */
-                mode = 0;
-                break;
-            case 'e': /* edges */
-                mode = 1;
-                break;
-            case 'c': /* corners */
-                mode = 2;
-                break;
-            case 'p': /* principle */
-                principle = 1;
-                break;
-            case 'n': /* thinning post processing */
-                thin_post_proc = 0;
-                break;
-            case 'b': /* simple drawing mode */
-                drawing_mode = 1;
-                break;
-            case '3': /* 3x3 flat mask */
-                three_by_three = 1;
-                break;
-            case 'q': /* quick susan mask */
-                susan_quick = 1;
-                break;
-            case 'd': /* distance threshold */
-                if (++argindex >= argc)
-                {
-                    printf("No argument following -d\n");
-                    exit(0);
-                }
-                dt = atof(argv[argindex]);
-                if (dt < 0)
-                    three_by_three = 1;
-                break;
-            case 't': /* brightness threshold */
-                if (++argindex >= argc)
-                {
-                    printf("No argument following -t\n");
-                    exit(0);
-                }
-                bt = atoi(argv[argindex]);
-                break;
-            }
-        else
-            ;
-        argindex++;
+        susan_thin(r, mid, x_size, y_size);
     }
-
-    if ((principle == 1) && (mode == 0))
-        mode = 1;
-
-    /* }}} */
-    /* {{{ main processing */
-    switch (mode)
-    {
-    case 0:
-        /* {{{ smoothing */
-        puts("smoothing\r\n");
-        setup_brightness_lut(&bp, bt, 2);
-        susan_smoothing(three_by_three, in, dt, x_size, y_size, bp);
-        break;
-
-        /* }}} */
-    case 1:
-        /* {{{ edges */
-        puts("edges\r\n");
-        r = (int32_t *)alloca(x_size * y_size * sizeof(int32_t));
-        setup_brightness_lut(&bp, bt, 6);
-
-        if (principle)
-        {
-            if (three_by_three)
-                susan_principle_small(in, r, bp, max_no_edges, x_size, y_size);
-            else
-                susan_principle(in, r, bp, max_no_edges, x_size, y_size);
-            int_to_uchar(r, in, x_size * y_size);
-        }
-        else
-        {
-            mid = (uchar *)malloc(x_size * y_size);
-            memset(mid, 100, x_size * y_size); /* note not set to zero */
-
-            if (three_by_three)
-                susan_edges_small(in, r, mid, bp, max_no_edges, x_size, y_size);
-            else
-                susan_edges(in, r, mid, bp, max_no_edges, x_size, y_size); // called
-            if (thin_post_proc)
-                susan_thin(r, mid, x_size, y_size);     // called
-            edge_draw(in, mid, x_size, y_size, drawing_mode);       // called
-        }
-
-        break;
-
-        /* }}} */
-    case 2:
-        /* {{{ corners */
-        puts("corners\r\n");
-        r = (int32_t *)malloc(x_size * y_size * sizeof(int32_t));
-        setup_brightness_lut(&bp, bt, 6);
-
-        if (principle)
-        {
-            susan_principle(in, r, bp, max_no_corners, x_size, y_size);
-            int_to_uchar(r, in, x_size * y_size);
-        }
-        else
-        {
-            if (susan_quick)
-                susan_corners_quick(in, r, bp, max_no_corners, corner_list, x_size, y_size);
-            else
-                susan_corners(in, r, bp, max_no_corners, corner_list, x_size, y_size);
-            corner_draw(in, corner_list, x_size, drawing_mode);
-        }
-
-        break;
-
-        /* }}} */
-    }
-
-    /* }}} */
+    edge_draw(in, mid, x_size, y_size, drawing_mode);
 
     put_image(in, x_size, y_size);
     return 0;
 }
-
-/* }}} */
