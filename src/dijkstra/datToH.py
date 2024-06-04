@@ -9,18 +9,22 @@ for line in infile:
         numRows += 1
 infile.close()
 
+print('#ifndef INPUT_H')
+print('#define INPUT_H\n')
+print('#include <stdint.h>\n')
 print(f'#define NUM_NODES {numRows}')
-print(f'unsigned int AdjMatrix[{numRows}][{numRows}] = ')
+print(f'const uint8_t AdjMatrix[{numRows}][{numRows}] = ')
 print('{')
 
 infile = open('input.dat')
 
 for line in infile:
     parts = line.strip().split()
-    print('{', end='')
+    print('    {', end='')
     for part in parts:
         # print with padding using spaces
         print('{:2d}, '.format(int(part)), end='')
     print('},')
 
 print('};')
+print('#endif  // INPUT_H')

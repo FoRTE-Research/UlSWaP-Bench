@@ -15,7 +15,7 @@ def main(size):
             if i == j:
                 row.append(0)  # Diagonal elements are set to 0
             else:
-                row.append(get_random_weight(1, 20))  # Random weights between 1 and 100
+                row.append(get_random_weight(1, 50))  # Random weights between 1 and 100
         adjacency_matrix.append(row)
 
     # Printing the adjacency matrix
