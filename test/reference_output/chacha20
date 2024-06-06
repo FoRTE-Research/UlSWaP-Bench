@@ -15,7 +15,7 @@ Plaintext:
 637265656e20776f756c642062652069
 742e
 
-Encrypting 114 bytes 8772 times (1000008 bytes total) 
+Encrypting 114 bytes 575 times (65550 bytes total) 
 Output ciphertext:
 6e2e359a2568f98041ba0728dd0d6981
 e97e7aec1d4360c20a27afccfd9fae0b
@@ -26,7 +26,7 @@ f91b65c5524733ab8f593dabcd62b357
 5af90bbf74a35be6b40b8eedf2785e42
 874d
 
-Decrypting 114 bytes 8772 times (1000008 bytes total) 
+Decrypting 114 bytes 575 times (65550 bytes total) 
 Output plaintext:
 4c616469657320616e642047656e746c
 656d656e206f662074686520636c6173
