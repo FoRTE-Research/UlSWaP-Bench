@@ -11,7 +11,7 @@
 #include "ChaCha20.h"
 
 #define MSG_SIZE 114
-#define ITERATIONS ((1000000 / MSG_SIZE) + 1)
+#define ITERATIONS ((65536 / MSG_SIZE) + 1)
 #define MAX_NUMS_PER_LINE 16
 
 const key256_t key = {
