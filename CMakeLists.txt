@@ -55,6 +55,16 @@ foreach(benchmark ${benchmarks})
     set_target_properties(${benchmark} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
     target_sources(${benchmark} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/mainmain.c ${ARCH_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/common.c)
     target_include_directories(${benchmark} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+    # Check if LOWER_OPT_LEVEL is set for the benchmark
+    get_property(BENCH_LOWER_OPT_LEVEL TARGET ${benchmark} PROPERTY LOWER_OPT_LEVEL)
+    if (BENCH_LOWER_OPT_LEVEL EQUAL "1")
+        message(STATUS "Setting lower optimization level for ${benchmark}")
+        target_compile_options(${benchmark} PRIVATE -O1)
+    else()
+        target_compile_options(${benchmark} PRIVATE -O3)
+    endif()
+
     target_compile_options(${benchmark} PRIVATE ${ARCH_FLAGS})
 
     if (DEFINED ARCH_LINK_DIRS)
