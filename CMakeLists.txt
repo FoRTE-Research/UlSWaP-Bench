@@ -46,7 +46,11 @@ endforeach()
 
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/lst)
 
-message("Benchmarks to build: ${benchmarks}")
+if (NO_PRINT)
+    message(STATUS "Disabling printf")
+endif()
+
+message(STATUS "Benchmarks to build: ${benchmarks}")
 
 foreach(benchmark ${benchmarks})
     add_executable(${benchmark})
@@ -63,6 +67,12 @@ foreach(benchmark ${benchmarks})
         target_compile_options(${benchmark} PRIVATE -O1)
     else()
         target_compile_options(${benchmark} PRIVATE -O3)
+    endif()
+
+    if (NO_PRINT)
+        target_compile_definitions(${benchmark} PRIVATE -DNO_PRINT=1)
+    else()
+        target_compile_definitions(${benchmark} PRIVATE -DNO_PRINT=0)
     endif()
 
     target_compile_options(${benchmark} PRIVATE ${ARCH_FLAGS})
@@ -93,5 +103,19 @@ foreach(benchmark ${benchmarks})
         )
 
         set_target_properties(${benchmark} PROPERTIES ADDITIONAL_CLEAN_FILES ${PROJECT_BINARY_DIR}/lst/${benchmark}.lst)
+    endif()
+
+    if (DEFINED ARCH_POST_COMMAND)
+        string(REPLACE "__BENCHMARK__" ${benchmark} ARCH_POST_COMMAND "${ARCH_POST_COMMAND}")
+        add_custom_command(
+            TARGET ${benchmark}
+            POST_BUILD
+            DEPENDS ${benchmark}
+            COMMENT "Generating hex file for ${benchmark}"
+            COMMAND ${ARCH_POST_COMMAND}
+            COMMAND_EXPAND_LISTS
+        )
+        # Revert for next iteration
+        string(REPLACE ${benchmark} "__BENCHMARK__" ARCH_POST_COMMAND "${ARCH_POST_COMMAND}")
     endif()
 endforeach()

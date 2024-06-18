@@ -7,7 +7,7 @@
 #define printf_float(_num) _num
 #endif  // PICOLIBC_FLOAT_PRINTF_SCANF
 
-#ifdef NO_PRINT
+#if NO_PRINT
 #define printf(...)
 #endif  // NO_PRINT
 
