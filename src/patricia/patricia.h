@@ -32,10 +32,11 @@
  * Each node in the tree can contain multiple masks, so this
  * structure is where the mask and data are kept.
  */
+#pragma pack(1)
 struct ptree_mask
 {
     uint32_t pm_mask;
-    void *pm_data;
+    uint16_t pm_data;
 };
 
 /*
@@ -43,13 +44,14 @@ struct ptree_mask
  */
 struct ptree
 {
-    uint32_t p_key;         /* Node key		*/
-    struct ptree_mask *p_m; /* Node masks		*/
-    uint8_t p_mlen;         /* Number of masks	*/
-    int8_t p_b;             /* Bit to check		*/
-    struct ptree *p_left;   /* Left pointer		*/
-    struct ptree *p_right;  /* Right pointer	*/
+    uint32_t p_key;             /* Node key		    */
+    struct ptree_mask p_m[3];   /* Node masks		*/
+    uint8_t p_mlen;             /* Number of masks	*/
+    int8_t p_b;                 /* Bit to check		*/
+    struct ptree *p_left;       /* Left pointer		*/
+    struct ptree *p_right;      /* Right pointer	*/
 };
+#pragma pack()
 
 extern struct ptree *pat_insert(struct ptree *n, struct ptree *head);
 extern int32_t pat_remove(struct ptree *n, struct ptree *head);
