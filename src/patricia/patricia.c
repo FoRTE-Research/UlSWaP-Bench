@@ -85,10 +85,10 @@ static struct ptree *insertR(struct ptree *h, struct ptree *n, int32_t d, struct
 struct ptree *pat_insert(struct ptree *n, struct ptree *head)
 {
     struct ptree *t;
-    struct ptree_mask *buf, *pm;
+    struct ptree_mask buf, *pm;
     int32_t i, copied;
 
-    if (!head || !n || !n->p_m)
+    if (!head || !n)
         return 0;
 
     /*
@@ -117,10 +117,9 @@ struct ptree *pat_insert(struct ptree *n, struct ptree *head)
          */
         for (i = 0; i < t->p_mlen; i++)
         {
-            if (n->p_m->pm_mask == t->p_m[i].pm_mask)
+            if (n->p_m[0].pm_mask == t->p_m[i].pm_mask)
             {
-                t->p_m[i].pm_data = n->p_m->pm_data;
-                free(n->p_m);
+                t->p_m[i].pm_data = n->p_m[0].pm_data;
                 free(n);
                 n = 0;
                 return t;
@@ -128,19 +127,13 @@ struct ptree *pat_insert(struct ptree *n, struct ptree *head)
         }
 
         /*
-         * Allocate space for a new set of masks.
-         */
-        buf = (struct ptree_mask *)alloca(
-            sizeof(struct ptree_mask) * (t->p_mlen + 1));
-
-        /*
          * Insert the new mask in the proper order from least
          * to greatest mask.
          */
         copied = 0;
-        for (i = 0, pm = buf; i < t->p_mlen; pm++)
+        for (i = 0, pm = &buf; i < t->p_mlen; pm++)
         {
-            if (n->p_m->pm_mask > t->p_m[i].pm_mask)
+            if (n->p_m[0].pm_mask > t->p_m[i].pm_mask)
             {
                 bcopy(t->p_m + i, pm, sizeof(struct ptree_mask));
                 i++;
@@ -148,7 +141,7 @@ struct ptree *pat_insert(struct ptree *n, struct ptree *head)
             else
             {
                 bcopy(n->p_m, pm, sizeof(struct ptree_mask));
-                n->p_m->pm_mask = 0xffffffff;
+                n->p_m[0].pm_mask = 0xffffffff;
                 copied = 1;
             }
         }
@@ -156,7 +149,7 @@ struct ptree *pat_insert(struct ptree *n, struct ptree *head)
         {
             bcopy(n->p_m, pm, sizeof(struct ptree_mask));
         }
-        free(n->p_m);
+
         free(n);
         n = 0;
         t->p_mlen++;
@@ -164,8 +157,7 @@ struct ptree *pat_insert(struct ptree *n, struct ptree *head)
         /*
          * Free old masks and point to new ones.
          */
-        free(t->p_m);
-        t->p_m = buf;
+        t->p_m[0] = buf;
 
         return t;
     }
@@ -196,7 +188,7 @@ int32_t pat_remove(struct ptree *n, struct ptree *head)
     struct ptree_mask *buf, *pm;
     int32_t i;
 
-    if (!n || !n->p_m)
+    if (!n)
         return 0;
 
     /*
@@ -260,17 +252,10 @@ int32_t pat_remove(struct ptree *n, struct ptree *head)
         else
             g->p_left = bit(p->p_b, n->p_key) ? p->p_left : p->p_right;
 
-        /*
-         * Delete the target's data and copy in its parent's
-         * data, but not the bit value.
-         */
-        if (t->p_m->pm_data)
-            free(t->p_m->pm_data);
-        free(t->p_m);
         if (t != p)
         {
             t->p_key = p->p_key;
-            t->p_m = p->p_m;
+            t->p_m[0] = p->p_m[0];
             t->p_mlen = p->p_mlen;
         }
         free(p);
@@ -307,7 +292,7 @@ int32_t pat_remove(struct ptree *n, struct ptree *head)
      */
     t->p_mlen--;
     free(t->p_m);
-    t->p_m = buf;
+    // t->p_m[0] = buf;
     return 1;
 }
 

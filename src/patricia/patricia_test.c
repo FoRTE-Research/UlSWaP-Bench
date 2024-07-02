@@ -42,10 +42,6 @@ struct in_addr
     uint32_t s_addr; // load with inet_aton()
 };
 
-uint32_t htonl(uint32_t x)
-{
-    return x;
-}
 
 int32_t inet_aton(const char *cp, struct in_addr *addr)
 {
@@ -145,24 +141,19 @@ int32_t inet_aton(const char *cp, struct in_addr *addr)
         break;
     }
     if (addr)
-        addr->s_addr = htonl(val);
+    {
+        addr->s_addr = val;
+    }
+
     return (1);
 }
-
-struct MyNode
-{
-    int32_t foo;
-    double bar;
-};
 
 int32_t benchmark_main()
 {
     struct ptree *phead;
     struct ptree *p, *pfind;
-    struct ptree_mask *pm;
     struct in_addr addr;
     uint32_t mask = 0xffffffff;
-    float time;
 
     /*
      * Initialize the Patricia trie by doing the following:
@@ -175,28 +166,9 @@ int32_t benchmark_main()
      * NOTE: This should go into an intialization function.
      */
     phead = (struct ptree *)alloca(sizeof(struct ptree));
-    if (!phead)
-    {
-        perror("Allocating p-trie node");
-        return (0);
-    }
     bzero(phead, sizeof(*phead));
-    phead->p_m = (struct ptree_mask *)alloca(
-        sizeof(struct ptree_mask));
-    if (!phead->p_m)
-    {
-        perror("Allocating p-trie mask data");
-        return (0);
-    }
-    bzero(phead->p_m, sizeof(*phead->p_m));
-    pm = phead->p_m;
-    pm->pm_data = (struct MyNode *)alloca(sizeof(struct MyNode));
-    if (!pm->pm_data)
-    {
-        perror("Allocating p-trie mask's node data");
-        return (0);
-    }
-    bzero(pm->pm_data, sizeof(*pm->pm_data));
+    bzero(phead->p_m, sizeof(struct ptree_mask));
+
     /*******
      *
      * Fill in default route/default node data here.
@@ -215,7 +187,6 @@ int32_t benchmark_main()
          * Read in each IP address and mask and convert them to
          * more usable formats.
          */
-        time = fakeFile->time;
         inet_aton(fakeFile->addr, &addr);
         ++fakeFile;
 
@@ -223,52 +194,23 @@ int32_t benchmark_main()
          * Create a Patricia trie node to insert.
          */
         p = (struct ptree *)alloca(sizeof(struct ptree));
-        if (!p)
-        {
-            perror("Allocating p-trie node");
-            return (0);
-        }
         bzero(p, sizeof(*p));
 
         /*
          * Allocate the mask data.
          */
-        p->p_m = (struct ptree_mask *)alloca(
-            sizeof(struct ptree_mask));
-        if (!p->p_m)
-        {
-            perror("Allocating p-trie mask data");
-            return (0);
-        }
-        bzero(p->p_m, sizeof(*p->p_m));
+        bzero(p->p_m, sizeof(struct ptree_mask));
 
         /*
-         * Allocate the data for this node.
-         * Replace 'struct MyNode' with whatever you'd like.
+         * Assign a value to the IP address and mask field for this node.
          */
-        pm = p->p_m;
-        pm->pm_data = (struct MyNode *)alloca(sizeof(struct MyNode));
-        if (!pm->pm_data)
-        {
-            perror("Allocating p-trie mask's node data");
-            return (0);
-        }
-        bzero(pm->pm_data, sizeof(*pm->pm_data));
-
-        /*
-         * Assign a value to the IP address and mask field for this
-         * node.
-         */
-        p->p_key = addr.s_addr; /* Network-byte order */
-        p->p_m->pm_mask = htonl(mask);
+        p->p_key = addr.s_addr;         /* Network-byte order */
+        p->p_m->pm_mask = mask;
 
         pfind = pat_search(addr.s_addr, phead);
-        // printf("%08x %08x %08x\r\n",p->p_key, addr.s_addr, p->p_m->pm_mask);
-        // if(pfind->p_key==(addr.s_addr&pfind->p_m->pm_mask))
         if (pfind->p_key == addr.s_addr)
         {
-            printf("%f %08x: ", printf_float(time), addr.s_addr);
-            printf("Found.\r\n");
+            printf("%08x: Found\r\n", addr.s_addr);
         }
         else
         {
@@ -276,9 +218,8 @@ int32_t benchmark_main()
              * Insert the node.
              * Returns the node it inserted on success, 0 on failure.
              */
-            // printf("%08x: ", addr.s_addr);
-            // printf("Inserted.\r\n");
             p = pat_insert(p, phead);
+            printf("%08x: Inserted\r\n", addr.s_addr);
         }
         if (!p)
         {
