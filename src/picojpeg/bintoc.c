@@ -13,7 +13,7 @@ int32_t main(void)
 {
     uint32_t ra;
 
-    fpin = fopen("small2.jpg", "rb");
+    fpin = fopen("torg.jpg", "rb");
     if (fpin == NULL)
     {
         return (1);
