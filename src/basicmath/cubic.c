@@ -7,7 +7,9 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "snipmath.h"
+#include "common.h"
 
 void SolveCubic(double a,
                 double b,
@@ -16,9 +18,9 @@ void SolveCubic(double a,
                 uint32_t *solutions,
                 double *x)
 {
-    long double a1 = b / a, a2 = c / a, a3 = d / a;
-    long double Q = (a1 * a1 - 3.0 * a2) / 9.0;
-    long double R = (2.0 * a1 * a1 * a1 - 9.0 * a1 * a2 + 27.0 * a3) / 54.0;
+    double a1 = b / a, a2 = c / a, a3 = d / a;
+    double Q = (a1 * a1 - 3.0 * a2) / 9.0;
+    double R = (2.0 * a1 * a1 * a1 - 9.0 * a1 * a2 + 27.0 * a3) / 54.0;
     double R2_Q3 = R * R - Q * Q * Q;
 
     double theta;
@@ -39,6 +41,19 @@ void SolveCubic(double a,
         x[0] *= (R < 0.0) ? 1 : -1;
         x[0] -= a1 / 3.0;
     }
+}
+
+void Cubic(double a, double b, double c, double d, uint32_t *solutions, double *x)
+{
+    SolveCubic(a, b, c, d, solutions, x);
+    printf("Coefficients: a = %+05.1f, b = %+05.1f, c = %+05.1f, d = %+05.1f    ",
+           printf_float(a), printf_float(b), printf_float(c), printf_float(d));
+    printf("Solutions:");
+    for (uint32_t i = 0; i < *solutions; i++)
+    {
+        printf("  %+08.6f", printf_float(x[i]));
+    }
+    printf("\r\n");
 }
 
 #ifdef TEST

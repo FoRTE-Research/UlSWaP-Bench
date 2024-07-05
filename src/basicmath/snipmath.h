@@ -18,6 +18,8 @@
 void SolveCubic(double a, double b, double c, /* Cubic.C        */
                 double d, uint32_t *solutions,
                 double *x);
+void Cubic(double a, double b, double c, double d, /* Cubic.C        */
+           uint32_t *solutions, double *x);
 double rad2deg(double rad); /* Rad2Deg.C      */
 double deg2rad(double deg); /* Rad2Deg.C      */
 
