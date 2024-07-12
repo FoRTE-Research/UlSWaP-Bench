@@ -6,10 +6,6 @@
 #include "g_jpegdata.h"
 #include "common.h"
 
-#ifndef HOST_TEST
-#define HOST_TEST 0
-#endif
-
 #ifndef max
 #define max(a,b)    (((a) > (b)) ? (a) : (b))
 #endif
