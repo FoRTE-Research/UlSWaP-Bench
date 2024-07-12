@@ -11,6 +11,10 @@
 #define printf(...)
 #endif  // NO_PRINT
 
+#ifndef HOST_TEST
+#define HOST_TEST 0
+#endif
+
 #define TRUE  1
 #define FALSE 0
 
