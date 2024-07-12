@@ -49,7 +49,7 @@
 
 /* Hashtable size (2**LZFX_HLOG entries) */
 #ifndef LZFX_HLOG
-# define LZFX_HLOG 16
+# define LZFX_HLOG 13
 #endif
 
 /* Predefined errors. */
@@ -67,28 +67,7 @@
     olen contains the compressed size in bytes.  On failure, a negative
     value is returned and olen is not modified.
 */
-int lzfx_compress(const void* ibuf, unsigned int ilen,
-                        void* obuf, unsigned int *olen);
-
-/*  Buffer-to-buffer decompression.
-
-    Supply pre-allocated input and output buffers via ibuf and obuf, and
-    their size in bytes via ilen and olen.  Buffers may not overlap.
-
-    On success, the function returns a non-negative value and the argument
-    olen contains the uncompressed size in bytes.  On failure, a negative
-    value is returned.
-
-    If the failure code is LZFX_ESIZE, olen contains the minimum buffer size
-    required to hold the decompressed data.  Otherwise, olen is not modified.
-
-    Supplying a zero *olen is a valid and supported strategy to determine the
-    required buffer size.  This does not require decompression of the entire
-    stream and is consequently very fast.  Argument obuf may be NULL in
-    this case only.
-*/
-int lzfx_decompress(const void* ibuf, unsigned int ilen,
-                          void* obuf, unsigned int *olen);
-
+int32_t lzfx_compress(const void* ibuf, uint32_t ilen,
+                        void* obuf, uint32_t *olen);
 
 #endif
