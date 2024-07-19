@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "picojpeg.h"
-#include "g_jpegdata.h"
+#include "jpeg_input.h"
 #include "common.h"
 
 #ifndef max
@@ -29,7 +29,7 @@ uint8_t pjpeg_need_bytes_callback(uint8_t *pBuf, uint8_t buf_size, uint8_t *pByt
     uint32_t to_read;
 
     to_read = min(g_FakeFileSize - g_FakeFileOffset, buf_size);
-    memcpy(pBuf, &jpegdata[g_FakeFileOffset], to_read);
+    memcpy(pBuf, &test_data[g_FakeFileOffset], to_read);
     *pBytes_actually_read = (uint8_t)(to_read);
     g_FakeFileOffset += to_read;
     return 0;
@@ -46,7 +46,7 @@ int benchmark_main()
     uint32_t b_checksum = 0;
 
     g_FakeFileOffset = 0;
-    g_FakeFileSize = sizeof(jpegdata);
+    g_FakeFileSize = sizeof(test_data);
 
     status = pjpeg_decode_init(&image_info, pjpeg_need_bytes_callback, NULL, 0);
 
