@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stddef.h>
 
+static int sendByte(char byte, FILE *file);
+
 // Basic clock startup for 8MHz (max freq without FRAM wait states)
 void initClocks(void){
   // Startup clock system with max DCO setting ~8MHz
@@ -72,6 +74,28 @@ void run_arch_startup(){
   __bis_SR_register(GIE);
 }
 
+void print_hexstring(uint32_t num){
+  for (uint32_t i = sizeof(num) * 8; i > 0; i -= 4){
+    uint8_t nibble = (num >> (i - 4)) & 0xF;
+    if (nibble > 9){
+      sendByte(nibble + 0x37, NULL);
+    }else{
+      sendByte(nibble + 0x30, NULL);
+    }
+  }
+}
+
+void hexstring(uint32_t num){
+  print_hexstring(num);
+  sendByte('\r', NULL);
+  sendByte('\n', NULL);
+}
+
+void hexstrings(uint32_t num){
+  print_hexstring(num);
+  sendByte(' ', NULL);
+}
+
 // Set up handles for picolibc stdout
 static int sendByte(char byte, FILE *file){
   (void) file;
@@ -82,8 +106,6 @@ static int sendByte(char byte, FILE *file){
 
 static FILE __stdio = FDEV_SETUP_STREAM(sendByte, NULL, NULL, _FDEV_SETUP_WRITE);
 FILE *const stdout = &__stdio;
-
-// Place picolibc start function in reset vector
-//extern uint16_t _start;
-//uint16_t* __attribute__((section (".resetvec"))) myVar = (uint16_t*) &_start;
+__strong_reference(stdout, stdin);
+__strong_reference(stdin, stderr);
 
