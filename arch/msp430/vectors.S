@@ -10,3 +10,7 @@
 rst:
   MOV #WDTPW|WDTHOLD, &WDTCTL
   jmp _start
+
+.global _exit
+_exit:
+  jmp .
