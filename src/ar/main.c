@@ -65,6 +65,7 @@ typedef struct {
     unsigned stationaryCount;
 } stats_t;
 
+uint8_t done;
 
 void accel_sample(unsigned seed, accelReading* result){
 	result->x = (seed*17)%85;
@@ -299,7 +300,8 @@ run_mode_t select_mode(uint8_t *prev_pin_state)
 	  if(count >= 5) pin_state = 0;
 	  if(count >= 7) {   
         printf("Done\r\n");
-		    while(1);
+        done = 1;
+        return (run_mode_t)NULL;
 		}
     // Don't re-launch training after finishing training
     if ((pin_state == MODE_TRAIN_STATIONARY ||
@@ -331,9 +333,14 @@ int benchmark_main(void)
     uint8_t prev_pin_state = MODE_IDLE;
     model_t model;
 
-    while (1)
+    done = 0;
+
+    while (done == 0)
     {
         run_mode_t mode = select_mode(&prev_pin_state);
+        if(done){
+          break;
+        }
         switch (mode) {
             case MODE_TRAIN_STATIONARY:
                 printf("mode: train stationary\r\n");
