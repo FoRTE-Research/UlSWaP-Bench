@@ -1,26 +1,71 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <math.h>
 
 #include "svm.h"
+#include "data.h"
 
-int main(void){
-  printf("Hello, world!\r\n");
+// RMS and crest factor (peak/RMS) for one channel
+void featurize(double *rms, double *crest, const int16_t *series, size_t len){
+  int16_t peak = 0;
+  *rms = 0;
+  for(int16_t i = len - 1; i >= 0; i--){
+    if(abs(series[i]) > peak){
+      peak = abs(series[i]);
+    }
+    *rms += series[i] * series[i];
+  }
+  *rms /= len;
+  *rms = sqrt(*rms);
+  *crest = peak / *rms;
+}
 
-  double normal_features[] = {389.242838, 4.02576450, 110.064290, 4.06126274, 1009.53132, -0.499241570};
-  double abnormal_features[] = {412.965497, 4.18921196, 110.454395, 3.03292593, 1020.00860, -0.577446114};
+int benchmark_main(void){
+  double features[6];
+  double pred_featurized;
 
-  int32_t normal_features_fixedpoint[] = {389242, 4026, 110064, 4061, 1009531, -499};
-  int32_t abnormal_features_fixedpoint[] = {412965, 4189, 110454, 3033, 1020009, -577};
+  featurize(&features[0], &features[1], acc_x3, sizeof(acc_x3) / sizeof(acc_x3[0]));
+  featurize(&features[2], &features[3], acc_y3, sizeof(acc_y3) / sizeof(acc_y3[0]));
+  featurize(&features[4], &features[5], acc_z3, sizeof(acc_z3) / sizeof(acc_z3[0]));
+  pred_featurized = score(features);
+  printf("Featurized prediction: %f\r\n", pred_featurized);
+  if(pred_featurized > 0){
+    printf("OK\r\n");
+  }else{
+    printf("NOK\r\n");
+  }
 
-  double pred_normal = score(normal_features);
-  printf("Normal prediction: %f\r\n\r\n", pred_normal);
-  double pred_abnormal = score(abnormal_features);
-  printf("Abnormal prediction: %f\r\n", pred_abnormal);
+  featurize(&features[0], &features[1], acc_x2, sizeof(acc_x2) / sizeof(acc_x2[0]));
+  featurize(&features[2], &features[3], acc_y2, sizeof(acc_y2) / sizeof(acc_y2[0]));
+  featurize(&features[4], &features[5], acc_z2, sizeof(acc_z2) / sizeof(acc_z2[0]));
+  pred_featurized = score(features);
+  printf("Featurized prediction: %f\r\n", pred_featurized);
+  if(pred_featurized > 0){
+    printf("OK\r\n");
+  }else{
+    printf("NOK\r\n");
+  }
 
-  printf("\r\n\r\n");
+  featurize(&features[0], &features[1], acc_x1, sizeof(acc_x1) / sizeof(acc_x1[0]));
+  featurize(&features[2], &features[3], acc_y1, sizeof(acc_y1) / sizeof(acc_y1[0]));
+  featurize(&features[4], &features[5], acc_z1, sizeof(acc_z1) / sizeof(acc_z1[0]));
+  pred_featurized = score(features);
+  printf("Featurized prediction: %f\r\n", pred_featurized);
+  if(pred_featurized > 0){
+    printf("OK\r\n");
+  }else{
+    printf("NOK\r\n");
+  }
 
-  int32_t pred_normal_fixedpoint = scoreFixedPoint(normal_features_fixedpoint);
-  printf("Normal prediction, fixed point: %i\r\n\r\n", pred_normal_fixedpoint);
-  int32_t pred_abnormal_fixedpoint = scoreFixedPoint(abnormal_features_fixedpoint);
-  printf("Abnormal prediction, fixed point: %i\r\n", pred_abnormal_fixedpoint);
+  featurize(&features[0], &features[1], acc_x0, sizeof(acc_x0) / sizeof(acc_x0[0]));
+  featurize(&features[2], &features[3], acc_y0, sizeof(acc_y0) / sizeof(acc_y0[0]));
+  featurize(&features[4], &features[5], acc_z0, sizeof(acc_z0) / sizeof(acc_z0[0]));
+  pred_featurized = score(features);
+  printf("Featurized prediction: %f\r\n", pred_featurized);
+  if(pred_featurized > 0){
+    printf("OK\r\n");
+  }else{
+    printf("NOK\r\n");
+  }
 }
