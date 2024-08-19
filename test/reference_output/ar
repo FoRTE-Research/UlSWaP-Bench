@@ -1,0 +1,2152 @@
+count: 1
+selectMode: pins 0001
+mode: train moving
+warmup
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+train: done: mn 36 sd 30
+count: 2
+selectMode: pins 0003
+mode: idle
+count: 3
+selectMode: pins 0002
+mode: train stationary
+warmup
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+train: done: mn 40 sd 30
+count: 4
+selectMode: pins 0003
+mode: idle
+count: 5
+selectMode: pins 0000
+mode: recognize
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 0 m 1 t 1
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 1 m 1 t 2
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 2 m 1 t 3
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 3 m 1 t 4
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 4 m 1 t 5
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 4 m 2 t 6
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 5 m 2 t 7
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 6 m 2 t 8
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 7 m 2 t 9
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 8 m 2 t 10
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 8 m 3 t 11
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 9 m 3 t 12
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 10 m 3 t 13
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 11 m 3 t 14
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 12 m 3 t 15
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 12 m 4 t 16
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 13 m 4 t 17
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 14 m 4 t 18
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 15 m 4 t 19
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 16 m 4 t 20
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 16 m 5 t 21
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 17 m 5 t 22
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 18 m 5 t 23
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 19 m 5 t 24
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 20 m 5 t 25
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 20 m 6 t 26
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 21 m 6 t 27
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 22 m 6 t 28
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 23 m 6 t 29
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 24 m 6 t 30
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 24 m 7 t 31
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 25 m 7 t 32
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 26 m 7 t 33
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 27 m 7 t 34
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 28 m 7 t 35
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 28 m 8 t 36
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 29 m 8 t 37
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 30 m 8 t 38
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 31 m 8 t 39
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 32 m 8 t 40
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 32 m 9 t 41
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 33 m 9 t 42
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 34 m 9 t 43
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 35 m 9 t 44
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 36 m 9 t 45
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 36 m 10 t 46
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 37 m 10 t 47
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 38 m 10 t 48
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 39 m 10 t 49
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 40 m 10 t 50
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 40 m 11 t 51
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 41 m 11 t 52
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 42 m 11 t 53
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 43 m 11 t 54
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 44 m 11 t 55
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 44 m 12 t 56
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 45 m 12 t 57
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 46 m 12 t 58
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 47 m 12 t 59
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 48 m 12 t 60
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 48 m 13 t 61
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 49 m 13 t 62
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 50 m 13 t 63
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 51 m 13 t 64
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 52 m 13 t 65
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 52 m 14 t 66
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 53 m 14 t 67
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 54 m 14 t 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 55 m 14 t 69
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 56 m 14 t 70
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 56 m 15 t 71
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 57 m 15 t 72
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 58 m 15 t 73
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 59 m 15 t 74
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 60 m 15 t 75
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 60 m 16 t 76
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 61 m 16 t 77
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 62 m 16 t 78
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 63 m 16 t 79
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 64 m 16 t 80
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 64 m 17 t 81
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 65 m 17 t 82
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 66 m 17 t 83
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 67 m 17 t 84
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 68 m 17 t 85
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 68 m 18 t 86
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 69 m 18 t 87
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 70 m 18 t 88
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 71 m 18 t 89
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 72 m 18 t 90
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 72 m 19 t 91
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 73 m 19 t 92
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 74 m 19 t 93
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 75 m 19 t 94
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 76 m 19 t 95
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 76 m 20 t 96
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 77 m 20 t 97
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 78 m 20 t 98
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 79 m 20 t 99
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 80 m 20 t 100
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 80 m 21 t 101
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 81 m 21 t 102
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 82 m 21 t 103
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 83 m 21 t 104
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 84 m 21 t 105
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 84 m 22 t 106
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 85 m 22 t 107
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 86 m 22 t 108
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 87 m 22 t 109
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 88 m 22 t 110
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 88 m 23 t 111
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 89 m 23 t 112
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 90 m 23 t 113
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 91 m 23 t 114
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 92 m 23 t 115
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 92 m 24 t 116
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 93 m 24 t 117
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 94 m 24 t 118
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 95 m 24 t 119
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 96 m 24 t 120
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 96 m 25 t 121
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 97 m 25 t 122
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 98 m 25 t 123
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 99 m 25 t 124
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 100 m 25 t 125
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 100 m 26 t 126
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 101 m 26 t 127
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 102 m 26 t 128
+stats: s 102 (79%) m 26 (20%) sum/tot 128/128: V
+count: 6
+selectMode: pins 0000
+mode: recognize
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 1 m 0 t 1
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 2 m 0 t 2
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 2 m 1 t 3
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 3 m 1 t 4
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 4 m 1 t 5
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 5 m 1 t 6
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 6 m 1 t 7
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 6 m 2 t 8
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 7 m 2 t 9
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 8 m 2 t 10
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 9 m 2 t 11
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 10 m 2 t 12
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 10 m 3 t 13
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 11 m 3 t 14
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 12 m 3 t 15
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 13 m 3 t 16
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 14 m 3 t 17
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 14 m 4 t 18
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 15 m 4 t 19
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 16 m 4 t 20
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 17 m 4 t 21
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 18 m 4 t 22
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 18 m 5 t 23
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 19 m 5 t 24
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 20 m 5 t 25
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 21 m 5 t 26
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 22 m 5 t 27
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 22 m 6 t 28
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 23 m 6 t 29
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 24 m 6 t 30
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 25 m 6 t 31
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 26 m 6 t 32
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 26 m 7 t 33
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 27 m 7 t 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 28 m 7 t 35
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 29 m 7 t 36
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 30 m 7 t 37
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 30 m 8 t 38
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 31 m 8 t 39
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 32 m 8 t 40
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 33 m 8 t 41
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 34 m 8 t 42
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 34 m 9 t 43
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 35 m 9 t 44
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 36 m 9 t 45
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 37 m 9 t 46
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 38 m 9 t 47
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 38 m 10 t 48
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 39 m 10 t 49
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 40 m 10 t 50
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 41 m 10 t 51
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 42 m 10 t 52
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 42 m 11 t 53
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 43 m 11 t 54
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 44 m 11 t 55
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 45 m 11 t 56
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 46 m 11 t 57
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 46 m 12 t 58
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 47 m 12 t 59
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 48 m 12 t 60
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 49 m 12 t 61
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 50 m 12 t 62
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 50 m 13 t 63
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 51 m 13 t 64
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 52 m 13 t 65
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 53 m 13 t 66
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 54 m 13 t 67
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 54 m 14 t 68
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 55 m 14 t 69
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 56 m 14 t 70
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 57 m 14 t 71
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 58 m 14 t 72
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 58 m 15 t 73
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 59 m 15 t 74
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 60 m 15 t 75
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 61 m 15 t 76
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 62 m 15 t 77
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 62 m 16 t 78
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 63 m 16 t 79
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 64 m 16 t 80
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 65 m 16 t 81
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 66 m 16 t 82
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 66 m 17 t 83
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 67 m 17 t 84
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 68 m 17 t 85
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 69 m 17 t 86
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 70 m 17 t 87
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 70 m 18 t 88
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 71 m 18 t 89
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 72 m 18 t 90
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 73 m 18 t 91
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 74 m 18 t 92
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 74 m 19 t 93
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 75 m 19 t 94
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 76 m 19 t 95
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 77 m 19 t 96
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 78 m 19 t 97
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 78 m 20 t 98
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 79 m 20 t 99
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 80 m 20 t 100
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 81 m 20 t 101
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 82 m 20 t 102
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 82 m 21 t 103
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 83 m 21 t 104
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 84 m 21 t 105
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 85 m 21 t 106
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 86 m 21 t 107
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 86 m 22 t 108
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 87 m 22 t 109
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 88 m 22 t 110
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 89 m 22 t 111
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 90 m 22 t 112
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 90 m 23 t 113
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 91 m 23 t 114
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 92 m 23 t 115
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 93 m 23 t 116
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 94 m 23 t 117
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 94 m 24 t 118
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 95 m 24 t 119
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 96 m 24 t 120
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 97 m 24 t 121
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 98 m 24 t 122
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 98 m 25 t 123
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+transform
+featurize: mean 46 sd 18
+classify: class 0
+stats: s 99 m 25 t 124
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+transform
+transform: sample 0 0 0
+featurize: mean 36 sd 30
+classify: class 0
+stats: s 100 m 25 t 125
+acquire: sample 34 68 51
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+transform
+featurize: mean 46 sd 14
+classify: class 0
+stats: s 101 m 25 t 126
+acquire: sample 0 0 0
+acquire: sample 17 34 68
+acquire: sample 34 68 51
+transform
+transform: sample 0 0 0
+featurize: mean 40 sd 30
+classify: class 0
+stats: s 102 m 25 t 127
+acquire: sample 51 17 34
+acquire: sample 68 51 17
+acquire: sample 0 0 0
+transform
+transform: sample 0 0 0
+featurize: mean 35 sd 26
+classify: class 1
+stats: s 102 m 26 t 128
+stats: s 102 (79%) m 26 (20%) sum/tot 128/128: V
+count: 7
+Done

@@ -1,0 +1,37 @@
+Model version: 0.4.3
+NNoM version 0.4.3
+To disable logs, please void the marco 'NNOM_LOG(...)' in 'nnom_port.h'.
+Data format: Channel last (HWC)
+Static memory size set to: 8192
+Compiling model...
+Memory cost by each block:
+ 
+ Memory cost by network buffers: 4352 bytes
+ Total memory occupied: 7240 bytes
+Starting classification 0
+Starting classification 1
+Starting classification 2
+Starting classification 3
+Starting classification 4
+Starting classification 5
+Starting classification 6
+Starting classification 7
+Starting classification 8
+Starting classification 9
+Starting classification 10
+Starting classification 11
+Starting classification 12
+Starting classification 13
+Starting classification 14
+Starting classification 15
+Starting classification 16
+Starting classification 17
+Starting classification 18
+Starting classification 19
+Starting classification 20
+Starting classification 21
+Starting classification 22
+Starting classification 23
+Starting classification 24
+Reported model accuracy: 92%
+Expected model accuracy: 80%
