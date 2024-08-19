@@ -14,7 +14,7 @@ void featurize(double *rms, double *crest, const int16_t *series, size_t len){
     if(abs(series[i]) > peak){
       peak = abs(series[i]);
     }
-    *rms += series[i] * series[i];
+    *rms += (int32_t) series[i] * (int32_t) series[i];
   }
   *rms /= len;
   *rms = sqrt(*rms);
@@ -68,4 +68,5 @@ int benchmark_main(void){
   }else{
     printf("NOK\r\n");
   }
+  return 0;
 }
