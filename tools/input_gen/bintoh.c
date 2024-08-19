@@ -59,16 +59,17 @@ int main(int argc, char *argv[])
     fprintf(pOutFile, "#define %s\n\n", macro);
 
     fprintf(pOutFile, "#include <stdint.h>\n\n");
-    fprintf(pOutFile, "uint8_t test_data[] =\n");
+    fprintf(pOutFile, "const uint8_t test_data[] =\n");
     fprintf(pOutFile, "{\n    ");
     for (uint32_t i = 0; i < bytesRead; i++)
     {
-        fprintf(pOutFile, "0x%02X,%s", data[i], (i & 7) == 7 ? "\n    " : " ");
+        // fprintf(pOutFile, "0x%02X,%s", data[i], (i & 7) == 7 ? "\n    " : " ");
+        fprintf(pOutFile, "%02X\n", data[i]);
     }
     fprintf(pOutFile, "\n");
     fprintf(pOutFile, "};\n");
     fprintf(pOutFile, "\n");
-    fprintf(pOutFile, "uint8_t* fakeFile = test_data;\n\n");
+    fprintf(pOutFile, "const uint8_t* fakeFile = test_data;\n\n");
     fprintf(pOutFile, "#endif  // %s\n", macro);
     fclose(pOutFile);
 
