@@ -235,11 +235,11 @@ do { \
 #define SBLIMIT     32
 
 #ifndef MAX_CHANNELS
-#define MAX_CHANNELS 2
+#define MAX_CHANNELS 1
 #endif
 
 #ifndef MAX_GRANULES
-#define MAX_GRANULES 2
+#define MAX_GRANULES 1
 #endif
 
 typedef struct {
@@ -365,7 +365,6 @@ void shine_putbits(bitstream_t *bs, unsigned int val, unsigned int N);
 
 int shine_get_bits_count(bitstream_t *bs);
 
-
 typedef struct shine_global_flags {
     priv_shine_wave_t wave;
     priv_shine_mpeg_t mpeg;
@@ -387,9 +386,10 @@ typedef struct shine_global_flags {
     subband_t subband;
 } shine_global_config;
 
+const uint32_t sizeof_shine_t = sizeof(shine_global_config);
 
 void shine_format_bitstream(shine_global_config *config);
-
+void shine_mdct_initialise(shine_global_config *config);
 
 /*
  *
@@ -593,7 +593,7 @@ void shine_window_filter_subband(int16_t **buffer, int32_t s[SBLIMIT], int k, sh
 #ifndef shine_MDCT_H
 #define shine_MDCT_H
 
-void shine_mdct_initialise();
+// void shine_mdct_initialise();
 
 void shine_mdct_sub(shine_global_config *config, int stride);
 
@@ -833,11 +833,10 @@ static int granules_per_frame[4] = {
 
 /* Set default values for important vars */
 void shine_set_config_mpeg_defaults(shine_mpeg_t *mpeg) {
-    mpeg->bitr = 16;
+    mpeg->bitr = 64;
     mpeg->emph = NONE;
     mpeg->copyright = 0;
     mpeg->original = 1;
-    mpeg->mode = MONO;
 }
 
 int shine_mpeg_version(int samplerate_index) {
@@ -890,16 +889,18 @@ int shine_samples_per_pass(shine_t s) {
 }
 
 /* Compute default encoding values. */
-shine_global_config *shine_initialise(shine_config_t *pub_config) {
+void shine_initialise(shine_config_t *pub_config, shine_t config) {
     double avg_slots_per_frame;
-    shine_global_config *config;
 
     if (shine_check_config(pub_config->wave.samplerate, pub_config->mpeg.bitr) < 0)
-        return NULL;
+    {
+        printf("Invalid configuration\n");
+        return;
+    }
 
-    config = calloc(1, sizeof(shine_global_config));
+    // config = calloc(1, sizeof(shine_global_config));
     if (config == NULL)
-        return config;
+        return;
 
     shine_subband_initialise(config);
     shine_mdct_initialise(config);
@@ -951,8 +952,6 @@ shine_global_config *shine_initialise(shine_config_t *pub_config) {
         config->sideinfo_len = 8 * ((config->wave.channels == 1) ? 4 + 17 : 4 + 32);
     else                /* MPEG 2 */
         config->sideinfo_len = 8 * ((config->wave.channels == 1) ? 4 + 9 : 4 + 17);
-
-    return config;
 }
 
 static unsigned char *shine_encode_buffer_internal(shine_global_config *config, int *written, int stride) {
@@ -982,16 +981,16 @@ static unsigned char *shine_encode_buffer_internal(shine_global_config *config, 
 
 unsigned char *shine_encode_buffer(shine_global_config *config, int16_t **data, int *written) {
     config->buffer[0] = data[0];
-    if (config->wave.channels == 2)
-        config->buffer[1] = data[1];
+    // if (config->wave.channels == 2)
+    //     config->buffer[1] = data[1];
 
     return shine_encode_buffer_internal(config, written, 1);
 }
 
 unsigned char *shine_encode_buffer_interleaved(shine_global_config *config, int16_t *data, int *written) {
     config->buffer[0] = data;
-    if (config->wave.channels == 2)
-        config->buffer[1] = data + 1;
+    // if (config->wave.channels == 2)
+    //     config->buffer[1] = data + 1;
 
     return shine_encode_buffer_internal(config, written, config->wave.channels);
 }
@@ -1006,7 +1005,7 @@ unsigned char *shine_flush(shine_global_config *config, int *written) {
 
 void shine_close(shine_global_config *config) {
     shine_close_bit_stream(&config->bs);
-    free(config);
+    // free(config);
 }
 /*
  *  bit_stream.c package
@@ -1025,9 +1024,14 @@ void shine_close(shine_global_config *config) {
 
 #endif
 
+#define BITSTREAM_SIZE 4096
+uint8_t g_bitstream_data[BITSTREAM_SIZE];
+
 /* open the device to write the bit stream into it */
 void shine_open_bit_stream(bitstream_t *bs, int size) {
-    bs->data = (unsigned char *) malloc(size * sizeof(unsigned char));
+    // printf("Allocating %d bytes\n", size);
+    // bs->data = (unsigned char *) malloc(size * sizeof(unsigned char));
+    bs->data = g_bitstream_data;
     bs->data_size = size;
     bs->data_position = 0;
     bs->cache = 0;
@@ -1036,8 +1040,8 @@ void shine_open_bit_stream(bitstream_t *bs, int size) {
 
 /*close the device containing the bit stream */
 void shine_close_bit_stream(bitstream_t *bs) {
-    if (bs->data)
-        free(bs->data);
+    // if (bs->data)
+    //     free(bs->data);
 }
 
 /*
@@ -1061,8 +1065,10 @@ void shine_putbits(bitstream_t *bs, unsigned int val, unsigned int N) {
         bs->cache |= val << bs->cache_bits;
     } else {
         if (bs->data_position + sizeof(unsigned int) >= bs->data_size) {
-            bs->data = (unsigned char *) realloc(bs->data, bs->data_size + (bs->data_size / 2));
-            bs->data_size += (bs->data_size / 2);
+            printf("Failure: reallocation required at %s:%d\r\n", __FILE__, __LINE__);
+            exit(1);
+            // bs->data = (unsigned char *) realloc(bs->data, bs->data_size + (bs->data_size / 2));
+            // bs->data_size += (bs->data_size / 2);
         }
 
         N -= bs->cache_bits;
@@ -1547,15 +1553,15 @@ void shine_iteration_loop(shine_global_config *config) {
  */
 void calc_scfsi(shine_psy_xmin_t *l3_xmin, int ch, int gr,
                 shine_global_config *config) {
-    shine_side_info_t *l3_side = &config->side_info;
+    // shine_side_info_t *l3_side = &config->side_info;
     /* This is the scfsi_band table from 2.4.2.7 of the IS */
-    static const int scfsi_band_long[5] = {0, 6, 11, 16, 21};
+    // static const int scfsi_band_long[5] = {0, 6, 11, 16, 21};
 
-    int scfsi_band;
-    unsigned scfsi_set;
+    // int scfsi_band;
+    // unsigned scfsi_set;
 
     int sfb, start, end, i;
-    int condition = 0;
+    // int condition = 0;
     int temp;
 
     const int *scalefac_band_long = &shine_scale_fact_band_index[config->mpeg.samplerate_index][0];
@@ -1570,7 +1576,7 @@ void calc_scfsi(shine_psy_xmin_t *l3_xmin, int ch, int gr,
     */
 
     config->l3loop.xrmaxl[gr] = config->l3loop.xrmax;
-    scfsi_set = 0;
+    // scfsi_set = 0;
 
     /* the total energy of the granule */
     for (temp = 0, i = GRANULE_SIZE; i--;)
@@ -1601,43 +1607,45 @@ void calc_scfsi(shine_psy_xmin_t *l3_xmin, int ch, int gr,
     }
 
     if (gr == 1) {
-        int gr2, tp;
+        printf("Reached unexpected code path (%s:%d)\r\n", __FILE__, __LINE__);
+        exit(1);
+        // int gr2, tp;
 
-        for (gr2 = 2; gr2--;) {
-            /* The spectral values are not all zero */
-            if (config->l3loop.xrmaxl[gr2])
-                condition++;
+        // for (gr2 = 2; gr2--;) {
+        //     /* The spectral values are not all zero */
+        //     if (config->l3loop.xrmaxl[gr2])
+        //         condition++;
 
-            condition++;
-        }
-        if (abs(config->l3loop.en_tot[0] - config->l3loop.en_tot[1]) < en_tot_krit)
-            condition++;
-        for (tp = 0, sfb = 21; sfb--;)
-            tp += abs(config->l3loop.en[0][sfb] - config->l3loop.en[1][sfb]);
-        if (tp < en_dif_krit)
-            condition++;
+        //     condition++;
+        // }
+        // if (abs(config->l3loop.en_tot[0] - config->l3loop.en_tot[1]) < en_tot_krit)
+        //     condition++;
+        // for (tp = 0, sfb = 21; sfb--;)
+        //     tp += abs(config->l3loop.en[0][sfb] - config->l3loop.en[1][sfb]);
+        // if (tp < en_dif_krit)
+        //     condition++;
 
-        if (condition == 6) {
-            for (scfsi_band = 0; scfsi_band < 4; scfsi_band++) {
-                int sum0 = 0, sum1 = 0;
-                l3_side->scfsi[ch][scfsi_band] = 0;
-                start = scfsi_band_long[scfsi_band];
-                end = scfsi_band_long[scfsi_band + 1];
-                for (sfb = start; sfb < end; sfb++) {
-                    sum0 += abs(config->l3loop.en[0][sfb] - config->l3loop.en[1][sfb]);
-                    sum1 += abs(config->l3loop.xm[0][sfb] - config->l3loop.xm[1][sfb]);
-                }
+        // if (condition == 6) {
+        //     for (scfsi_band = 0; scfsi_band < 4; scfsi_band++) {
+        //         int sum0 = 0, sum1 = 0;
+        //         l3_side->scfsi[ch][scfsi_band] = 0;
+        //         start = scfsi_band_long[scfsi_band];
+        //         end = scfsi_band_long[scfsi_band + 1];
+        //         for (sfb = start; sfb < end; sfb++) {
+        //             sum0 += abs(config->l3loop.en[0][sfb] - config->l3loop.en[1][sfb]);
+        //             sum1 += abs(config->l3loop.xm[0][sfb] - config->l3loop.xm[1][sfb]);
+        //         }
 
-                if (sum0 < en_scfsi_band_krit && sum1 < xm_scfsi_band_krit) {
-                    l3_side->scfsi[ch][scfsi_band] = 1;
-                    scfsi_set |= (1 << scfsi_band);
-                } else
-                    l3_side->scfsi[ch][scfsi_band] = 0;
-            } /* for scfsi_band */
-        } /* if condition == 6 */
-        else
-            for (scfsi_band = 0; scfsi_band < 4; scfsi_band++)
-                l3_side->scfsi[ch][scfsi_band] = 0;
+        //         if (sum0 < en_scfsi_band_krit && sum1 < xm_scfsi_band_krit) {
+        //             l3_side->scfsi[ch][scfsi_band] = 1;
+        //             // scfsi_set |= (1 << scfsi_band);
+        //         } else
+        //             l3_side->scfsi[ch][scfsi_band] = 0;
+        //     } /* for scfsi_band */
+        // } /* if condition == 6 */
+        // else
+        //     for (scfsi_band = 0; scfsi_band < 4; scfsi_band++)
+        //         l3_side->scfsi[ch][scfsi_band] = 0;
     } /* if gr == 1 */
 }
 
@@ -1805,6 +1813,8 @@ void calc_runlen(int ix[GRANULE_SIZE], gr_info *cod_info) {
             rzero++;
         else
             break;
+
+    (void)rzero; /* to avoid warning */
 
     cod_info->count1 = 0;
     for (; i > 3; i -= 4)
