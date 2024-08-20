@@ -87,6 +87,7 @@ typedef struct {
 
 /* Abtract type for the shine encoder handle. */
 typedef struct shine_global_flags *shine_t;
+extern const uint32_t sizeof_shine_t;
 
 /* Fill in a `mpeg_t` structure with default values. */
 void shine_set_config_mpeg_defaults(shine_mpeg_t *mpeg);
@@ -123,7 +124,7 @@ int shine_check_config(int freq, int bitr);
  *
  * This function returns NULL if it was not able to allocate memory data for 
  * the encoder. */
-shine_t shine_initialise(shine_config_t *config);
+void shine_initialise(shine_config_t *config, shine_t global_config);
 
 /* Maximun possible value for the function below. */
 #define SHINE_MAX_SAMPLES 1152
