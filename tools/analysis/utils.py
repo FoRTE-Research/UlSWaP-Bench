@@ -13,6 +13,7 @@ def parse_args():
     parser.add_argument('--benchmark', type=str, help='Benchmark to run')
     parser.add_argument('--hex_file', type=str, help='Path to the hex file')
     parser.add_argument('--bin_dir', type=str, help='Directory containing firmware binaries')
+    parser.add_argument('--build_dir', type=str, help='Directory containing object files')
     parser.add_argument('--hex_dir', type=str, help='Directory containing firmware hex files')
     parser.add_argument('--dump_file', type=str, help='Dump file to analyze')
     parser.add_argument('--dump_dir', type=str, help='Directory containing verilator dump')
