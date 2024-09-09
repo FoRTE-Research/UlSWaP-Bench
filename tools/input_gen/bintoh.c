@@ -63,8 +63,8 @@ int main(int argc, char *argv[])
     fprintf(pOutFile, "{\n    ");
     for (uint32_t i = 0; i < bytesRead; i++)
     {
-        // fprintf(pOutFile, "0x%02X,%s", data[i], (i & 7) == 7 ? "\n    " : " ");
-        fprintf(pOutFile, "%02X\n", data[i]);
+        fprintf(pOutFile, "0x%02X,%s", data[i], (i & 7) == 7 ? "\n    " : " ");
+        // fprintf(pOutFile, "%02X\n", data[i]);
     }
     fprintf(pOutFile, "\n");
     fprintf(pOutFile, "};\n");
