@@ -4,8 +4,8 @@
 #include "common.h"
 
 static unsigned curtask;
-unsigned count = 0;
-unsigned seed = 1;
+uint16_t count = 0;
+uint32_t seed = 1;
 
 // Number of samples to discard before recording training set
 #define NUM_WARMUP_SAMPLES 3
@@ -67,11 +67,23 @@ typedef struct {
 
 uint8_t done;
 
-void accel_sample(unsigned seed, accelReading* result){
-	result->x = (seed*17)%85;
-	result->y = (seed*17*17)%85;
-	result->z = (seed*17*17*17)%85;
+void accel_sample(uint16_t seed, accelReading* result){
+	result->x = ((uint32_t) seed*17)%85;
+	result->y = ((uint32_t) seed*17*17)%85;
+	result->z = ((uint32_t) seed*17*17*17) %85;
+  // These should be int8s
+  //printf("accel_sample seed %d\r\n", seed);
+  //printf("accel_sample result->x %d\r\n", result->x);
+  //printf("accel_sample result->y %d\r\n", result->y);
+  //printf("accel_sample result->z %d\r\n", result->z);
+  //printf("(seed*17*17*17): %lu\r\n\r\n", ((uint32_t) seed*17*17*17));
 }
+
+void bp(){
+  volatile uint8_t i = 0;
+  i++;
+}
+
 void acquire_window(accelWindow window)
 {
     accelReading sample;
@@ -81,6 +93,7 @@ void acquire_window(accelWindow window)
         accel_sample(seed, &sample);
 	      seed++;
         printf("acquire: sample %u %u %u\r\n", sample.x, sample.y, sample.z);
+        //bp();
 
         window[samplesInWindow++] = sample;
     }
@@ -148,8 +161,8 @@ void featurize(features_t *features, accelWindow aWin)
     stddev.y >>= 2;
     stddev.z >>= 2;
 
-    unsigned meanmag = mean.x*mean.x + mean.y*mean.y + mean.z*mean.z;
-    unsigned stddevmag = stddev.x*stddev.x + stddev.y*stddev.y + stddev.z*stddev.z;
+    uint16_t meanmag = mean.x*mean.x + mean.y*mean.y + mean.z*mean.z;
+    uint16_t stddevmag = stddev.x*stddev.x + stddev.y*stddev.y + stddev.z*stddev.z;
 
     features->meanmag   = sqrt(meanmag);
     features->stddevmag = sqrt(stddevmag);
@@ -159,8 +172,8 @@ void featurize(features_t *features, accelWindow aWin)
 
 class_t classify(features_t *features, model_t *model)
 {
-    int move_less_error = 0;
-    int stat_less_error = 0;
+    int16_t move_less_error = 0;
+    int16_t stat_less_error = 0;
     features_t *model_features;
     int i;
 
@@ -223,10 +236,10 @@ void record_stats(stats_t *stats, class_t class)
 
 void print_stats(stats_t *stats)
 {
-    unsigned resultStationaryPct = stats->stationaryCount * 100 / stats->totalCount;
-    unsigned resultMovingPct = stats->movingCount * 100 / stats->totalCount;
+    uint16_t resultStationaryPct = stats->stationaryCount * 100 / stats->totalCount;
+    uint16_t resultMovingPct = stats->movingCount * 100 / stats->totalCount;
 
-    unsigned sum = stats->stationaryCount + stats->movingCount;
+    uint16_t sum = stats->stationaryCount + stats->movingCount;
 
     printf("stats: s %u (%u%%) m %u (%u%%) sum/tot %u/%u: %c\r\n",
            stats->stationaryCount, resultStationaryPct,
@@ -237,7 +250,7 @@ void print_stats(stats_t *stats)
 
 void warmup_sensor()
 {
-    unsigned discardedSamplesCount = 0;
+    uint16_t discardedSamplesCount = 0;
     accelReading sample;
 
     printf("warmup\r\n");
@@ -252,7 +265,7 @@ void train(features_t *classModel)
 {
     accelWindow sampleWindow;
     features_t features;
-    unsigned i;
+    uint16_t i;
 
     warmup_sensor();
 
@@ -274,7 +287,7 @@ void recognize(model_t *model)
     accelWindow sampleWindow;
     features_t features;
     class_t class;
-    unsigned i;
+    uint16_t i;
 
     stats.totalCount = 0;
     stats.stationaryCount = 0;
@@ -332,6 +345,9 @@ int benchmark_main(void)
     // globals correctly
     uint8_t prev_pin_state = MODE_IDLE;
     model_t model;
+
+    count = 0;
+    seed = 1;
 
     done = 0;
 
