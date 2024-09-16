@@ -3,7 +3,6 @@
 
 #include "common.h"
 
-static unsigned curtask;
 uint16_t count = 0;
 uint32_t seed = 1;
 
@@ -17,13 +16,15 @@ uint32_t seed = 1;
 // Number of classifications to complete in one experiment
 #define SAMPLES_TO_COLLECT 128
 
-typedef struct {
+typedef struct
+{
     int16_t x;
     int16_t y;
     int16_t z;
 } threeAxis_t;
 
-typedef struct {
+typedef struct
+{
     int8_t x;
     int8_t y;
     int8_t z;
@@ -31,35 +32,40 @@ typedef struct {
 
 #ifdef ACCEL_16BIT_TYPE
 typedef threeAxis_t accelReading;
-#else // !ACCEL_16BIT_TYPE
+#else  // !ACCEL_16BIT_TYPE
 typedef threeAxis_t_8 accelReading;
 #endif // !ACCEL_16BIT_TYPE
 
 typedef accelReading accelWindow[ACCEL_WINDOW_SIZE];
 
-typedef struct {
+typedef struct
+{
     unsigned meanmag;
     unsigned stddevmag;
 } features_t;
 
-typedef enum {
+typedef enum
+{
     CLASS_STATIONARY,
     CLASS_MOVING,
 } class_t;
 
-typedef struct {
+typedef struct
+{
     features_t stationary[MODEL_SIZE];
     features_t moving[MODEL_SIZE];
 } model_t;
 
-typedef enum {
+typedef enum
+{
     MODE_IDLE = 3,
     MODE_TRAIN_STATIONARY = 2,
     MODE_TRAIN_MOVING = 1,
     MODE_RECOGNIZE = 0, // default
 } run_mode_t;
 
-typedef struct {
+typedef struct
+{
     unsigned totalCount;
     unsigned movingCount;
     unsigned stationaryCount;
@@ -67,21 +73,23 @@ typedef struct {
 
 uint8_t done;
 
-void accel_sample(uint16_t seed, accelReading* result){
-	result->x = ((uint32_t) seed*17)%85;
-	result->y = ((uint32_t) seed*17*17)%85;
-	result->z = ((uint32_t) seed*17*17*17) %85;
-  // These should be int8s
-  //printf("accel_sample seed %d\r\n", seed);
-  //printf("accel_sample result->x %d\r\n", result->x);
-  //printf("accel_sample result->y %d\r\n", result->y);
-  //printf("accel_sample result->z %d\r\n", result->z);
-  //printf("(seed*17*17*17): %lu\r\n\r\n", ((uint32_t) seed*17*17*17));
+void accel_sample(uint16_t seed, accelReading *result)
+{
+    result->x = ((uint32_t)seed * 17) % 85;
+    result->y = ((uint32_t)seed * 17 * 17) % 85;
+    result->z = ((uint32_t)seed * 17 * 17 * 17) % 85;
+    // These should be int8s
+    // printf("accel_sample seed %d\r\n", seed);
+    // printf("accel_sample result->x %d\r\n", result->x);
+    // printf("accel_sample result->y %d\r\n", result->y);
+    // printf("accel_sample result->z %d\r\n", result->z);
+    // printf("(seed*17*17*17): %lu\r\n\r\n", ((uint32_t) seed*17*17*17));
 }
 
-void bp(){
-  volatile uint8_t i = 0;
-  i++;
+void bp()
+{
+    volatile uint8_t i = 0;
+    i++;
 }
 
 void acquire_window(accelWindow window)
@@ -89,11 +97,12 @@ void acquire_window(accelWindow window)
     accelReading sample;
     unsigned samplesInWindow = 0;
 
-    while (samplesInWindow < ACCEL_WINDOW_SIZE) {
+    while (samplesInWindow < ACCEL_WINDOW_SIZE)
+    {
         accel_sample(seed, &sample);
-	      seed++;
+        seed++;
         printf("acquire: sample %u %u %u\r\n", sample.x, sample.y, sample.z);
-        //bp();
+        // bp();
 
         window[samplesInWindow++] = sample;
     }
@@ -105,15 +114,17 @@ void transform(accelWindow window)
 
     printf("transform\r\n");
 
-    for (i = 0; i < ACCEL_WINDOW_SIZE; i++) {
+    for (i = 0; i < ACCEL_WINDOW_SIZE; i++)
+    {
         accelReading *sample = &window[i];
 
         if (sample->x < SAMPLE_NOISE_FLOOR ||
             sample->y < SAMPLE_NOISE_FLOOR ||
-            sample->z < SAMPLE_NOISE_FLOOR) {
+            sample->z < SAMPLE_NOISE_FLOOR)
+        {
 
             printf("transform: sample %u %u %u\r\n",
-                sample->x, sample->y, sample->z);
+                   sample->x, sample->y, sample->z);
 
             sample->x = (sample->x > SAMPLE_NOISE_FLOOR) ? sample->x : 0;
             sample->y = (sample->y > SAMPLE_NOISE_FLOOR) ? sample->y : 0;
@@ -130,10 +141,11 @@ void featurize(features_t *features, accelWindow aWin)
     mean.x = mean.y = mean.z = 0;
     stddev.x = stddev.y = stddev.z = 0;
     int i;
-    for (i = 0; i < ACCEL_WINDOW_SIZE; i++) {
-        mean.x += aWin[i].x;  // x
-        mean.y += aWin[i].y;  // y
-        mean.z += aWin[i].z;  // z
+    for (i = 0; i < ACCEL_WINDOW_SIZE; i++)
+    {
+        mean.x += aWin[i].x; // x
+        mean.y += aWin[i].y; // y
+        mean.z += aWin[i].z; // z
     }
     /*
        mean.x = mean.x / ACCEL_WINDOW_SIZE;
@@ -144,13 +156,14 @@ void featurize(features_t *features, accelWindow aWin)
     mean.y >>= 2;
     mean.z >>= 2;
 
-    for (i = 0; i < ACCEL_WINDOW_SIZE; i++) {
+    for (i = 0; i < ACCEL_WINDOW_SIZE; i++)
+    {
         stddev.x += aWin[i].x > mean.x ? aWin[i].x - mean.x
-            : mean.x - aWin[i].x;  // x
+                                       : mean.x - aWin[i].x; // x
         stddev.y += aWin[i].y > mean.y ? aWin[i].y - mean.y
-            : mean.y - aWin[i].y;  // y
+                                       : mean.y - aWin[i].y; // y
         stddev.z += aWin[i].z > mean.z ? aWin[i].z - mean.z
-            : mean.z - aWin[i].z;  // z
+                                       : mean.z - aWin[i].z; // z
     }
     /*
        stddev.x = stddev.x / (ACCEL_WINDOW_SIZE - 1);
@@ -161,10 +174,10 @@ void featurize(features_t *features, accelWindow aWin)
     stddev.y >>= 2;
     stddev.z >>= 2;
 
-    uint16_t meanmag = mean.x*mean.x + mean.y*mean.y + mean.z*mean.z;
-    uint16_t stddevmag = stddev.x*stddev.x + stddev.y*stddev.y + stddev.z*stddev.z;
+    uint16_t meanmag = mean.x * mean.x + mean.y * mean.y + mean.z * mean.z;
+    uint16_t stddevmag = stddev.x * stddev.x + stddev.y * stddev.y + stddev.z * stddev.z;
 
-    features->meanmag   = sqrt(meanmag);
+    features->meanmag = sqrt(meanmag);
     features->stddevmag = sqrt(stddevmag);
 
     printf("featurize: mean %u sd %u\r\n", features->meanmag, features->stddevmag);
@@ -177,42 +190,48 @@ class_t classify(features_t *features, model_t *model)
     features_t *model_features;
     int i;
 
-    for (i = 0; i < MODEL_SIZE; ++i) {
+    for (i = 0; i < MODEL_SIZE; ++i)
+    {
         model_features = &model->stationary[i];
 
         long int stat_mean_err = (model_features->meanmag > features->meanmag)
-            ? (model_features->meanmag - features->meanmag)
-            : (features->meanmag - model_features->meanmag);
+                                     ? (model_features->meanmag - features->meanmag)
+                                     : (features->meanmag - model_features->meanmag);
 
         long int stat_sd_err = (model_features->stddevmag > features->stddevmag)
-            ? (model_features->stddevmag - features->stddevmag)
-            : (features->stddevmag - model_features->stddevmag);
+                                   ? (model_features->stddevmag - features->stddevmag)
+                                   : (features->stddevmag - model_features->stddevmag);
 
         model_features = &model->moving[i];
 
         long int move_mean_err = (model_features->meanmag > features->meanmag)
-            ? (model_features->meanmag - features->meanmag)
-            : (features->meanmag - model_features->meanmag);
+                                     ? (model_features->meanmag - features->meanmag)
+                                     : (features->meanmag - model_features->meanmag);
 
         long int move_sd_err = (model_features->stddevmag > features->stddevmag)
-            ? (model_features->stddevmag - features->stddevmag)
-            : (features->stddevmag - model_features->stddevmag);
+                                   ? (model_features->stddevmag - features->stddevmag)
+                                   : (features->stddevmag - model_features->stddevmag);
 
-        if (move_mean_err < stat_mean_err) {
+        if (move_mean_err < stat_mean_err)
+        {
             move_less_error++;
-        } else {
+        }
+        else
+        {
             stat_less_error++;
         }
 
-        if (move_sd_err < stat_sd_err) {
+        if (move_sd_err < stat_sd_err)
+        {
             move_less_error++;
-        } else {
+        }
+        else
+        {
             stat_less_error++;
         }
     }
 
-    class_t class = move_less_error > stat_less_error ?
-                        CLASS_MOVING : CLASS_STATIONARY;
+    class_t class = move_less_error > stat_less_error ? CLASS_MOVING : CLASS_STATIONARY;
     printf("classify: class %u\r\n", class);
 
     return class;
@@ -222,30 +241,35 @@ void record_stats(stats_t *stats, class_t class)
 {
     stats->totalCount++;
 
-    switch (class) {
-        case CLASS_MOVING:
-            stats->movingCount++;
-            break;
-        case CLASS_STATIONARY:
-            stats->stationaryCount++;
-            break;
+    switch (class)
+    {
+    case CLASS_MOVING:
+        stats->movingCount++;
+        break;
+    case CLASS_STATIONARY:
+        stats->stationaryCount++;
+        break;
     }
     printf("stats: s %u m %u t %u\r\n",
-        stats->stationaryCount, stats->movingCount, stats->totalCount);
+           stats->stationaryCount, stats->movingCount, stats->totalCount);
 }
 
 void print_stats(stats_t *stats)
 {
-    uint16_t resultStationaryPct = stats->stationaryCount * 100 / stats->totalCount;
-    uint16_t resultMovingPct = stats->movingCount * 100 / stats->totalCount;
+    volatile uint16_t resultStationaryPct = stats->stationaryCount * 100 / stats->totalCount;
+    volatile uint16_t resultMovingPct = stats->movingCount * 100 / stats->totalCount;
 
-    uint16_t sum = stats->stationaryCount + stats->movingCount;
+    volatile uint16_t sum = stats->stationaryCount + stats->movingCount;
 
     printf("stats: s %u (%u%%) m %u (%u%%) sum/tot %u/%u: %c\r\n",
            stats->stationaryCount, resultStationaryPct,
            stats->movingCount, resultMovingPct,
            stats->totalCount, sum,
            sum == stats->totalCount && sum == SAMPLES_TO_COLLECT ? 'V' : 'X');
+
+    (void)resultStationaryPct;
+    (void)resultMovingPct;
+    (void)sum;
 }
 
 void warmup_sensor()
@@ -255,9 +279,10 @@ void warmup_sensor()
 
     printf("warmup\r\n");
 
-    while (discardedSamplesCount++ < NUM_WARMUP_SAMPLES) {
+    while (discardedSamplesCount++ < NUM_WARMUP_SAMPLES)
+    {
         accel_sample(seed, &sample);
-	seed++;
+        seed++;
     }
 }
 
@@ -269,7 +294,8 @@ void train(features_t *classModel)
 
     warmup_sensor();
 
-    for (i = 0; i < MODEL_SIZE; ++i) {
+    for (i = 0; i < MODEL_SIZE; ++i)
+    {
         acquire_window(sampleWindow);
         transform(sampleWindow);
         featurize(&features, sampleWindow);
@@ -277,8 +303,8 @@ void train(features_t *classModel)
         classModel[i] = features;
     }
 
- printf("train: done: mn %u sd %u\r\n",
-        features.meanmag, features.stddevmag);
+    printf("train: done: mn %u sd %u\r\n",
+           features.meanmag, features.stddevmag);
 }
 
 void recognize(model_t *model)
@@ -293,7 +319,8 @@ void recognize(model_t *model)
     stats.stationaryCount = 0;
     stats.movingCount = 0;
 
-    for (i = 0; i < SAMPLES_TO_COLLECT; ++i) {
+    for (i = 0; i < SAMPLES_TO_COLLECT; ++i)
+    {
         acquire_window(sampleWindow);
         transform(sampleWindow);
         featurize(&features, sampleWindow);
@@ -307,21 +334,27 @@ void recognize(model_t *model)
 run_mode_t select_mode(uint8_t *prev_pin_state)
 {
     uint8_t pin_state = 1;
-	  count++;
-	  printf("count: %u\r\n", count);
-	  if(count >= 3) pin_state = 2;
-	  if(count >= 5) pin_state = 0;
-	  if(count >= 7) {   
+    count++;
+    printf("count: %u\r\n", count);
+    if (count >= 3)
+        pin_state = 2;
+    if (count >= 5)
+        pin_state = 0;
+    if (count >= 7)
+    {
         printf("Done\r\n");
         done = 1;
         return (run_mode_t)NULL;
-		}
+    }
     // Don't re-launch training after finishing training
     if ((pin_state == MODE_TRAIN_STATIONARY ||
-        pin_state == MODE_TRAIN_MOVING) &&
-        pin_state == *prev_pin_state) {
+         pin_state == MODE_TRAIN_MOVING) &&
+        pin_state == *prev_pin_state)
+    {
         pin_state = MODE_IDLE;
-    } else {
+    }
+    else
+    {
         *prev_pin_state = pin_state;
     }
 
@@ -330,6 +363,7 @@ run_mode_t select_mode(uint8_t *prev_pin_state)
     return (run_mode_t)pin_state;
 }
 
+#if 0
 static void init_accel()
 {
 #ifdef ACCEL_16BIT_TYPE
@@ -338,6 +372,7 @@ static void init_accel()
     threeAxis_t_8 accelID = {0};
 #endif
 }
+#endif
 
 int benchmark_main(void)
 {
@@ -354,28 +389,29 @@ int benchmark_main(void)
     while (done == 0)
     {
         run_mode_t mode = select_mode(&prev_pin_state);
-        if(done){
-          break;
+        if (done)
+        {
+            break;
         }
-        switch (mode) {
-            case MODE_TRAIN_STATIONARY:
-                printf("mode: train stationary\r\n");
-                train(model.stationary);
-                break;
-            case MODE_TRAIN_MOVING:
-                printf("mode: train moving\r\n");
-                train(model.moving);
-                break;
-            case MODE_RECOGNIZE:
-                printf("mode: recognize\r\n");
-                recognize(&model);
-                break;
-            default:
-                printf("mode: idle\r\n");
-                break;
+        switch (mode)
+        {
+        case MODE_TRAIN_STATIONARY:
+            printf("mode: train stationary\r\n");
+            train(model.stationary);
+            break;
+        case MODE_TRAIN_MOVING:
+            printf("mode: train moving\r\n");
+            train(model.moving);
+            break;
+        case MODE_RECOGNIZE:
+            printf("mode: recognize\r\n");
+            recognize(&model);
+            break;
+        default:
+            printf("mode: idle\r\n");
+            break;
         }
     }
 
     return 0;
 }
-
