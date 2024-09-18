@@ -45,6 +45,7 @@ int benchmark_main()
     uint32_t r_checksum = 0;
     uint32_t g_checksum = 0;
     uint32_t b_checksum = 0;
+    volatile uint32_t noprint_output;
 
     g_FakeFileOffset = 0;
     g_FakeFileSize = sizeof(test_data);
@@ -60,6 +61,7 @@ int benchmark_main()
     printf("Scan type: %s\r\n", scan_type_strings[image_info.m_scanType]);
     printf("MCU width: %d\r\n", image_info.m_MCUWidth);
     printf("MCU height: %d\r\n", image_info.m_MCUHeight);
+    (void)scan_type_strings;
 
     if (status)
     {
@@ -166,9 +168,10 @@ int benchmark_main()
     printf("R checksum: %u\r\n", r_checksum);
     printf("G checksum: %u\r\n", g_checksum);
     printf("B checksum: %u\r\n", b_checksum);
-    (void)r_checksum;
-    (void)g_checksum;
-    (void)b_checksum;
+    noprint_output = r_checksum;
+    noprint_output = g_checksum;
+    noprint_output = b_checksum;
+    (void)noprint_output;
 
 #if HOST_TEST
     FILE *fpout = fopen("out.raw", "wb");

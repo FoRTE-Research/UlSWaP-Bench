@@ -15,13 +15,13 @@
 // Define PJPG_INLINE to "inline" if your C compiler supports explicit inlining
 #define PJPG_INLINE
 //------------------------------------------------------------------------------
-typedef uint8_t    uint8;
-typedef uint16_t   uint16;
-typedef int8_t     int8;
-typedef int16_t    int16;
+typedef uint8_t    uint8_t;
+typedef uint16_t   uint16_t;
+typedef int8_t     int8_t;
+typedef int16_t    int16_t;
 //------------------------------------------------------------------------------
 #if PJPG_RIGHT_SHIFT_IS_ALWAYS_UNSIGNED
-static int16 replicateSignBit16(int8 n)
+static int16_t replicateSignBit16(int8_t n)
 {
    switch (n)
    {
@@ -44,9 +44,9 @@ static int16 replicateSignBit16(int8 n)
       default: return 0xFFFF;
    }
 }
-static PJPG_INLINE int16 arithmeticRightShiftN16(int16 x, int8 n)
+static PJPG_INLINE int16_t arithmeticRightShiftN16(int16_t x, int8_t n)
 {
-   int16 r = (uint16)x >> (uint8)n;
+   int16_t r = (uint16_t)x >> (uint8_t)n;
    if (x < 0)
       r |= replicateSignBit16(n);
    return r;
@@ -127,7 +127,7 @@ typedef enum
    RST0    = 0xD0
 } JPEG_MARKER;
 //------------------------------------------------------------------------------
-static const int8 ZAG[] =
+static const int8_t ZAG[] =
 {
    0,  1,  8, 16,  9,  2,  3, 10,
    17, 24, 32, 25, 18, 11,  4,  5,
@@ -140,85 +140,85 @@ static const int8 ZAG[] =
 };
 //------------------------------------------------------------------------------
 // 128 bytes
-static int16 gCoeffBuf[8*8];
+static int16_t gCoeffBuf[8*8];
 
 // 8*8*4 bytes * 3 = 768
-static uint8 gMCUBufR[256];
-static uint8 gMCUBufG[256];
-static uint8 gMCUBufB[256];
+static uint8_t gMCUBufR[256];
+static uint8_t gMCUBufG[256];
+static uint8_t gMCUBufB[256];
 
 // 256 bytes
-static int16 gQuant0[8*8];
-static int16 gQuant1[8*8];
+static int16_t gQuant0[8*8];
+static int16_t gQuant1[8*8];
 
 // 6 bytes
-static int16 gLastDC[3];
+static int16_t gLastDC[3];
 
 typedef struct HuffTableT
 {
-   uint16 mMinCode[16];
-   uint16 mMaxCode[16];
-   uint8 mValPtr[16];
+   uint16_t mMinCode[16];
+   uint16_t mMaxCode[16];
+   uint8_t mValPtr[16];
 } HuffTable;
 
 // DC - 192
 static HuffTable gHuffTab0;
 
-static uint8 gHuffVal0[16];
+static uint8_t gHuffVal0[16];
 
 static HuffTable gHuffTab1;
-static uint8 gHuffVal1[16];
+static uint8_t gHuffVal1[16];
 
 // AC - 672
 static HuffTable gHuffTab2;
-static uint8 gHuffVal2[256];
+static uint8_t gHuffVal2[256];
 
 static HuffTable gHuffTab3;
-static uint8 gHuffVal3[256];
+static uint8_t gHuffVal3[256];
 
-static uint8 gValidHuffTables;
-static uint8 gValidQuantTables;
+static uint8_t gValidHuffTables;
+static uint8_t gValidQuantTables;
 
-static uint8 gTemFlag;
+static uint8_t gTemFlag;
 #define PJPG_MAX_IN_BUF_SIZE 256
-static uint8 gInBuf[PJPG_MAX_IN_BUF_SIZE];
-static uint8 gInBufOfs;
-static uint8 gInBufLeft;
+static uint8_t gInBuf[PJPG_MAX_IN_BUF_SIZE];
+static uint8_t gInBufOfs;
+static uint8_t gInBufLeft;
 
-static uint16 gBitBuf;
-static uint8 gBitsLeft;
+static uint16_t gBitBuf;
+static uint8_t gBitsLeft;
 //------------------------------------------------------------------------------
-static uint16 gImageXSize;
-static uint16 gImageYSize;
-static uint8 gCompsInFrame;
-static uint8 gCompIdent[3];
-static uint8 gCompHSamp[3];
-static uint8 gCompVSamp[3];
-static uint8 gCompQuant[3];
+static uint16_t gImageXSize;
+static uint16_t gImageYSize;
+static uint8_t gCompsInFrame;
+static uint8_t gCompIdent[3];
+static uint8_t gCompHSamp[3];
+static uint8_t gCompVSamp[3];
+static uint8_t gCompQuant[3];
 
-static uint16 gRestartInterval;
-static uint16 gNextRestartNum;
-static uint16 gRestartsLeft;
+static uint16_t gRestartInterval;
+static uint16_t gNextRestartNum;
+static uint16_t gRestartsLeft;
 
-static uint8 gCompsInScan;
-static uint8 gCompList[3];
-static uint8 gCompDCTab[3]; // 0,1
-static uint8 gCompACTab[3]; // 0,1
+static uint8_t gCompsInScan;
+static uint8_t gCompList[3];
+static uint8_t gCompDCTab[3]; // 0,1
+static uint8_t gCompACTab[3]; // 0,1
 
 static pjpeg_scan_type_t gScanType;
 
-static uint8 gMaxBlocksPerMCU;
-static uint8 gMaxMCUXSize;
-static uint8 gMaxMCUYSize;
-static uint16 gMaxMCUSPerRow;
-static uint16 gMaxMCUSPerCol;
-static uint16 gNumMCUSRemainingX, gNumMCUSRemainingY;
-static uint8 gMCUOrg[6];
+static uint8_t gMaxBlocksPerMCU;
+static uint8_t gMaxMCUXSize;
+static uint8_t gMaxMCUYSize;
+static uint16_t gMaxMCUSPerRow;
+static uint16_t gMaxMCUSPerCol;
+static uint16_t gNumMCUSRemainingX, gNumMCUSRemainingY;
+static uint8_t gMCUOrg[6];
 
 static pjpeg_need_bytes_callback_t g_pNeedBytesCallback;
 static void *g_pCallback_data;
-static uint8 gCallbackStatus;
-static uint8 gReduce;
+static uint8_t gCallbackStatus;
+static uint8_t gReduce;
 //------------------------------------------------------------------------------
 static void fillInBuf(void)
 {
@@ -237,7 +237,7 @@ static void fillInBuf(void)
    }
 }
 //------------------------------------------------------------------------------
-static PJPG_INLINE uint8 getChar(void)
+static PJPG_INLINE uint8_t getChar(void)
 {
    if (!gInBufLeft)
    {
@@ -253,20 +253,20 @@ static PJPG_INLINE uint8 getChar(void)
    return gInBuf[gInBufOfs++];
 }
 //------------------------------------------------------------------------------
-static PJPG_INLINE void stuffChar(uint8 i)
+static PJPG_INLINE void stuffChar(uint8_t i)
 {
    gInBufOfs--;
    gInBuf[gInBufOfs] = i;
    gInBufLeft++;
 }
 //------------------------------------------------------------------------------
-static PJPG_INLINE uint8 getOctet(uint8 FFCheck)
+static PJPG_INLINE uint8_t getOctet(uint8_t FFCheck)
 {
-   uint8 c = getChar();
+   uint8_t c = getChar();
 
    if ((FFCheck) && (c == 0xFF))
    {
-      uint8 n = getChar();
+      uint8_t n = getChar();
 
       if (n)
       {
@@ -278,10 +278,10 @@ static PJPG_INLINE uint8 getOctet(uint8 FFCheck)
    return c;
 }
 //------------------------------------------------------------------------------
-static uint16 getBits(uint8 numBits, uint8 FFCheck)
+static uint16_t getBits(uint8_t numBits, uint8_t FFCheck)
 {
-   uint8 origBits = numBits;
-   uint16 ret = gBitBuf;
+   uint8_t origBits = numBits;
+   uint16_t ret = gBitBuf;
 
    if (numBits > 8)
    {
@@ -308,26 +308,26 @@ static uint16 getBits(uint8 numBits, uint8 FFCheck)
    }
    else
    {
-      gBitsLeft = (uint8)(gBitsLeft - numBits);
+      gBitsLeft = (uint8_t)(gBitsLeft - numBits);
       gBitBuf <<= numBits;
    }
 
    return ret >> (16 - origBits);
 }
 //------------------------------------------------------------------------------
-static PJPG_INLINE uint16 getBits1(uint8 numBits)
+static PJPG_INLINE uint16_t getBits1(uint8_t numBits)
 {
    return getBits(numBits, 0);
 }
 //------------------------------------------------------------------------------
-static PJPG_INLINE uint16 getBits2(uint8 numBits)
+static PJPG_INLINE uint16_t getBits2(uint8_t numBits)
 {
    return getBits(numBits, 1);
 }
 //------------------------------------------------------------------------------
-static PJPG_INLINE uint8 getBit(void)
+static PJPG_INLINE uint8_t getBit(void)
 {
-   uint8 ret = 0;
+   uint8_t ret = 0;
    if (gBitBuf & 0x8000)
       ret = 1;
 
@@ -344,7 +344,7 @@ static PJPG_INLINE uint8 getBit(void)
    return ret;
 }
 //------------------------------------------------------------------------------
-static uint16 getExtendTest(uint8 i)
+static uint16_t getExtendTest(uint8_t i)
 {
    switch (i)
    {
@@ -368,7 +368,7 @@ static uint16 getExtendTest(uint8 i)
    }
 }
 //------------------------------------------------------------------------------
-static int16 getExtendOffset(uint8 i)
+static int16_t getExtendOffset(uint8_t i)
 {
    switch (i)
    {
@@ -392,23 +392,23 @@ static int16 getExtendOffset(uint8 i)
    }
 };
 //------------------------------------------------------------------------------
-static PJPG_INLINE int16 huffExtend(uint16 x, uint8 s)
+static PJPG_INLINE int16_t huffExtend(uint16_t x, uint8_t s)
 {
-   return ((x < getExtendTest(s)) ? ((int16)x + getExtendOffset(s)) : (int16)x);
+   return ((x < getExtendTest(s)) ? ((int16_t)x + getExtendOffset(s)) : (int16_t)x);
 }
 //------------------------------------------------------------------------------
-static PJPG_INLINE uint8 huffDecode(const HuffTable* pHuffTable, const uint8* pHuffVal)
+static PJPG_INLINE uint8_t huffDecode(const HuffTable* pHuffTable, const uint8_t* pHuffVal)
 {
-   uint8 i = 0;
-   uint8 j;
-   uint16 code = getBit();
+   uint8_t i = 0;
+   uint8_t j;
+   uint16_t code = getBit();
 
    // This func only reads a bit at a time, which on modern CPU's is not terribly efficient.
    // But on microcontrollers without strong integer shifting support this seems like a
    // more reasonable approach.
    for ( ; ; )
    {
-      uint16 maxCode;
+      uint16_t maxCode;
 
       if (i == 16)
          return 0;
@@ -423,21 +423,21 @@ static PJPG_INLINE uint8 huffDecode(const HuffTable* pHuffTable, const uint8* pH
    }
 
    j = pHuffTable->mValPtr[i];
-   j = (uint8)(j + (code - pHuffTable->mMinCode[i]));
+   j = (uint8_t)(j + (code - pHuffTable->mMinCode[i]));
 
    return pHuffVal[j];
 }
 //------------------------------------------------------------------------------
-static void huffCreate(const uint8* pBits, HuffTable* pHuffTable)
+static void huffCreate(const uint8_t* pBits, HuffTable* pHuffTable)
 {
-   uint8 i = 0;
-   uint8 j = 0;
+   uint8_t i = 0;
+   uint8_t j = 0;
 
-   uint16 code = 0;
+   uint16_t code = 0;
 
    for ( ; ; )
    {
-      uint8 num = pBits[i];
+      uint8_t num = pBits[i];
 
       if (!num)
       {
@@ -451,9 +451,9 @@ static void huffCreate(const uint8* pBits, HuffTable* pHuffTable)
          pHuffTable->mMaxCode[i] = code + num - 1;
          pHuffTable->mValPtr[i] = j;
 
-         j = (uint8)(j + num);
+         j = (uint8_t)(j + num);
 
-         code = (uint16)(code + num);
+         code = (uint16_t)(code + num);
       }
 
       code <<= 1;
@@ -464,7 +464,7 @@ static void huffCreate(const uint8* pBits, HuffTable* pHuffTable)
    }
 }
 //------------------------------------------------------------------------------
-static HuffTable* getHuffTable(uint8 index)
+static HuffTable* getHuffTable(uint8_t index)
 {
    // 0-1 = DC
    // 2-3 = AC
@@ -478,7 +478,7 @@ static HuffTable* getHuffTable(uint8 index)
    }
 }
 //------------------------------------------------------------------------------
-static uint8* getHuffVal(uint8 index)
+static uint8_t* getHuffVal(uint8_t index)
 {
    // 0-1 = DC
    // 2-3 = AC
@@ -492,15 +492,15 @@ static uint8* getHuffVal(uint8 index)
    }
 }
 //------------------------------------------------------------------------------
-static uint16 getMaxHuffCodes(uint8 index)
+static uint16_t getMaxHuffCodes(uint8_t index)
 {
    return (index < 2) ? 12 : 255;
 }
 //------------------------------------------------------------------------------
-static uint8 readDHTMarker(void)
+static uint8_t readDHTMarker(void)
 {
-   uint8 bits[16];
-   uint16 left = getBits1(16);
+   uint8_t bits[16];
+   uint16_t left = getBits1(16);
 
    if (left < 2)
       return PJPG_BAD_DHT_MARKER;
@@ -509,12 +509,12 @@ static uint8 readDHTMarker(void)
 
    while (left)
    {
-      uint8 i, tableIndex, index;
-      uint8* pHuffVal;
+      uint8_t i, tableIndex, index;
+      uint8_t* pHuffVal;
       HuffTable* pHuffTable;
-      uint16 count, totalRead;
+      uint16_t count, totalRead;
 
-      index = (uint8)getBits1(8);
+      index = (uint8_t)getBits1(8);
 
       if ( ((index & 0xF) > 1) || ((index & 0xF0) > 0x10) )
          return PJPG_BAD_DHT_INDEX;
@@ -529,23 +529,23 @@ static uint8 readDHTMarker(void)
       count = 0;
       for (i = 0; i <= 15; i++)
       {
-         uint8 n = (uint8)getBits1(8);
+         uint8_t n = (uint8_t)getBits1(8);
          bits[i] = n;
-         count = (uint16)(count + n);
+         count = (uint16_t)(count + n);
       }
 
       if (count > getMaxHuffCodes(tableIndex))
          return PJPG_BAD_DHT_COUNTS;
 
       for (i = 0; i < count; i++)
-         pHuffVal[i] = (uint8)getBits1(8);
+         pHuffVal[i] = (uint8_t)getBits1(8);
 
       totalRead = 1 + 16 + count;
 
       if (left < totalRead)
          return PJPG_BAD_DHT_MARKER;
 
-      left = (uint16)(left - totalRead);
+      left = (uint16_t)(left - totalRead);
 
       huffCreate(bits, pHuffTable);
    }
@@ -553,11 +553,11 @@ static uint8 readDHTMarker(void)
    return 0;
 }
 //------------------------------------------------------------------------------
-static void createWinogradQuant(int16* pQuant);
+static void createWinogradQuant(int16_t* pQuant);
 
-static uint8 readDQTMarker(void)
+static uint8_t readDQTMarker(void)
 {
-   uint16 left = getBits1(16);
+   uint16_t left = getBits1(16);
 
    if (left < 2)
       return PJPG_BAD_DQT_MARKER;
@@ -566,10 +566,10 @@ static uint8 readDQTMarker(void)
 
    while (left)
    {
-      uint8 i;
-      uint8 n = (uint8)getBits1(8);
-      uint8 prec = n >> 4;
-      uint16 totalRead;
+      uint8_t i;
+      uint8_t n = (uint8_t)getBits1(8);
+      uint8_t prec = n >> 4;
+      uint16_t totalRead;
 
       n &= 0x0F;
 
@@ -581,15 +581,15 @@ static uint8 readDQTMarker(void)
       // read quantization entries, in zag order
       for (i = 0; i < 64; i++)
       {
-         uint16 temp = getBits1(8);
+         uint16_t temp = getBits1(8);
 
          if (prec)
             temp = (temp << 8) + getBits1(8);
 
          if (n)
-            gQuant1[i] = (int16)temp;
+            gQuant1[i] = (int16_t)temp;
          else
-            gQuant0[i] = (int16)temp;
+            gQuant0[i] = (int16_t)temp;
       }
 
       createWinogradQuant(n ? gQuant1 : gQuant0);
@@ -602,16 +602,16 @@ static uint8 readDQTMarker(void)
       if (left < totalRead)
          return PJPG_BAD_DQT_LENGTH;
 
-      left = (uint16)(left - totalRead);
+      left = (uint16_t)(left - totalRead);
    }
 
    return 0;
 }
 //------------------------------------------------------------------------------
-static uint8 readSOFMarker(void)
+static uint8_t readSOFMarker(void)
 {
-   uint8 i;
-   uint16 left = getBits1(16);
+   uint8_t i;
+   uint16_t left = getBits1(16);
 
    if (getBits1(8) != 8)
       return PJPG_BAD_PRECISION;
@@ -626,7 +626,7 @@ static uint8 readSOFMarker(void)
    if ((!gImageXSize) || (gImageXSize > PJPG_MAX_WIDTH))
       return PJPG_BAD_WIDTH;
 
-   gCompsInFrame = (uint8)getBits1(8);
+   gCompsInFrame = (uint8_t)getBits1(8);
 
    if (gCompsInFrame > 3)
       return PJPG_TOO_MANY_COMPONENTS;
@@ -636,10 +636,10 @@ static uint8 readSOFMarker(void)
 
    for (i = 0; i < gCompsInFrame; i++)
    {
-      gCompIdent[i] = (uint8)getBits1(8);
-      gCompHSamp[i] = (uint8)getBits1(4);
-      gCompVSamp[i] = (uint8)getBits1(4);
-      gCompQuant[i] = (uint8)getBits1(8);
+      gCompIdent[i] = (uint8_t)getBits1(8);
+      gCompHSamp[i] = (uint8_t)getBits1(4);
+      gCompVSamp[i] = (uint8_t)getBits1(4);
+      gCompQuant[i] = (uint8_t)getBits1(8);
 
       if (gCompQuant[i] > 1)
          return PJPG_UNSUPPORTED_QUANT_TABLE;
@@ -649,9 +649,9 @@ static uint8 readSOFMarker(void)
 }
 //------------------------------------------------------------------------------
 // Used to skip unrecognized markers.
-static uint8 skipVariableMarker(void)
+static uint8_t skipVariableMarker(void)
 {
-   uint16 left = getBits1(16);
+   uint16_t left = getBits1(16);
 
    if (left < 2)
       return PJPG_BAD_VARIABLE_MARKER;
@@ -668,7 +668,7 @@ static uint8 skipVariableMarker(void)
 }
 //------------------------------------------------------------------------------
 // Read a define restart interval (DRI) marker.
-static uint8 readDRIMarker(void)
+static uint8_t readDRIMarker(void)
 {
    if (getBits1(16) != 4)
       return PJPG_BAD_DRI_LENGTH;
@@ -679,13 +679,13 @@ static uint8 readDRIMarker(void)
 }
 //------------------------------------------------------------------------------
 // Read a start of scan (SOS) marker.
-static uint8 readSOSMarker(void)
+static uint8_t readSOSMarker(void)
 {
-   uint8 i;
-   uint16 left = getBits1(16);
-   //uint8 spectral_start, spectral_end, successive_high, successive_low;
+   uint8_t i;
+   uint16_t left = getBits1(16);
+   //uint8_t spectral_start, spectral_end, successive_high, successive_low;
 
-   gCompsInScan = (uint8)getBits1(8);
+   gCompsInScan = (uint8_t)getBits1(8);
 
    left -= 3;
 
@@ -694,9 +694,9 @@ static uint8 readSOSMarker(void)
 
    for (i = 0; i < gCompsInScan; i++)
    {
-      uint8 cc = (uint8)getBits1(8);
-      uint8 c = (uint8)getBits1(8);
-      uint8 ci;
+      uint8_t cc = (uint8_t)getBits1(8);
+      uint8_t c = (uint8_t)getBits1(8);
+      uint8_t ci;
 
       left -= 2;
 
@@ -712,10 +712,10 @@ static uint8 readSOSMarker(void)
       gCompACTab[ci] = (c & 15);
    }
 
-   /*spectral_start  = (uint8)*/getBits1(8);
-   /*spectral_end    = (uint8)*/getBits1(8);
-   /*successive_high = (uint8)*/getBits1(4);
-   /*successive_low  = (uint8)*/getBits1(4);
+   /*spectral_start  = (uint8_t)*/getBits1(8);
+   /*spectral_end    = (uint8_t)*/getBits1(8);
+   /*successive_high = (uint8_t)*/getBits1(4);
+   /*successive_low  = (uint8_t)*/getBits1(4);
 
    left -= 3;
 
@@ -728,10 +728,10 @@ static uint8 readSOSMarker(void)
    return 0;
 }
 //------------------------------------------------------------------------------
-static uint8 nextMarker(void)
+static uint8_t nextMarker(void)
 {
-   uint8 c;
-   uint8 bytes = 0;
+   uint8_t c;
+   uint8_t bytes = 0;
 
    do
    {
@@ -739,30 +739,31 @@ static uint8 nextMarker(void)
       {
          bytes++;
 
-         c = (uint8)getBits1(8);
+         c = (uint8_t)getBits1(8);
 
       } while (c != 0xFF);
 
       do
       {
-         c = (uint8)getBits1(8);
+         c = (uint8_t)getBits1(8);
 
       } while (c == 0xFF);
 
    } while (c == 0);
 
    // If bytes > 0 here, there where extra bytes before the marker (not good).
+   (void)bytes;
 
    return c;
 }
 //------------------------------------------------------------------------------
 // Process markers. Returns when an SOFx, SOI, EOI, or SOS marker is
 // encountered.
-static uint8 processMarkers(uint8* pMarker)
+static uint8_t processMarkers(uint8_t* pMarker)
 {
    for ( ; ; )
    {
-      uint8 c = nextMarker();
+      uint8_t c = nextMarker();
 
       switch (c)
       {
@@ -833,13 +834,13 @@ static uint8 processMarkers(uint8* pMarker)
 }
 //------------------------------------------------------------------------------
 // Finds the start of image (SOI) marker.
-static uint8 locateSOIMarker(void)
+static uint8_t locateSOIMarker(void)
 {
-   uint16 bytesleft;
+   uint16_t bytesleft;
 
-   uint8 lastchar = (uint8)getBits1(8);
+   uint8_t lastchar = (uint8_t)getBits1(8);
 
-   uint8 thischar = (uint8)getBits1(8);
+   uint8_t thischar = (uint8_t)getBits1(8);
 
    /* ok if it's a normal JPEG file without a special header */
 
@@ -855,7 +856,7 @@ static uint8 locateSOIMarker(void)
 
       lastchar = thischar;
 
-      thischar = (uint8)getBits1(8);
+      thischar = (uint8_t)getBits1(8);
 
       if (lastchar == 0xFF)
       {
@@ -869,7 +870,7 @@ static uint8 locateSOIMarker(void)
    /* Check the next character after marker: if it's not 0xFF, it can't
    be the start of the next marker, so the file is bad */
 
-   thischar = (uint8)((gBitBuf >> 8) & 0xFF);
+   thischar = (uint8_t)((gBitBuf >> 8) & 0xFF);
 
    if (thischar != 0xFF)
       return PJPG_NOT_JPEG;
@@ -878,11 +879,11 @@ static uint8 locateSOIMarker(void)
 }
 //------------------------------------------------------------------------------
 // Find a start of frame (SOF) marker.
-static uint8 locateSOFMarker(void)
+static uint8_t locateSOFMarker(void)
 {
-   uint8 c;
+   uint8_t c;
 
-   uint8 status = locateSOIMarker();
+   uint8_t status = locateSOIMarker();
    if (status)
       return status;
 
@@ -921,10 +922,10 @@ static uint8 locateSOFMarker(void)
 }
 //------------------------------------------------------------------------------
 // Find a start of scan (SOS) marker.
-static uint8 locateSOSMarker(uint8* pFoundEOI)
+static uint8_t locateSOSMarker(uint8_t* pFoundEOI)
 {
-   uint8 c;
-   uint8 status;
+   uint8_t c;
+   uint8_t status;
 
    *pFoundEOI = 0;
 
@@ -943,7 +944,7 @@ static uint8 locateSOSMarker(uint8* pFoundEOI)
    return readSOSMarker();
 }
 //------------------------------------------------------------------------------
-static uint8 init(void)
+static uint8_t init(void)
 {
    gImageXSize = 0;
    gImageYSize = 0;
@@ -971,9 +972,9 @@ static void fixInBuffer(void)
    /* In case any 0xFF's where pulled into the buffer during marker scanning */
 
    if (gBitsLeft > 0)
-      stuffChar((uint8)gBitBuf);
+      stuffChar((uint8_t)gBitBuf);
 
-   stuffChar((uint8)(gBitBuf >> 8));
+   stuffChar((uint8_t)(gBitBuf >> 8));
 
    gBitsLeft = 8;
    getBits2(8);
@@ -981,12 +982,12 @@ static void fixInBuffer(void)
 }
 //------------------------------------------------------------------------------
 // Restart interval processing.
-static uint8 processRestart(void)
+static uint8_t processRestart(void)
 {
    // Let's scan a little bit to find the marker, but not _too_ far.
    // 1536 is a "fudge factor" that determines how much to scan.
-   uint16 i;
-   uint8 c = 0;
+   uint16_t i;
+   uint8_t c = 0;
 
    for (i = 1536; i > 0; i--)
       if (getChar() == 0xFF)
@@ -1026,10 +1027,10 @@ static uint8 processRestart(void)
 ////------------------------------------------------------------------------------
 //// FIXME: findEOI() is not actually called at the end of the image
 //// (it's optional, and probably not needed on embedded devices)
-//static uint8 findEOI(void)
+//static uint8_t findEOI(void)
 //{
-   //uint8 c;
-   //uint8 status;
+   //uint8_t c;
+   //uint8_t status;
 
    //// Prime the bit buffer
    //gBitsLeft = 8;
@@ -1050,14 +1051,14 @@ static uint8 processRestart(void)
    //return 0;
 //}
 //------------------------------------------------------------------------------
-static uint8 checkHuffTables(void)
+static uint8_t checkHuffTables(void)
 {
-   uint8 i;
+   uint8_t i;
 
    for (i = 0; i < gCompsInScan; i++)
    {
-      uint8 compDCTab = gCompDCTab[gCompList[i]];
-      uint8 compACTab = gCompACTab[gCompList[i]] + 2;
+      uint8_t compDCTab = gCompDCTab[gCompList[i]];
+      uint8_t compACTab = gCompACTab[gCompList[i]] + 2;
 
       if ( ((gValidHuffTables & (1 << compDCTab)) == 0) ||
            ((gValidHuffTables & (1 << compACTab)) == 0) )
@@ -1067,13 +1068,13 @@ static uint8 checkHuffTables(void)
    return 0;
 }
 //------------------------------------------------------------------------------
-static uint8 checkQuantTables(void)
+static uint8_t checkQuantTables(void)
 {
-   uint8 i;
+   uint8_t i;
 
    for (i = 0; i < gCompsInScan; i++)
    {
-      uint8 compQuantMask = gCompQuant[gCompList[i]] ? 2 : 1;
+      uint8_t compQuantMask = gCompQuant[gCompList[i]] ? 2 : 1;
 
       if ((gValidQuantTables & compQuantMask) == 0)
          return PJPG_UNDEFINED_QUANT_TABLE;
@@ -1082,10 +1083,10 @@ static uint8 checkQuantTables(void)
    return 0;
 }
 //------------------------------------------------------------------------------
-static uint8 initScan(void)
+static uint8_t initScan(void)
 {
-   uint8 foundEOI;
-   uint8 status = locateSOSMarker(&foundEOI);
+   uint8_t foundEOI;
+   uint8_t status = locateSOSMarker(&foundEOI);
    if (status)
       return status;
    if (foundEOI)
@@ -1114,7 +1115,7 @@ static uint8 initScan(void)
    return 0;
 }
 //------------------------------------------------------------------------------
-static uint8 initFrame(void)
+static uint8_t initFrame(void)
 {
    if (gCompsInFrame == 1)
    {
@@ -1217,7 +1218,7 @@ static uint8 initFrame(void)
 
 #define PJPG_WINOGRAD_QUANT_SCALE_BITS 10
 
-const uint8 gWinogradQuant[] =
+const uint8_t gWinogradQuant[] =
 {
    128,  178,  178,  167,  246,  167,  151,  232,
    232,  151,  128,  209,  219,  209,  128,  101,
@@ -1230,15 +1231,15 @@ const uint8 gWinogradQuant[] =
 };
 
 // Multiply quantization matrix by the Winograd IDCT scale factors
-static void createWinogradQuant(int16* pQuant)
+static void createWinogradQuant(int16_t* pQuant)
 {
-   uint8 i;
+   uint8_t i;
 
    for (i = 0; i < 64; i++)
    {
       int64_t x = pQuant[i];
       x *= gWinogradQuant[i];
-      pQuant[i] = (int16)((x + (1 << (PJPG_WINOGRAD_QUANT_SCALE_BITS - PJPG_DCT_SCALE_BITS - 1))) >> (PJPG_WINOGRAD_QUANT_SCALE_BITS - PJPG_DCT_SCALE_BITS));
+      pQuant[i] = (int16_t)((x + (1 << (PJPG_WINOGRAD_QUANT_SCALE_BITS - PJPG_DCT_SCALE_BITS - 1))) >> (PJPG_WINOGRAD_QUANT_SCALE_BITS - PJPG_DCT_SCALE_BITS));
    }
 }
 
@@ -1248,43 +1249,43 @@ static void createWinogradQuant(int16* pQuant)
 
 // 1/cos(4*pi/16)
 // 362, 256+106
-static PJPG_INLINE int16 imul_b1_b3(int16 w)
+static PJPG_INLINE int16_t imul_b1_b3(int16_t w)
 {
    int64_t x = (w * 362L);
    x += 128L;
-   return (int16)(PJPG_ARITH_SHIFT_RIGHT_8_L(x));
+   return (int16_t)(PJPG_ARITH_SHIFT_RIGHT_8_L(x));
 }
 
 // 1/cos(6*pi/16)
 // 669, 256+256+157
-static PJPG_INLINE int16 imul_b2(int16 w)
+static PJPG_INLINE int16_t imul_b2(int16_t w)
 {
    int64_t x = (w * 669L);
    x += 128L;
-   return (int16)(PJPG_ARITH_SHIFT_RIGHT_8_L(x));
+   return (int16_t)(PJPG_ARITH_SHIFT_RIGHT_8_L(x));
 }
 
 // 1/cos(2*pi/16)
 // 277, 256+21
-static PJPG_INLINE int16 imul_b4(int16 w)
+static PJPG_INLINE int16_t imul_b4(int16_t w)
 {
    int64_t x = (w * 277L);
    x += 128L;
-   return (int16)(PJPG_ARITH_SHIFT_RIGHT_8_L(x));
+   return (int16_t)(PJPG_ARITH_SHIFT_RIGHT_8_L(x));
 }
 
 // 1/(cos(2*pi/16) + cos(6*pi/16))
 // 196, 196
-static PJPG_INLINE int16 imul_b5(int16 w)
+static PJPG_INLINE int16_t imul_b5(int16_t w)
 {
    int64_t x = (w * 196L);
    x += 128L;
-   return (int16)(PJPG_ARITH_SHIFT_RIGHT_8_L(x));
+   return (int16_t)(PJPG_ARITH_SHIFT_RIGHT_8_L(x));
 }
 
-static PJPG_INLINE uint8 clamp(int16 s)
+static PJPG_INLINE uint8_t clamp(int16_t s)
 {
-   if ((uint16)s > 255U)
+   if ((uint16_t)s > 255U)
    {
       if (s < 0)
          return 0;
@@ -1292,20 +1293,20 @@ static PJPG_INLINE uint8 clamp(int16 s)
          return 255;
    }
 
-   return (uint8)s;
+   return (uint8_t)s;
 }
 
 static void idctRows(void)
 {
-   uint8 i;
-   int16* pSrc = gCoeffBuf;
+   uint8_t i;
+   int16_t* pSrc = gCoeffBuf;
 
    for (i = 0; i < 8; i++)
    {
       if ((pSrc[1] | pSrc[2] | pSrc[3] | pSrc[4] | pSrc[5] | pSrc[6] | pSrc[7]) == 0)
       {
          // Short circuit the 1D IDCT if only the DC component is non-zero
-         int16 src0 = *pSrc;
+         int16_t src0 = *pSrc;
 
          *(pSrc+1) = src0;
          *(pSrc+2) = src0;
@@ -1317,44 +1318,44 @@ static void idctRows(void)
       }
       else
       {
-         int16 src4 = *(pSrc+5);
-         int16 src7 = *(pSrc+3);
-         int16 x4  = src4 - src7;
-         int16 x7  = src4 + src7;
+         int16_t src4 = *(pSrc+5);
+         int16_t src7 = *(pSrc+3);
+         int16_t x4  = src4 - src7;
+         int16_t x7  = src4 + src7;
 
-         int16 src5 = *(pSrc+1);
-         int16 src6 = *(pSrc+7);
-         int16 x5  = src5 + src6;
-         int16 x6  = src5 - src6;
+         int16_t src5 = *(pSrc+1);
+         int16_t src6 = *(pSrc+7);
+         int16_t x5  = src5 + src6;
+         int16_t x6  = src5 - src6;
 
-         int16 tmp1 = imul_b5(x4 - x6);
-         int16 stg26 = imul_b4(x6) - tmp1;
+         int16_t tmp1 = imul_b5(x4 - x6);
+         int16_t stg26 = imul_b4(x6) - tmp1;
 
-         int16 x24 = tmp1 - imul_b2(x4);
+         int16_t x24 = tmp1 - imul_b2(x4);
 
-         int16 x15 = x5 - x7;
-         int16 x17 = x5 + x7;
+         int16_t x15 = x5 - x7;
+         int16_t x17 = x5 + x7;
 
-         int16 tmp2 = stg26 - x17;
-         int16 tmp3 = imul_b1_b3(x15) - tmp2;
-         int16 x44 = tmp3 + x24;
+         int16_t tmp2 = stg26 - x17;
+         int16_t tmp3 = imul_b1_b3(x15) - tmp2;
+         int16_t x44 = tmp3 + x24;
 
-         int16 src0 = *(pSrc+0);
-         int16 src1 = *(pSrc+4);
-         int16 x30 = src0 + src1;
-         int16 x31 = src0 - src1;
+         int16_t src0 = *(pSrc+0);
+         int16_t src1 = *(pSrc+4);
+         int16_t x30 = src0 + src1;
+         int16_t x31 = src0 - src1;
 
-         int16 src2 = *(pSrc+2);
-         int16 src3 = *(pSrc+6);
-         int16 x12 = src2 - src3;
-         int16 x13 = src2 + src3;
+         int16_t src2 = *(pSrc+2);
+         int16_t src3 = *(pSrc+6);
+         int16_t x12 = src2 - src3;
+         int16_t x13 = src2 + src3;
 
-         int16 x32 = imul_b1_b3(x12) - x13;
+         int16_t x32 = imul_b1_b3(x12) - x13;
 
-         int16 x40 = x30 + x13;
-         int16 x43 = x30 - x13;
-         int16 x41 = x31 + x32;
-         int16 x42 = x31 - x32;
+         int16_t x40 = x30 + x13;
+         int16_t x43 = x30 - x13;
+         int16_t x41 = x31 + x32;
+         int16_t x42 = x31 - x32;
 
          *(pSrc+0) = x40 + x17;
          *(pSrc+1) = x41 + tmp2;
@@ -1372,16 +1373,16 @@ static void idctRows(void)
 
 static void idctCols(void)
 {
-   uint8 i;
+   uint8_t i;
 
-   int16* pSrc = gCoeffBuf;
+   int16_t* pSrc = gCoeffBuf;
 
    for (i = 0; i < 8; i++)
    {
       if ((pSrc[1*8] | pSrc[2*8] | pSrc[3*8] | pSrc[4*8] | pSrc[5*8] | pSrc[6*8] | pSrc[7*8]) == 0)
       {
          // Short circuit the 1D IDCT if only the DC component is non-zero
-         uint8 c = clamp(PJPG_DESCALE(*pSrc) + 128);
+         uint8_t c = clamp(PJPG_DESCALE(*pSrc) + 128);
          *(pSrc+0*8) = c;
          *(pSrc+1*8) = c;
          *(pSrc+2*8) = c;
@@ -1393,44 +1394,44 @@ static void idctCols(void)
       }
       else
       {
-         int16 src4 = *(pSrc+5*8);
-         int16 src7 = *(pSrc+3*8);
-         int16 x4  = src4 - src7;
-         int16 x7  = src4 + src7;
+         int16_t src4 = *(pSrc+5*8);
+         int16_t src7 = *(pSrc+3*8);
+         int16_t x4  = src4 - src7;
+         int16_t x7  = src4 + src7;
 
-         int16 src5 = *(pSrc+1*8);
-         int16 src6 = *(pSrc+7*8);
-         int16 x5  = src5 + src6;
-         int16 x6  = src5 - src6;
+         int16_t src5 = *(pSrc+1*8);
+         int16_t src6 = *(pSrc+7*8);
+         int16_t x5  = src5 + src6;
+         int16_t x6  = src5 - src6;
 
-         int16 tmp1 = imul_b5(x4 - x6);
-         int16 stg26 = imul_b4(x6) - tmp1;
+         int16_t tmp1 = imul_b5(x4 - x6);
+         int16_t stg26 = imul_b4(x6) - tmp1;
 
-         int16 x24 = tmp1 - imul_b2(x4);
+         int16_t x24 = tmp1 - imul_b2(x4);
 
-         int16 x15 = x5 - x7;
-         int16 x17 = x5 + x7;
+         int16_t x15 = x5 - x7;
+         int16_t x17 = x5 + x7;
 
-         int16 tmp2 = stg26 - x17;
-         int16 tmp3 = imul_b1_b3(x15) - tmp2;
-         int16 x44 = tmp3 + x24;
+         int16_t tmp2 = stg26 - x17;
+         int16_t tmp3 = imul_b1_b3(x15) - tmp2;
+         int16_t x44 = tmp3 + x24;
 
-         int16 src0 = *(pSrc+0*8);
-         int16 src1 = *(pSrc+4*8);
-         int16 x30 = src0 + src1;
-         int16 x31 = src0 - src1;
+         int16_t src0 = *(pSrc+0*8);
+         int16_t src1 = *(pSrc+4*8);
+         int16_t x30 = src0 + src1;
+         int16_t x31 = src0 - src1;
 
-         int16 src2 = *(pSrc+2*8);
-         int16 src3 = *(pSrc+6*8);
-         int16 x12 = src2 - src3;
-         int16 x13 = src2 + src3;
+         int16_t src2 = *(pSrc+2*8);
+         int16_t src3 = *(pSrc+6*8);
+         int16_t x12 = src2 - src3;
+         int16_t x13 = src2 + src3;
 
-         int16 x32 = imul_b1_b3(x12) - x13;
+         int16_t x32 = imul_b1_b3(x12) - x13;
 
-         int16 x40 = x30 + x13;
-         int16 x43 = x30 - x13;
-         int16 x41 = x31 + x32;
-         int16 x42 = x31 - x32;
+         int16_t x40 = x30 + x13;
+         int16_t x43 = x30 - x13;
+         int16_t x41 = x31 + x32;
+         int16_t x42 = x31 - x32;
 
          // descale, convert to unsigned and clamp to 8-bit
          *(pSrc+0*8) = clamp(PJPG_DESCALE(x40 + x17)  + 128);
@@ -1448,11 +1449,11 @@ static void idctCols(void)
 }
 
 /*----------------------------------------------------------------------------*/
-static PJPG_INLINE uint8 addAndClamp(uint8 a, int16 b)
+static PJPG_INLINE uint8_t addAndClamp(uint8_t a, int16_t b)
 {
    b = a + b;
 
-   if ((uint16)b > 255U)
+   if ((uint16_t)b > 255U)
    {
       if (b < 0)
          return 0;
@@ -1460,14 +1461,14 @@ static PJPG_INLINE uint8 addAndClamp(uint8 a, int16 b)
          return 255;
    }
 
-   return (uint8)b;
+   return (uint8_t)b;
 }
 /*----------------------------------------------------------------------------*/
-static PJPG_INLINE uint8 subAndClamp(uint8 a, int16 b)
+static PJPG_INLINE uint8_t subAndClamp(uint8_t a, int16_t b)
 {
    b = a - b;
 
-   if ((uint16)b > 255U)
+   if ((uint16_t)b > 255U)
    {
       if (b < 0)
          return 0;
@@ -1475,7 +1476,7 @@ static PJPG_INLINE uint8 subAndClamp(uint8 a, int16 b)
          return 255;
    }
 
-   return (uint8)b;
+   return (uint8_t)b;
 }
 /*----------------------------------------------------------------------------*/
 // 103/256
@@ -1488,19 +1489,19 @@ static PJPG_INLINE uint8 subAndClamp(uint8 a, int16 b)
 //B = Y + 1.772 (Cb-128)
 /*----------------------------------------------------------------------------*/
 // Cb upsample and accumulate, 4x4 to 8x8
-static void upsampleCb(uint8 srcOfs, uint8 dstOfs)
+static void upsampleCb(uint8_t srcOfs, uint8_t dstOfs)
 {
    // Cb - affects G and B
-   uint8 x, y;
-   int16* pSrc = gCoeffBuf + srcOfs;
-   uint8* pDstG = gMCUBufG + dstOfs;
-   uint8* pDstB = gMCUBufB + dstOfs;
+   uint8_t x, y;
+   int16_t* pSrc = gCoeffBuf + srcOfs;
+   uint8_t* pDstG = gMCUBufG + dstOfs;
+   uint8_t* pDstB = gMCUBufB + dstOfs;
    for (y = 0; y < 4; y++)
    {
       for (x = 0; x < 4; x++)
       {
-         uint8 cb = (uint8)*pSrc++;
-         int16 cbG, cbB;
+         uint8_t cb = (uint8_t)*pSrc++;
+         int16_t cbG, cbB;
 
          cbG = ((cb * 88U) >> 8U) - 44U;
          pDstG[0] = subAndClamp(pDstG[0], cbG);
@@ -1525,19 +1526,19 @@ static void upsampleCb(uint8 srcOfs, uint8 dstOfs)
 }
 /*----------------------------------------------------------------------------*/
 // Cb upsample and accumulate, 4x8 to 8x8
-static void upsampleCbH(uint8 srcOfs, uint8 dstOfs)
+static void upsampleCbH(uint8_t srcOfs, uint8_t dstOfs)
 {
    // Cb - affects G and B
-   uint8 x, y;
-   int16* pSrc = gCoeffBuf + srcOfs;
-   uint8* pDstG = gMCUBufG + dstOfs;
-   uint8* pDstB = gMCUBufB + dstOfs;
+   uint8_t x, y;
+   int16_t* pSrc = gCoeffBuf + srcOfs;
+   uint8_t* pDstG = gMCUBufG + dstOfs;
+   uint8_t* pDstB = gMCUBufB + dstOfs;
    for (y = 0; y < 8; y++)
    {
       for (x = 0; x < 4; x++)
       {
-         uint8 cb = (uint8)*pSrc++;
-         int16 cbG, cbB;
+         uint8_t cb = (uint8_t)*pSrc++;
+         int16_t cbG, cbB;
 
          cbG = ((cb * 88U) >> 8U) - 44U;
          pDstG[0] = subAndClamp(pDstG[0], cbG);
@@ -1556,19 +1557,19 @@ static void upsampleCbH(uint8 srcOfs, uint8 dstOfs)
 }
 /*----------------------------------------------------------------------------*/
 // Cb upsample and accumulate, 8x4 to 8x8
-static void upsampleCbV(uint8 srcOfs, uint8 dstOfs)
+static void upsampleCbV(uint8_t srcOfs, uint8_t dstOfs)
 {
    // Cb - affects G and B
-   uint8 x, y;
-   int16* pSrc = gCoeffBuf + srcOfs;
-   uint8* pDstG = gMCUBufG + dstOfs;
-   uint8* pDstB = gMCUBufB + dstOfs;
+   uint8_t x, y;
+   int16_t* pSrc = gCoeffBuf + srcOfs;
+   uint8_t* pDstG = gMCUBufG + dstOfs;
+   uint8_t* pDstB = gMCUBufB + dstOfs;
    for (y = 0; y < 4; y++)
    {
       for (x = 0; x < 8; x++)
       {
-         uint8 cb = (uint8)*pSrc++;
-         int16 cbG, cbB;
+         uint8_t cb = (uint8_t)*pSrc++;
+         int16_t cbG, cbB;
 
          cbG = ((cb * 88U) >> 8U) - 44U;
          pDstG[0] = subAndClamp(pDstG[0], cbG);
@@ -1597,19 +1598,19 @@ static void upsampleCbV(uint8 srcOfs, uint8 dstOfs)
 //B = Y + 1.772 (Cb-128)
 /*----------------------------------------------------------------------------*/
 // Cr upsample and accumulate, 4x4 to 8x8
-static void upsampleCr(uint8 srcOfs, uint8 dstOfs)
+static void upsampleCr(uint8_t srcOfs, uint8_t dstOfs)
 {
    // Cr - affects R and G
-   uint8 x, y;
-   int16* pSrc = gCoeffBuf + srcOfs;
-   uint8* pDstR = gMCUBufR + dstOfs;
-   uint8* pDstG = gMCUBufG + dstOfs;
+   uint8_t x, y;
+   int16_t* pSrc = gCoeffBuf + srcOfs;
+   uint8_t* pDstR = gMCUBufR + dstOfs;
+   uint8_t* pDstG = gMCUBufG + dstOfs;
    for (y = 0; y < 4; y++)
    {
       for (x = 0; x < 4; x++)
       {
-         uint8 cr = (uint8)*pSrc++;
-         int16 crR, crG;
+         uint8_t cr = (uint8_t)*pSrc++;
+         int16_t crR, crG;
 
          crR = (cr + ((cr * 103U) >> 8U)) - 179;
          pDstR[0] = addAndClamp(pDstR[0], crR);
@@ -1634,19 +1635,19 @@ static void upsampleCr(uint8 srcOfs, uint8 dstOfs)
 }
 /*----------------------------------------------------------------------------*/
 // Cr upsample and accumulate, 4x8 to 8x8
-static void upsampleCrH(uint8 srcOfs, uint8 dstOfs)
+static void upsampleCrH(uint8_t srcOfs, uint8_t dstOfs)
 {
    // Cr - affects R and G
-   uint8 x, y;
-   int16* pSrc = gCoeffBuf + srcOfs;
-   uint8* pDstR = gMCUBufR + dstOfs;
-   uint8* pDstG = gMCUBufG + dstOfs;
+   uint8_t x, y;
+   int16_t* pSrc = gCoeffBuf + srcOfs;
+   uint8_t* pDstR = gMCUBufR + dstOfs;
+   uint8_t* pDstG = gMCUBufG + dstOfs;
    for (y = 0; y < 8; y++)
    {
       for (x = 0; x < 4; x++)
       {
-         uint8 cr = (uint8)*pSrc++;
-         int16 crR, crG;
+         uint8_t cr = (uint8_t)*pSrc++;
+         int16_t crR, crG;
 
          crR = (cr + ((cr * 103U) >> 8U)) - 179;
          pDstR[0] = addAndClamp(pDstR[0], crR);
@@ -1665,19 +1666,19 @@ static void upsampleCrH(uint8 srcOfs, uint8 dstOfs)
 }
 /*----------------------------------------------------------------------------*/
 // Cr upsample and accumulate, 8x4 to 8x8
-static void upsampleCrV(uint8 srcOfs, uint8 dstOfs)
+static void upsampleCrV(uint8_t srcOfs, uint8_t dstOfs)
 {
    // Cr - affects R and G
-   uint8 x, y;
-   int16* pSrc = gCoeffBuf + srcOfs;
-   uint8* pDstR = gMCUBufR + dstOfs;
-   uint8* pDstG = gMCUBufG + dstOfs;
+   uint8_t x, y;
+   int16_t* pSrc = gCoeffBuf + srcOfs;
+   uint8_t* pDstR = gMCUBufR + dstOfs;
+   uint8_t* pDstG = gMCUBufG + dstOfs;
    for (y = 0; y < 4; y++)
    {
       for (x = 0; x < 8; x++)
       {
-         uint8 cr = (uint8)*pSrc++;
-         int16 crR, crG;
+         uint8_t cr = (uint8_t)*pSrc++;
+         int16_t crR, crG;
 
          crR = (cr + ((cr * 103U) >> 8U)) - 179;
          pDstR[0] = addAndClamp(pDstR[0], crR);
@@ -1697,17 +1698,17 @@ static void upsampleCrV(uint8 srcOfs, uint8 dstOfs)
 }
 /*----------------------------------------------------------------------------*/
 // Convert Y to RGB
-static void copyY(uint8 dstOfs)
+static void copyY(uint8_t dstOfs)
 {
-   uint8 i;
-   uint8* pRDst = gMCUBufR + dstOfs;
-   uint8* pGDst = gMCUBufG + dstOfs;
-   uint8* pBDst = gMCUBufB + dstOfs;
-   int16* pSrc = gCoeffBuf;
+   uint8_t i;
+   uint8_t* pRDst = gMCUBufR + dstOfs;
+   uint8_t* pGDst = gMCUBufG + dstOfs;
+   uint8_t* pBDst = gMCUBufB + dstOfs;
+   int16_t* pSrc = gCoeffBuf;
 
    for (i = 64; i > 0; i--)
    {
-      uint8 c = (uint8)*pSrc++;
+      uint8_t c = (uint8_t)*pSrc++;
 
       *pRDst++ = c;
       *pGDst++ = c;
@@ -1716,17 +1717,17 @@ static void copyY(uint8 dstOfs)
 }
 /*----------------------------------------------------------------------------*/
 // Cb convert to RGB and accumulate
-static void convertCb(uint8 dstOfs)
+static void convertCb(uint8_t dstOfs)
 {
-   uint8 i;
-   uint8* pDstG = gMCUBufG + dstOfs;
-   uint8* pDstB = gMCUBufB + dstOfs;
-   int16* pSrc = gCoeffBuf;
+   uint8_t i;
+   uint8_t* pDstG = gMCUBufG + dstOfs;
+   uint8_t* pDstB = gMCUBufB + dstOfs;
+   int16_t* pSrc = gCoeffBuf;
 
    for (i = 64; i > 0; i--)
    {
-      uint8 cb = (uint8)*pSrc++;
-      int16 cbG, cbB;
+      uint8_t cb = (uint8_t)*pSrc++;
+      int16_t cbG, cbB;
 
       cbG = ((cb * 88U) >> 8U) - 44U;
       *pDstG = subAndClamp(pDstG[0], cbG);
@@ -1739,17 +1740,17 @@ static void convertCb(uint8 dstOfs)
 }
 /*----------------------------------------------------------------------------*/
 // Cr convert to RGB and accumulate
-static void convertCr(uint8 dstOfs)
+static void convertCr(uint8_t dstOfs)
 {
-   uint8 i;
-   uint8* pDstR = gMCUBufR + dstOfs;
-   uint8* pDstG = gMCUBufG + dstOfs;
-   int16* pSrc = gCoeffBuf;
+   uint8_t i;
+   uint8_t* pDstR = gMCUBufR + dstOfs;
+   uint8_t* pDstG = gMCUBufG + dstOfs;
+   int16_t* pSrc = gCoeffBuf;
 
    for (i = 64; i > 0; i--)
    {
-      uint8 cr = (uint8)*pSrc++;
-      int16 crR, crG;
+      uint8_t cr = (uint8_t)*pSrc++;
+      int16_t crR, crG;
 
       crR = (cr + ((cr * 103U) >> 8U)) - 179;
       *pDstR = addAndClamp(pDstR[0], crR);
@@ -1761,7 +1762,7 @@ static void convertCr(uint8 dstOfs)
    }
 }
 /*----------------------------------------------------------------------------*/
-static void transformBlock(uint8 mcuBlock)
+static void transformBlock(uint8_t mcuBlock)
 {
    idctRows();
    idctCols();
@@ -1908,10 +1909,10 @@ static void transformBlock(uint8 mcuBlock)
    }
 }
 //------------------------------------------------------------------------------
-static void transformBlockReduce(uint8 mcuBlock)
+static void transformBlockReduce(uint8_t mcuBlock)
 {
-   uint8 c = clamp(PJPG_DESCALE(gCoeffBuf[0]) + 128);
-   int16 cbG, cbB, crR, crG;
+   uint8_t c = clamp(PJPG_DESCALE(gCoeffBuf[0]) + 128);
+   int16_t cbG, cbB, crR, crG;
 
    switch (gScanType)
    {
@@ -2118,10 +2119,10 @@ static void transformBlockReduce(uint8 mcuBlock)
    }
 }
 //------------------------------------------------------------------------------
-static uint8 decodeNextMCU(void)
+static uint8_t decodeNextMCU(void)
 {
-   uint8 status;
-   uint8 mcuBlock;
+   uint8_t status;
+   uint8_t mcuBlock;
 
    if (gRestartInterval)
    {
@@ -2136,14 +2137,14 @@ static uint8 decodeNextMCU(void)
 
    for (mcuBlock = 0; mcuBlock < gMaxBlocksPerMCU; mcuBlock++)
    {
-      uint8 componentID = gMCUOrg[mcuBlock];
-      uint8 compQuant = gCompQuant[componentID];
-      uint8 compDCTab = gCompDCTab[componentID];
-      uint8 numExtraBits, compACTab, k;
-      const int16* pQ = compQuant ? gQuant1 : gQuant0;
-      uint16 r, dc;
+      uint8_t componentID = gMCUOrg[mcuBlock];
+      uint8_t compQuant = gCompQuant[componentID];
+      uint8_t compDCTab = gCompDCTab[componentID];
+      uint8_t numExtraBits, compACTab, k;
+      const int16_t* pQ = compQuant ? gQuant1 : gQuant0;
+      uint16_t r, dc;
 
-      uint8 s = huffDecode(compDCTab ? &gHuffTab1 : &gHuffTab0, compDCTab ? gHuffVal1 : gHuffVal0);
+      uint8_t s = huffDecode(compDCTab ? &gHuffTab1 : &gHuffTab0, compDCTab ? gHuffVal1 : gHuffVal0);
 
       r = 0;
       numExtraBits = s & 0xF;
@@ -2179,7 +2180,7 @@ static uint8 decodeNextMCU(void)
                   if ((k + r) > 63)
                      return PJPG_DECODE_ERROR;
 
-                  k = (uint8)(k + r);
+                  k = (uint8_t)(k + r);
                }
             }
             else
@@ -2203,7 +2204,7 @@ static uint8 decodeNextMCU(void)
          // Decode and dequantize AC coefficients
          for (k = 1; k < 64; k++)
          {
-            uint16 extraBits;
+            uint16_t extraBits;
 
             s = huffDecode(compACTab ? &gHuffTab3 : &gHuffTab2, compACTab ? gHuffVal3 : gHuffVal2);
 
@@ -2217,7 +2218,7 @@ static uint8 decodeNextMCU(void)
 
             if (s)
             {
-               int16 ac;
+               int16_t ac;
 
                if (r)
                {
@@ -2264,7 +2265,7 @@ static uint8 decodeNextMCU(void)
 //------------------------------------------------------------------------------
 uint8_t pjpeg_decode_mcu(void)
 {
-   uint8 status;
+   uint8_t status;
 
    if (gCallbackStatus)
       return gCallbackStatus;
@@ -2289,7 +2290,7 @@ uint8_t pjpeg_decode_mcu(void)
 //------------------------------------------------------------------------------
 uint8_t pjpeg_decode_init(pjpeg_image_info_t *pInfo, pjpeg_need_bytes_callback_t pNeed_bytes_callback, void *pCallback_data, uint8_t reduce)
 {
-   uint8 status;
+   uint8_t status;
 
    pInfo->m_width = 0; pInfo->m_height = 0; pInfo->m_comps = 0;
    pInfo->m_MCUSPerRow = 0; pInfo->m_MCUSPerCol = 0;
