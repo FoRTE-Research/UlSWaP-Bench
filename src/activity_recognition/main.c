@@ -256,10 +256,10 @@ void record_stats(stats_t *stats, class_t class)
 
 void print_stats(stats_t *stats)
 {
-    volatile uint16_t resultStationaryPct = stats->stationaryCount * 100 / stats->totalCount;
-    volatile uint16_t resultMovingPct = stats->movingCount * 100 / stats->totalCount;
-
-    volatile uint16_t sum = stats->stationaryCount + stats->movingCount;
+    volatile uint16_t noprint_output;
+    uint16_t resultStationaryPct = stats->stationaryCount * 100 / stats->totalCount;
+    uint16_t resultMovingPct = stats->movingCount * 100 / stats->totalCount;
+    uint16_t sum = stats->stationaryCount + stats->movingCount;
 
     printf("stats: s %u (%u%%) m %u (%u%%) sum/tot %u/%u: %c\r\n",
            stats->stationaryCount, resultStationaryPct,
@@ -267,9 +267,10 @@ void print_stats(stats_t *stats)
            stats->totalCount, sum,
            sum == stats->totalCount && sum == SAMPLES_TO_COLLECT ? 'V' : 'X');
 
-    (void)resultStationaryPct;
-    (void)resultMovingPct;
-    (void)sum;
+    noprint_output = resultStationaryPct;
+    noprint_output = resultMovingPct;
+    noprint_output = sum;
+    (void)noprint_output;
 }
 
 void warmup_sensor()

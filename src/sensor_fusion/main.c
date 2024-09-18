@@ -6,7 +6,8 @@
 
 int benchmark_main(void)
 {
-    volatile float out;
+    volatile float noprint_output;
+    float out;
     int i, j;
     for (i = TESTCASES - 1; i >= 0; i--)
     {
@@ -19,7 +20,8 @@ int benchmark_main(void)
         printf("%f\r\n", printf_float(out));
     }
 
-    (void)out;
+    noprint_output = out;
+    (void)noprint_output;
 
     return 0;
 }

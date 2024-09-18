@@ -99,8 +99,9 @@ static void native_to_little_endian(void *data, char *format);
 
 static uint32_t adpcm_converter()
 {
+    volatile uint32_t noprint_output;
     uint32_t checksum = 0;
-    volatile uint32_t bytes_written = 0;
+    uint32_t bytes_written = 0;
     int32_t format = 0;
     int32_t bits_per_sample = 0;
     int32_t num_channels;
@@ -321,7 +322,9 @@ static uint32_t adpcm_converter()
 
     printf("Output file size = %u bytes\r\n", bytes_written);
     printf("Checksum = %u\r\n", checksum);
-    (void)bytes_written;
+    noprint_output = bytes_written;
+    noprint_output = checksum;
+    (void)noprint_output;
 
 #if HOST_TEST
     printf("Output written to %s\r\n", OUTPUT_FILENAME);
