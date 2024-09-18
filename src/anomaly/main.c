@@ -27,8 +27,9 @@ void featurize(double *rms, double *crest, const int16_t *series, size_t len)
 
 int benchmark_main(void)
 {
+    volatile double noprint_output;
     double features[6];
-    volatile double pred_featurized;
+    double pred_featurized;
 
     featurize(&features[0], &features[1], acc_x3, sizeof(acc_x3) / sizeof(acc_x3[0]));
     featurize(&features[2], &features[3], acc_y3, sizeof(acc_y3) / sizeof(acc_y3[0]));
@@ -85,5 +86,9 @@ int benchmark_main(void)
     {
         printf("NOK\r\n");
     }
+
+    noprint_output = pred_featurized;
+    (void)noprint_output;
+
     return 0;
 }

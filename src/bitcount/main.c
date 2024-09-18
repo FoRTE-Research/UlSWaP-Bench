@@ -22,8 +22,9 @@ static uint32_t bit_shifter(uint32_t x);
 
 int benchmark_main(void)
 {
+    volatile uint32_t noprint_output;
     uint32_t i, j, num;
-    volatile uint32_t set_bits;
+    uint32_t set_bits;
 
     my_srand(RNG_SEED);
 
@@ -58,6 +59,9 @@ int benchmark_main(void)
 
         printf("%-38s> Set bits: %u\r\n", func_names[i], set_bits);
     }
+
+    noprint_output = set_bits;
+    (void)noprint_output;
 
     return 0;
 }
