@@ -11,9 +11,9 @@
 #include "bitops.h"
 #include "common.h"
 
-#define FUNCS      8
+#define NUM_FUNCS  8
 #define RNG_SEED   0x0C728394
-#define ITERATIONS 1125000
+#define ITERATIONS 100000
 
 void my_srand(uint32_t new_seed);
 uint32_t my_rand(void);
@@ -22,11 +22,12 @@ static uint32_t bit_shifter(uint32_t x);
 
 int benchmark_main(void)
 {
-    uint32_t i, j, n, seed;
+    uint32_t i, j, num;
+    volatile uint32_t set_bits;
 
     my_srand(RNG_SEED);
 
-    static uint32_t (*pBitCntFunc[FUNCS])(uint32_t) = {
+    static uint32_t (*pBitCntFunc[NUM_FUNCS])(uint32_t) = {
         bit_count,
         bitcount,
         ntbl_bitcnt,
@@ -35,7 +36,7 @@ int benchmark_main(void)
         BW_btbl_bitcount,
         AR_btbl_bitcount,
         bit_shifter};
-    static char *text[FUNCS] = {
+    static char *func_names[NUM_FUNCS] = {
         "Optimized 1 bit/loop counter",
         "Ratko's mystery algorithm",
         "Recursive bit count by nybbles",
@@ -44,17 +45,18 @@ int benchmark_main(void)
         "Non-recursive bit count by bytes (BW)",
         "Non-recursive bit count by bytes (AR)",
         "Shift and count bits"};
+    (void)func_names;
 
-    puts("Bit counter algorithm benchmark\r\n");
+    printf("Counting total number of 1's in %u random numbers\r\n", ITERATIONS);
 
-    for (i = 0; i < FUNCS; i++)
+    for (i = 0; i < NUM_FUNCS; i++)
     {
-        for (j = n = 0, seed = my_rand(); j < ITERATIONS; j++, seed += 13)
+        for (j = set_bits = 0, num = my_rand(); j < ITERATIONS; j++, num += 13)
         {
-            n += pBitCntFunc[i](seed);
+            set_bits += pBitCntFunc[i](num);
         }
 
-        printf("%-38s> Bits: %u\r\n", text[i], n);
+        printf("%-38s> Set bits: %u\r\n", func_names[i], set_bits);
     }
 
     return 0;

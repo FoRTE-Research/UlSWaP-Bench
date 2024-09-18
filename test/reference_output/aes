@@ -1,11 +1,10 @@
+Mode: ECB
 Key: 2b7e151628aed2a6abf7158809cf4f3c
+
 Encrypting 16 bytes 4096 times (65536 bytes total) 
 Plaintext: 6bc1bee22e409f96e93d7e117393172a
 Ciphertext: 3ad77bb40d7a3660a89ecaf32466ef97
-SUCCESS!
 
 Decrypting 16 bytes 4096 times (65536 bytes total) 
 Ciphertext: 3ad77bb40d7a3660a89ecaf32466ef97
 Plaintext: 6bc1bee22e409f96e93d7e117393172a
-SUCCESS!
-
