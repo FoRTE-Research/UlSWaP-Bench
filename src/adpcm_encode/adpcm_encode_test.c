@@ -12,6 +12,7 @@
 #include <ctype.h>
 #include <math.h>
 
+#include "common.h"
 #include "adpcm-lib.h"
 #include "input.h"
 
@@ -99,7 +100,7 @@ static void native_to_little_endian(void *data, char *format);
 static uint32_t adpcm_converter()
 {
     uint32_t checksum = 0;
-    uint32_t bytes_written = 0;
+    volatile uint32_t bytes_written = 0;
     int32_t format = 0;
     int32_t bits_per_sample = 0;
     int32_t num_channels;
@@ -320,6 +321,7 @@ static uint32_t adpcm_converter()
 
     printf("Output file size = %u bytes\r\n", bytes_written);
     printf("Checksum = %u\r\n", checksum);
+    (void)bytes_written;
 
 #if HOST_TEST
     printf("Output written to %s\r\n", OUTPUT_FILENAME);
