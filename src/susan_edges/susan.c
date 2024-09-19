@@ -594,13 +594,15 @@ int32_t benchmark_main()
     printf("Image width = %d\r\n", x_size);
     printf("Image height = %d\r\n", y_size);
 
+    volatile int32_t noprint_output;
     int32_t checksum = 0;
     for (int32_t i = 0; i < x_size * y_size; i++)
     {
         checksum += in[i];
     }
     printf("Output image checksum = %d\r\n", checksum);
-    (void)checksum;
+    noprint_output = checksum;
+    (void)noprint_output;
 
 #if HOST_TEST
     put_image(in, x_size, y_size);
