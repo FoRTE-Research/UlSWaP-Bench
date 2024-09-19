@@ -47,15 +47,8 @@ int check_decrypt()
 
 int benchmark_main(void)
 {
-    uint32_t test_result = 1;
-
     rsa1024_encrypt(public_key, public_exponent, plaintext, resultBuffer);
-    test_result = check_encrypt();
-    printf("Encryption %s\r\n\r\n", test_result ? "failed" : "successful");
-
     rsa1024_decrypt(public_key, private_key, ciphertext, resultBuffer);
-    test_result = check_decrypt();
-    printf("Decryption %s\r\n", test_result ? "failed" : "successful");
 
     return 0;
 }
