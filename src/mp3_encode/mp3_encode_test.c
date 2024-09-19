@@ -3,7 +3,7 @@
 #include <string.h>
 #include "shine_mp3.h"
 #include "input.h"
-
+#include "common.h"
 
 static const uint32_t g_wav_file_size     = sizeof(test_data);
 static const uint32_t g_header_size_bytes = 44;
@@ -39,6 +39,7 @@ int benchmark_main()
     uint8_t* output_data;
     uint32_t output_size = 0;
     uint32_t checksum = 0;
+    volatile uint32_t noprint_output;
 
     shine_set_config_mpeg_defaults(&config.mpeg);
 
@@ -97,6 +98,8 @@ int benchmark_main()
     printf("Output bitrate: %u kbps\r\n", g_output_bitrate);
     printf("Output file size: %u bytes\r\n", output_size);
     printf("Checksum = %u\r\n", checksum);
+    noprint_output = output_size;
+    (void)noprint_output;
 
 #if HOST_TEST
     printf("Output written to %s\r\n", OUTPUT_FILENAME);

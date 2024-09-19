@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include "input.h"
 #include "lzfx.h"
+#include "common.h"
 
 #define OUTPUT_FILENAME "lzfx_compressed_data.h"
 #define COMPRESSED_SIZE 5000
@@ -25,11 +26,14 @@ int32_t benchmark_main(void)
 
     // compute checksum on compressed data
     uint32_t checksum = 0;
+    volatile uint32_t noprint_output;
     for (uint32_t i = 0; i < compressed_size; i++)
     {
         checksum += compressed_data[i];
     }
     printf("Compressed data checksum: 0x%08X\r\n", checksum);
+    noprint_output = checksum;
+    (void)noprint_output;
 
 #if HOST_TEST
     printf("Writing compressed data to %s\r\n", OUTPUT_FILENAME);

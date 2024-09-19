@@ -4,7 +4,6 @@
 #include <stdint.h>
 
 #include "fourier.h"
-#include "../common.h"
 #include "common.h"
 
 const uint32_t MAXSIZE = 256;       // small 4096, 8192 inverse, 512 for memory-limited systems
