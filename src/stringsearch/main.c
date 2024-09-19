@@ -15,6 +15,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <limits.h>
+#include <stdio.h>
 #include "common.h"
 
 static size_t table[UCHAR_MAX + 1];
@@ -72,8 +73,6 @@ char *strsearch(const char *string)
     }
     return NULL;
 }
-
-#include <stdio.h>
 
 int benchmark_main()
 {
