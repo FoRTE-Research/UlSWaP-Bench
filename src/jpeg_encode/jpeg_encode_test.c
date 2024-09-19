@@ -23,6 +23,7 @@ int32_t benchmark_main()
     int32_t len;
     const uint8_t *jpeg = jpec_enc_run(e, &len);
 
+    volatile uint32_t noprint_output;
     uint32_t checksum = 0;
     for (int32_t i = 0; i < len; i++)
     {
@@ -30,6 +31,8 @@ int32_t benchmark_main()
     }
     printf("Output image size: %d\r\n", len);
     printf("Output image checksum: %u\r\n", checksum);
+    noprint_output = checksum;
+    (void)noprint_output;
 
 #if HOST_TEST
     FILE *file = fopen(OUTPUT_IMAGE_NAME, "wb");

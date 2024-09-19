@@ -27,11 +27,14 @@ int benchmark_main(void)
 
     // compute checksum on decompressed data
     uint32_t checksum = 0;
+    volatile uint32_t noprint_output;
     for (uint32_t i = 0; i < compressed_size; i++)
     {
         checksum += decompressed_data[i];
     }
     printf("Decompressed data checksum: 0x%08X\r\n", checksum);
+    noprint_output = checksum;
+    (void)noprint_output;
 
 #if HOST_TEST
     printf("Writing decompressed data to %s\r\n", OUTPUT_FILENAME);
