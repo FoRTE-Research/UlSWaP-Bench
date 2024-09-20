@@ -48,9 +48,11 @@
 #include <stdlib.h>
 
 /* define if you have fast 32-bit types on your system */
-#if 1
-#  define HAVE_UINT_32T
-#endif
+// #if 1
+// When enabled, this attempts to cast a non-four-byte-aligned char pointer to a uint_32t pointer, which
+// results in an address misaligned exception on RISC-V.
+// #  define HAVE_UINT_32T
+// #endif
 
 /* define if you don't want any tables */
 #if 1
