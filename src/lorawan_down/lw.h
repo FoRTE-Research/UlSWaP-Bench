@@ -14,7 +14,7 @@
 #warning Not supported compiler type
 #endif
 
-#define LW_MAX_NODES (150)
+#define LW_MAX_NODES (10)
 #define LW_KEY_LEN (16)
 #define LW_MIC_LEN (4)
 
