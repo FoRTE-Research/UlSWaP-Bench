@@ -6,7 +6,7 @@
 #include "input.h"
 
 #define OUTPUT_FILENAME "lzfx_decompressed_data.txt"
-#define DECOMP_DATA_LEN 0x2000
+#define DECOMP_DATA_LEN 0x1800
 uint8_t decompressed_data[DECOMP_DATA_LEN];
 
 int benchmark_main(void)
