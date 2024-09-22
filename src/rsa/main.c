@@ -5,7 +5,7 @@
 #include "bn.h"
 #include "common.h"
 
-char resultBuffer[8192];
+char resultBuffer[2048];
 
 const char public_key[] =
     "b7a6084628c283c8dbc3d5ce296df8e7084372e85ed2e59a602e4a5033c08b44"

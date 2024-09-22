@@ -50,7 +50,7 @@ void rsa1024_encrypt(
 {
     printf("Encrypting...\r\n");
 
-    char buf[8192];
+    char buf[2048];
 
     struct bn n; /* public  key */
     struct bn d; /* private key */
@@ -100,7 +100,7 @@ void rsa1024_decrypt(
 {
     printf("Decrypting...\r\n");
 
-    char buf[8192];
+    char buf[2048];
 
     struct bn n; /* public  key */
     struct bn d; /* private key */
