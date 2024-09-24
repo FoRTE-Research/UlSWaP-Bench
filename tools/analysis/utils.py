@@ -3,6 +3,42 @@ from enum import Enum
 
 VSOC_EXEC = '/home/danchiba/FrankenRV/hdl/sim/obj_dir/VSOC'
 
+ALL_BENCHMARKS = {
+    'Security': ['aes', 'chacha20', 'poly1305', 'rsa', 'ecc', 'sha256'],
+    'Communication': ['crc', 'dijkstra', 'patricia', 'lzfx_compress', 'lzfx_decompress', 'lorawan_down', 'lorawan_up'],
+    'AI': ['activity_recognition', 'sensor_fusion', 'anomaly'],
+    'Signal Processing': ['fft', 'adpcm_encode', 'mp3_encode', 'jpeg_decode', 'jpeg_encode', 'susan_edges', 'susan_corners', 'susan_smoothing'],
+    'General': ['basicmath', 'bitcount', 'qsort', 'stringsearch']
+}
+
+def get_bench_names() -> list[str]:
+    bench_names = []
+    for bench_group in ALL_BENCHMARKS.values():
+        bench_names += bench_group
+
+    return bench_names
+
+
+def get_label_xtick_positions() -> list[float]:
+    positions = []
+    bench_idx = 0
+    for i, bench_group in enumerate(ALL_BENCHMARKS.keys()):
+        positions.append(bench_idx + (len(ALL_BENCHMARKS[bench_group]) - 1) / 2)
+        bench_idx += len(ALL_BENCHMARKS[bench_group])
+
+    return positions
+
+
+def get_line_xticks() -> list[float]:
+    positions = []
+    bench_idx = 0
+    for bench_group in ALL_BENCHMARKS.values():
+        positions.append(bench_idx + len(bench_group) - 0.5)
+        bench_idx += len(bench_group)
+
+    return positions
+
+
 class RunStatus(Enum):
     SUCCESS = 1
     FAILED = 2
