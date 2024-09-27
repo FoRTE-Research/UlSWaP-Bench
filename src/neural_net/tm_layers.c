@@ -289,7 +289,7 @@ tm_err_t TM_WEAK tml_add(tm_mat_t* in0, tm_mat_t* in1, tm_mat_t* out, \
     mtype_t* d1 = in1->data;
     mtype_t* res = out->data; 
     int size = in0->h*in0->w*in0->c;
-    TM_PRINTF("s0=%.3f,zp0=%d; s1=%.3f,zp1=%d\r\n", in_s0, in_zp0, in_s1, in_zp1);
+    TM_PRINTF("s0=%.3f,zp0=%d; s1=%.3f,zp1=%d\r\n", printf_float(in_s0), in_zp0, printf_float(in_s1), in_zp1);
 #if TM_MDL_TYPE == TM_MDL_FP16 || TM_MDL_TYPE == TM_MDL_FP32 || TM_MDL_TYPE == TM_MDL_INT8
     int i;
     for(i=0; i+4<=size; ){

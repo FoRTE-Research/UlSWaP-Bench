@@ -12,6 +12,7 @@ limitations under the License.
 
 #include "stdio.h"
 #include "tinymaix.h"
+#include "common.h"
 
 #include "mnist_resnet_q.h"
 
@@ -94,9 +95,9 @@ static tm_err_t layer_cb(tm_mdl_t* mdl, tml_head_t* lh)
             TM_PRINTF("[");
             for(int c=0; c<ch; c++){
             #if TM_MDL_TYPE == TM_MDL_FP32
-                TM_PRINTF("%.3f,", output[(y*w+x)*ch+c]);
+                TM_PRINTF("%.3f,", printf_float(output[(y*w+x)*ch+c]));
             #else
-                TM_PRINTF("%.3f,", TML_DEQUANT(lh,output[(y*w+x)*ch+c]));
+                TM_PRINTF("%.3f,", printf_float(TML_DEQUANT(lh,output[(y*w+x)*ch+c])));
             #endif
             }
             TM_PRINTF("],");
@@ -115,13 +116,13 @@ static void parse_output(tm_mat_t* outs)
     float maxp = 0;
     int maxi = -1;
     for(int i=0; i<10; i++){
-        printf("%d: %.3f\n", i, data[i]);
+        printf("%d: %.3f\n", i, printf_float(data[i]));
         if(data[i] > maxp) {
             maxi = i;
             maxp = data[i];
         }
     }
-    TM_PRINTF("### Predict output is: Number %d, prob %.3f\n", maxi, maxp);
+    TM_PRINTF("### Predict output is: Number %d, prob %.3f\n", maxi, printf_float(maxp));
     return;
 }
 
