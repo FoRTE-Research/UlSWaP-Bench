@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "snipmath.h"
 #include <math.h>
+#include "snipmath.h"
 #include "common.h"
 
 /* The printf's may be removed to isolate just the math calculations */
@@ -57,23 +57,6 @@ int benchmark_main(void)
     {
         printf("%.12f radians = %3.0f degrees\r\n", printf_float(X), printf_float(rad2deg(X)));
     }
-
-    printf("\r\n********* REMAINDERS ***********\r\n");
-    my_srand(0x12345678);
-    i = 0;
-    while (i < 500)
-    {
-        uint32_t dividend = my_rand() & 0xFFFFFF;
-        uint32_t divisor = my_rand() & 0xFFF;
-        if (divisor != 0)
-        {
-            uint32_t remainder = dividend % divisor;
-            printf("%8u %% %4u = %4u\r\n", dividend, divisor, remainder);
-            (void)remainder;
-            i++;
-        }
-    }
-    printf("\r\n");
 
     return 0;
 }

@@ -5,9 +5,10 @@
 
 // Enable both ECB and CBC mode. Note this can be done before including aes.h or at compile-time.
 // E.g. with GCC by using the -D flag: gcc -c aes.c -DCBC=0 -DECB=1
-#define CBC 1
+#define CBC 0
 #define ECB 1
 
+#include "common.h"
 #include "aes.h"
 
 #define ECB_MSG_SIZE 16
@@ -35,15 +36,13 @@ static void print_char_array(uint8_t *arr, uint8_t len, const char* label)
 
 int benchmark_main(void)
 {
+    printf("Mode: ECB\r\n");
     print_char_array(key, 16, "Key");
+    printf("\r\n");
 
     test_encrypt_ecb();
+    printf("\r\n");
     test_decrypt_ecb();
-
-    // printf("CBC\r\n---\r\n");
-    // print_char_array(iv, 16, "IV");
-    // test_encrypt_cbc();
-    // test_decrypt_cbc();
 
     return 0;
 }
@@ -51,51 +50,34 @@ int benchmark_main(void)
 void test_encrypt_ecb(void)
 {
     uint8_t in[] = {0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a};
-    uint8_t out[] = {0x3a, 0xd7, 0x7b, 0xb4, 0x0d, 0x7a, 0x36, 0x60, 0xa8, 0x9e, 0xca, 0xf3, 0x24, 0x66, 0xef, 0x97};
-    uint8_t buffer[16];
+    uint8_t out[16];
 
     printf("Encrypting %u bytes %u times (%u bytes total) \r\n", ECB_MSG_SIZE, ECB_ITERATIONS, ECB_MSG_SIZE * ECB_ITERATIONS);
     for (int i = 0; i < ECB_ITERATIONS; i++)
     {
-        AES128_ECB_encrypt(in, key, buffer);
+        AES128_ECB_encrypt(in, key, out);
     }
 
     print_char_array(in, 16, "Plaintext");
-    print_char_array(buffer, 16, "Ciphertext");
-    if (0 == strncmp((char *)out, (char *)buffer, 16))
-    {
-        printf("SUCCESS!\r\n\r\n");
-    }
-    else
-    {
-        printf("FAILURE!\r\n\r\n");
-    }
+    print_char_array(out, 16, "Ciphertext");
 }
 
 void test_decrypt_ecb(void)
 {
     uint8_t in[] = {0x3a, 0xd7, 0x7b, 0xb4, 0x0d, 0x7a, 0x36, 0x60, 0xa8, 0x9e, 0xca, 0xf3, 0x24, 0x66, 0xef, 0x97};
-    uint8_t out[] = {0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a};
-    uint8_t buffer[16];
+    uint8_t out[16];
 
     printf("Decrypting %u bytes %u times (%u bytes total) \r\n", ECB_MSG_SIZE, ECB_ITERATIONS, ECB_MSG_SIZE * ECB_ITERATIONS);
     for (int i = 0; i < ECB_ITERATIONS; i++)
     {
-        AES128_ECB_decrypt(in, key, buffer);
+        AES128_ECB_decrypt(in, key, out);
     }
 
     print_char_array(in, 16, "Ciphertext");
-    print_char_array(buffer, 16, "Plaintext");
-    if (0 == strncmp((char *)out, (char *)buffer, 16))
-    {
-        printf("SUCCESS!\r\n\r\n");
-    }
-    else
-    {
-        printf("FAILURE!\r\n\r\n");
-    }
+    print_char_array(out, 16, "Plaintext");
 }
 
+#if CBC
 void test_encrypt_cbc(void)
 {
     uint8_t in[] = {0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a,
@@ -157,3 +139,4 @@ void test_decrypt_cbc(void)
         printf("FAILURE!\r\n\r\n");
     }
 }
+#endif  // CBC

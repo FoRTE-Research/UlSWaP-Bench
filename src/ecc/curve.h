@@ -31,7 +31,7 @@
 
 /* What is the default curve to use? */
 #ifndef ECC_CURVE
-#define ECC_CURVE NIST_B571 // change this name to switch curve  ex NIST_B163 -> NIST_B233
+#define ECC_CURVE NIST_B233 // change this name to switch curve  ex NIST_B163 -> NIST_B233
 #endif
 
 /* MbedTLS ECC */

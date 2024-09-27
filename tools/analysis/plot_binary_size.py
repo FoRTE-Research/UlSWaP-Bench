@@ -41,10 +41,8 @@ def get_segment_sizes(segment_output:str, file_path:str) -> dict[str, int]:
                 segment = '.text'
             elif '.rodata' in segment_line:
                 segment = '.rodata'
-            elif '.data' in segment_line:
+            elif '.data' in segment_line or '.sdata' in segment_line or '.sbss' in segment_line or '.bss' in segment_line:
                 segment = '.data'
-            elif 'bss' in segment_line:
-                continue
             else:
                 segment = 'unknown'
                 print(f'Unknown segment found: {segment_line} in {file_path}')
@@ -91,33 +89,42 @@ Args:
 def plot_binary_sizes(binary_sizes:dict[str, dict[str, int]], output_file:str=None):
     import matplotlib.pyplot as plt
 
-    # Sort the dictionary alphabetically
-    sorted_binary_sizes = dict(sorted(binary_sizes.items()))
-
     # Create a stacked bar chart of binary sizes for each benchmark
     fig, ax = plt.subplots()
     fig.set_size_inches(20, 10)
     bar_width = 0.5
-    x = list(sorted_binary_sizes.keys())
-    bar_bottom = [0] * len(x)
+    bench_names = get_bench_names()
+    bar_bottom = [0] * len(bench_names)
     for segment in ['text', 'rodata', 'data']:
-        sizes = [sorted_binary_sizes[bench].get(f'.{segment}', 0) for bench in x]
-        print(sizes)
-        ax.bar(x, sizes, bar_width, label=segment, bottom=bar_bottom)
-        bar_bottom = [bar_bottom[i] + sizes[i] for i in range(len(x))]
+        sizes = [binary_sizes[bench].get(f'.{segment}', 0) for bench in bench_names]
+        ax.bar(bench_names, sizes, bar_width, label=segment, bottom=bar_bottom)
+        bar_bottom = [bar_bottom[i] + sizes[i] for i in range(len(bench_names))]
 
-    ax.set_xlabel('Benchmarks')
+    # ax.set_xlabel('Benchmarks')
     ax.set_ylabel('Size (bytes)')
     # ax.set_title('Binary Size')
 
     # ax.set_ylim(0, 110000)
 
+    # Benchmark category labels
+    sec = ax.secondary_xaxis(location=0)
+    sec.set_xticks(get_label_xtick_positions(), labels=list('\n\n\n\n\n\n\n\n\n' + group for group in ALL_BENCHMARKS.keys()), weight='bold')
+
+    sec.tick_params('x', length=0)
+
+    # Lines between the categories:
+    sec2 = ax.secondary_xaxis(location=0)
+    sec2.set_xticks(get_line_xticks(), labels=[])
+    sec2.tick_params('x', length=120, width=1.5)
+    ax.set_xlim(-0.5, len(bench_names) - 0.5)
+
     # print total size on top of each bar
-    # for i, v in enumerate(bar_bottom):
-    #     ax.text(i, v, str(v), ha='center', va='bottom')
+    for i, v in enumerate(bar_bottom):
+        ax.text(i, v, str(v), ha='center', va='bottom')
 
     # rotate x-axis labels
-    plt.xticks(rotation=45, ha='right')
+    # plt.xticks(rotation=45, ha='right')
+    plt.xticks(rotation=90, ha='center')
     ax.legend()
     ax.grid(axis='y')
     plt.tight_layout()
@@ -135,6 +142,8 @@ def main():
         return
 
     binary_size_dict = get_all_binary_sizes(args.bin_dir)
+    for bench, sizes in binary_size_dict.items():
+        print(f'{bench}: {sizes}, total: {sum(sizes.values())}')
     plot_binary_sizes(binary_size_dict, args.plot_file)
 
 

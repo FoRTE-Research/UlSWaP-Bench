@@ -16,6 +16,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <limits.h>
+#include <stdio.h>
 #include "common.h"
 
 static size_t table[UCHAR_MAX + 1];
