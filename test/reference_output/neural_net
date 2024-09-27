@@ -1,37 +1,63 @@
-Model version: 0.4.3
-NNoM version 0.4.3
-To disable logs, please void the marco 'NNOM_LOG(...)' in 'nnom_port.h'.
-Data format: Channel last (HWC)
-Static memory size set to: 8192
-Compiling model...
-Memory cost by each block:
- 
- Memory cost by network buffers: 4352 bytes
- Total memory occupied: 7240 bytes
-Starting classification 0
-Starting classification 1
-Starting classification 2
-Starting classification 3
-Starting classification 4
-Starting classification 5
-Starting classification 6
-Starting classification 7
-Starting classification 8
-Starting classification 9
-Starting classification 10
-Starting classification 11
-Starting classification 12
-Starting classification 13
-Starting classification 14
-Starting classification 15
-Starting classification 16
-Starting classification 17
-Starting classification 18
-Starting classification 19
-Starting classification 20
-Starting classification 21
-Starting classification 22
-Starting classification 23
-Starting classification 24
-Reported model accuracy: 92%
-Expected model accuracy: 80%
+mnist demo
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,116,125,171,255,255,150, 93,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,169,253,253,253,253,253,253,218, 30,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,169,253,253,253,213,142,176,253,253,122,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0, 52,250,253,210, 32, 12,  0,  6,206,253,140,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0, 77,251,210, 25,  0,  0,  0,122,248,253, 65,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0, 31, 18,  0,  0,  0,  0,209,253,253, 65,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,117,247,253,198, 10,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 76,247,253,231, 63,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,128,253,253,144,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,176,246,253,159, 12,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 25,234,253,233, 35,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,198,253,253,141,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0, 78,248,253,189, 12,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0, 19,200,253,253,141,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,134,253,253,173, 12,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,248,253,253, 25,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,248,253,253, 43, 20, 20, 20, 20,  5,  0,  5, 20, 20, 37,150,150,150,147, 10,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,248,253,253,253,253,253,253,253,168,143,166,253,253,253,253,253,253,253,123,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,174,253,253,253,253,253,253,253,253,253,253,253,249,247,247,169,117,117, 57,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,118,123,123,123,166,253,253,253,155,123,123, 41,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
+================================ model stat ================================
+mdl_type=0 (int8))
+out_deq=1 
+input_cnt=1, output_cnt=1, layer_cnt=8
+input 3dims: (28, 28, 1)
+output 1dims: (1, 1, 10)
+main buf size 4704; sub buf size 0
+//Note: PARAM is layer param size, include align padding
+
+Idx	Layer	         outshape	inoft	outoft	PARAM	MEMOUT  OPS
+---	Input    	 28, 28,  1	-   	0    	0 	784 	0
+000	Conv2D        	 14, 14, 12	0	1176	208	2352	21168
+001	Conv2D        	  7,  7, 24	1176	3528	2784	1176	127008
+002	Conv2D        	  7,  7, 24	3528	2352	5376	1176	254016
+003	ADD           	  7,  7, 24	2352	0	0	1176	0
+004	Conv2D        	  3,  3, 48	0	3096	10752	432	93312
+005	Reshape       	  1,  1,432	3096	3096	0	432	0
+006	FC            	  1,  1, 10	3096	0	4400	10	4320
+007	Softmax       	  1,  1, 10	0	3472	0	10	60
+
+Total param ~23.0 KB, OPS ~0.50 MOPS, buffer 4.6 KB
+
+s0=0.017,zp0=-128; s1=0.029,zp1=4
+0: 0.133
+1: 0.000
+2: 0.867
+3: 0.000
+4: 0.000
+5: 0.000
+6: 0.004
+7: 0.000
+8: 0.004
+9: 0.000
+### Predict output is: Number 2, prob 0.867
