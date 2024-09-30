@@ -20,10 +20,21 @@
  * and part of high FRAM for RW memory
  */
 
+/*
+*__flash       = 0x00010000;
+*__flash_size  = 0x00019FF0;
+*__ram         = 0x00029FF0;
+*__ram_size    = 0x0001A000;
+*__stack_size  = 0xC00;
+*/
+
+/*0x43FF0 is the end*/
+/*0x43FF0 - 0x1F40 = 0x420B0*/
+
 __flash       = 0x00010000;
-__flash_size  = 0x00019FF0;
-__ram         = 0x00029FF0;
-__ram_size    = 0x0001A000;
+__flash_size  = 0x000320B0;
+__ram         = 0x000420B0;
+__ram_size    = 0x00001F40;
 __stack_size  = 0xC00;
 
 

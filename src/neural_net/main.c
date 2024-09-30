@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /* Copyright 2022 Sipeed Technology Co., Ltd. All Rights Reserved.
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -127,23 +126,24 @@ static void parse_output(tm_mat_t* outs)
 }
 
 static uint8_t mdl_buf[4800];
+tm_mdl_t mdl;
 
 int benchmark_main(void)
 {
-    TM_PRINTF("mnist demo\n");
-    tm_mdl_t mdl;
+    //TM_PRINTF("mnist demo\n");
+    //tm_mdl_t mdl;
 
     // Print image
     for(int i=0; i<28*28; i++){
-        TM_PRINTF("%3d,", mnist_pic[i]);
-        if(i%28==27)TM_PRINTF("\n");
+        //TM_PRINTF("%3d,", mnist_pic[i]);
+        //if(i%28==27)TM_PRINTF("\n");
     }
 
     tm_mat_t in_uint8 = {3,28,28,1, {(mtype_t*)mnist_pic}};
     tm_mat_t in = {3,28,28,1, {NULL}};
     tm_mat_t outs[1];
     tm_err_t res;
-    tm_stat((tm_mdlbin_t*)mdl_data); 
+    //tm_stat((tm_mdlbin_t*)mdl_data); 
 
     res = tm_load(&mdl, mdl_data, mdl_buf, layer_cb, &in);
     if(res != TM_OK) {
