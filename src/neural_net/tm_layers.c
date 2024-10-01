@@ -156,7 +156,7 @@ tm_err_t TM_WEAK tml_conv2d_dwconv2d(tm_mat_t* in, tm_mat_t* out, wtype_t* w, bt
                 int _ky1 = in->h-src_y0>kh ? kh : in->h-src_y0;
                 int _kx1 = in->w-src_x0>kw ? kw : in->w-src_x0;
                 uint32_t sidx=0;    //sbuf:cho,chi,maxk //dw:chi==1;
-                uint32_t s_step = (_ky1-_ky0)*(_kx1-_kx0);
+                // uint32_t s_step = (_ky1-_ky0)*(_kx1-_kx0);
                 mtype_t* sptr_base = (mtype_t*)TM_MATP(in, src_y0, src_x0, 0);
                 mtype_t* sptr = sptr_base;
             #if TM_MDL_TYPE == TM_MDL_INT8
@@ -289,7 +289,7 @@ tm_err_t TM_WEAK tml_add(tm_mat_t* in0, tm_mat_t* in1, tm_mat_t* out, \
     mtype_t* d1 = in1->data;
     mtype_t* res = out->data; 
     int size = in0->h*in0->w*in0->c;
-    TM_PRINTF("s0=%.3f,zp0=%d; s1=%.3f,zp1=%d\r\n", printf_float(in_s0), in_zp0, printf_float(in_s1), in_zp1);
+    printf("s0=%.3f,zp0=%d; s1=%.3f,zp1=%d\r\n", printf_float(in_s0), in_zp0, printf_float(in_s1), in_zp1);
 #if TM_MDL_TYPE == TM_MDL_FP16 || TM_MDL_TYPE == TM_MDL_FP32 || TM_MDL_TYPE == TM_MDL_INT8
     int i;
     for(i=0; i+4<=size; ){

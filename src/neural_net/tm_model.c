@@ -111,6 +111,7 @@ tm_err_t TM_WEAK tm_run(tm_mdl_t* mdl, tm_mat_t* in, tm_mat_t* out)
         case TML_GAP: {
             tml_gap_t* l = (tml_gap_t*)(mdl->layer_body);
             res = tml_gap(&_in, &_out, h->in_s, h->in_zp, h->out_s, h->out_zp);
+            (void)l;
             break;}
         case TML_FC: {
             tml_fc_t* l = (tml_fc_t*)(mdl->layer_body);
@@ -120,10 +121,12 @@ tm_err_t TM_WEAK tm_run(tm_mdl_t* mdl, tm_mat_t* in, tm_mat_t* out)
         case TML_SOFTMAX: {
             tml_softmax_t* l = (tml_softmax_t*)(mdl->layer_body);
             res = tml_softmax(&_in, &_out, h->in_s, h->in_zp, h->out_s, h->out_zp);
+            (void)l;
             break; }
         case TML_RESHAPE: {
             tml_reshape_t* l = (tml_reshape_t*)(mdl->layer_body);
             res = tml_reshape(&_in, &_out, h->in_s, h->in_zp, h->out_s, h->out_zp);
+            (void)l;
             break; }
         case TML_ADD: {
             tml_add_t* l = (tml_add_t*)(mdl->layer_body);

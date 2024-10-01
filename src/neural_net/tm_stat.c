@@ -45,6 +45,7 @@ static const int tml_headsize_tbl[TML_MAXCNT] = {
 
 tm_err_t tm_stat(tm_mdlbin_t* b)
 {   
+    volatile int32_t noprint_output;
     printf("================================ model stat ================================\n");
     printf("mdl_type=%d (%s))\n", b->mdl_type, mdl_type_str[b->mdl_type]);
     printf("out_deq=%d \n", b->out_deq);
@@ -53,16 +54,15 @@ tm_err_t tm_stat(tm_mdlbin_t* b)
     printf("input %ddims: (%d, %d, %d)\n", idim[0],idim[1],idim[2],idim[3]);
     uint16_t* odim = b->out_dims;
     printf("output %ddims: (%d, %d, %d)\n", odim[0],odim[1],odim[2],odim[3]);
-    //printf("model param bin addr: 0x%x\n", (uint32_t)(b->layers_body));
+    TM_DBG("model param bin addr: 0x%x\n", (uint32_t)(b->layers_body));
     printf("main buf size %d; sub buf size %d\n", \
         b->buf_size,b->sub_size);
 
-    printf("//Note: PARAM is layer param size, include align padding\r\n\r\n");
     printf("Idx\tLayer\t         outshape\tinoft\toutoft\tPARAM\tMEMOUT  OPS\n");
     printf("---\tInput    \t%3d,%3d,%3d\t-   \t0    \t0 \t%zu \t0\n",\
         idim[1],idim[2],idim[3], (idim[1]*idim[2]*idim[3]*sizeof(mtype_t)));
     //      000  Input    -     224,224,3  0x40001234 0x40004000 100000 500000 200000
-    //printf("000  Input    -     %3d,%3d,%d  0x%08x   0x%08x     %6d %6d %6d\n",) 
+    TM_DBG("000  Input    -     %3d,%3d,%d  0x%08x   0x%08x     %6d %6d %6d\n",) 
     int sum_param = 0;
     int sum_ops   = 0;
     uint8_t*layer_body  = (uint8_t*)b->layers_body;
@@ -96,6 +96,7 @@ tm_err_t tm_stat(tm_mdlbin_t* b)
                 ops = (h->out_dims[3])*(h->in_dims[3]);         //MAC as ops
                 TM_DBG("FC: ws_oft=%d, w_oft=%d, b_oft=%d\n",\
                     l->ws_oft, l->w_oft, l->b_oft);
+                (void)l;
                 break;}
             case TML_SOFTMAX:
                 ops = 6*(h->out_dims[3]);                       //mixed
@@ -125,6 +126,15 @@ tm_err_t tm_stat(tm_mdlbin_t* b)
     }
     printf("\r\nTotal param ~%.1f KB, OPS ~%.2f MOPS, buffer %.1f KB\r\n\r\n", \
         printf_float(sum_param/1024.0), printf_float(sum_ops/1000000.0), printf_float((b->buf_size + b->sub_size)/1024.0));
+
+    noprint_output = idim[1];
+    noprint_output = odim[2];
+    noprint_output = sum_param;
+    noprint_output = sum_ops;
+    (void)noprint_output;
+    (void)mdl_type_str;
+    (void)tml_str_tbl;
+
     return TM_OK;
 } 
 
