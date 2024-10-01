@@ -87,24 +87,25 @@ static tm_err_t layer_cb(tm_mdl_t* mdl, tml_head_t* lh)
     int ch= lh->out_dims[3];
     mtype_t* output = TML_GET_OUTPUT(mdl, lh);
     return TM_OK;
-    TM_PRINTF("Layer %d callback ========\n", mdl->layer_i);
+    printf("Layer %d callback ========\n", mdl->layer_i);
     #if 1
     for(int y=0; y<h; y++){
-        TM_PRINTF("[");
+        printf("[");
         for(int x=0; x<w; x++){
-            TM_PRINTF("[");
+            printf("[");
             for(int c=0; c<ch; c++){
             #if TM_MDL_TYPE == TM_MDL_FP32
-                TM_PRINTF("%.3f,", printf_float(output[(y*w+x)*ch+c]));
+                printf("%.3f,", printf_float(output[(y*w+x)*ch+c]));
             #else
-                TM_PRINTF("%.3f,", printf_float(TML_DEQUANT(lh,output[(y*w+x)*ch+c])));
+                printf("%.3f,", printf_float(TML_DEQUANT(lh,output[(y*w+x)*ch+c])));
             #endif
             }
-            TM_PRINTF("],");
+            printf("],");
         }
-        TM_PRINTF("],\n");
+        printf("],\n");
     }
-    TM_PRINTF("\n");
+    printf("\n");
+    (void)output;
     #endif
     return TM_OK;
 }
@@ -115,6 +116,7 @@ static void parse_output(tm_mat_t* outs)
     float* data  = out.dataf;
     float maxp = 0;
     int maxi = -1;
+    volatile int noprint_output;
     for(int i=0; i<10; i++){
         printf("%d: %.3f\n", i, printf_float(data[i]));
         if(data[i] > maxp) {
@@ -122,7 +124,10 @@ static void parse_output(tm_mat_t* outs)
             maxp = data[i];
         }
     }
-    TM_PRINTF("### Predict output is: Number %d, prob %.3f\n", maxi, printf_float(maxp));
+    printf("Predicted output is: Number %d, prob %.3f\n", maxi, printf_float(maxp));
+    noprint_output = maxi;
+    (void)noprint_output;
+
     return;
 }
 
@@ -130,13 +135,13 @@ static uint8_t mdl_buf[4800];
 
 int benchmark_main(void)
 {
-    TM_PRINTF("mnist demo\n");
+    printf("mnist demo\n");
     tm_mdl_t mdl;
 
     // Print image
     for(int i=0; i<28*28; i++){
-        TM_PRINTF("%3d,", mnist_pic[i]);
-        if(i%28==27)TM_PRINTF("\n");
+        printf("%3d,", mnist_pic[i]);
+        if(i%28==27)printf("\n");
     }
 
     tm_mat_t in_uint8 = {3,28,28,1, {(mtype_t*)mnist_pic}};
@@ -147,7 +152,7 @@ int benchmark_main(void)
 
     res = tm_load(&mdl, mdl_data, mdl_buf, layer_cb, &in);
     if(res != TM_OK) {
-        TM_PRINTF("tm model load err %d\n", res);
+        printf("tm model load err %d\n", res);
         return -1;
     }
 
@@ -158,7 +163,7 @@ int benchmark_main(void)
 #endif
     res = tm_run(&mdl, &in, outs);
     if(res==TM_OK) parse_output(outs);  
-    else TM_PRINTF("tm run error: %d\n", res);
+    else printf("tm run error: %d\n", res);
     tm_unload(&mdl);                 
     return 0;
 }

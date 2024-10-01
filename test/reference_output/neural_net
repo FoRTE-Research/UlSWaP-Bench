@@ -34,8 +34,6 @@ input_cnt=1, output_cnt=1, layer_cnt=8
 input 3dims: (28, 28, 1)
 output 1dims: (1, 1, 10)
 main buf size 4704; sub buf size 0
-//Note: PARAM is layer param size, include align padding
-
 Idx	Layer	         outshape	inoft	outoft	PARAM	MEMOUT  OPS
 ---	Input    	 28, 28,  1	-   	0    	0 	784 	0
 000	Conv2D        	 14, 14, 12	0	1176	208	2352	21168
@@ -60,4 +58,4 @@ s0=0.017,zp0=-128; s1=0.029,zp1=4
 7: 0.000
 8: 0.004
 9: 0.000
-### Predict output is: Number 2, prob 0.867
+Predicted output is: Number 2, prob 0.867
