@@ -4,6 +4,4 @@ target_sources(neural_net PRIVATE ${CMAKE_CURRENT_LIST_DIR}/main.c
                                   ${CMAKE_CURRENT_LIST_DIR}/tm_stat.c
                                 )
 
-target_include_directories(neural_net PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
-
 target_link_libraries(neural_net c m)
