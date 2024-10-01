@@ -3,6 +3,7 @@ import sys
 import tempfile as tf
 import subprocess as sp
 from utils import *
+from unused_functions import get_unused_functions
 
 BENCHMARK_TOP_DIR = f'{os.path.dirname(os.path.abspath(__file__))}/../..'
 BENCHMARK_SRC_DIR = f'{BENCHMARK_TOP_DIR}/src'
@@ -31,6 +32,7 @@ def get_ir_properties(benchmark:str, build_dir:str) -> tuple[int, int]:
     num_instructions = 0
 
     c_files = get_files_to_analyze(benchmark, build_dir)
+    unused_funcs = get_unused_functions(benchmark, build_dir)
 
     with tf.TemporaryDirectory() as temp_dir:
         for c_file in c_files:
@@ -43,8 +45,10 @@ def get_ir_properties(benchmark:str, build_dir:str) -> tuple[int, int]:
             output = proc.stderr.decode()
 
             for line in output.splitlines():
-                num_basic_blocks += int(line.split(',')[1])
-                num_instructions += int(line.split(',')[2])
+                func = line.split(',')[0]
+                if func not in unused_funcs:
+                    num_basic_blocks += int(line.split(',')[1])
+                    num_instructions += int(line.split(',')[2])
 
     return num_basic_blocks, num_instructions
 
@@ -75,11 +79,22 @@ def get_benchmark_properties(benchmark:str, build_dir:str) -> BenchmarkPropertie
     return BenchmarkProperties(benchmark, c_loc, h_loc, num_basic_blocks, num_instructions)
 
 
-def print_properties_csv(all_benchmark_props:list[BenchmarkProperties]) -> None:
+def print_properties_csv(all_benchmark_props:dict[str,BenchmarkProperties]) -> None:
     print('Benchmark,C LOC,H LOC,Basic Blocks,Instructions')
     for benchmark in all_benchmark_props:
         print(f'{benchmark.name},{benchmark.c_loc},{benchmark.h_loc},{benchmark.num_basic_blocks},{benchmark.num_instructions}')
     return
+
+
+def print_properties_latex(all_benchmark_props:dict[str,BenchmarkProperties]) -> None:
+    for category in ALL_BENCHMARKS.keys():
+        print(' ' * 8 + f'\\multirow{{{len(ALL_BENCHMARKS[category])}}}{{*}}{{\\rotatebox[origin=c]{{90}}{{{category}}}}}')
+        for benchmark in ALL_BENCHMARKS[category]:
+            benchmark_props = all_benchmark_props[benchmark]
+            escaped_benchmark = benchmark.replace('_', '\_')
+            print(' ' * 8 + f'& {escaped_benchmark} & {benchmark_props.c_loc} & {benchmark_props.h_loc} & '
+                  f'{benchmark_props.num_basic_blocks} & {benchmark_props.num_instructions} \\\\')
+        print(' ' * 8 + '\hline')
 
 
 def main():
@@ -89,11 +104,12 @@ def main():
         benchmark_props = get_benchmark_properties(args.benchmark, args.build_dir)
         print_properties_csv([benchmark_props])
     else:
-        all_benchmark_props = []
+        all_benchmark_props = {}
         for benchmark in get_bench_names():
             benchmark_props = get_benchmark_properties(benchmark, args.build_dir)
-            all_benchmark_props.append(benchmark_props)
-        print_properties_csv(all_benchmark_props)
+            all_benchmark_props[benchmark] = benchmark_props
+        # print_properties_csv(all_benchmark_props)
+        print_properties_latex(all_benchmark_props)
 
     return
 
