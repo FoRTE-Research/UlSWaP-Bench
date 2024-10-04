@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include "bn.h"
+#include "rsa_test.h"
 #include "common.h"
 
 /* O(log n) */
@@ -14,7 +15,8 @@ void pow_mod_faster(
     struct bn *a,
     struct bn *b,
     struct bn *n,
-    struct bn *res)
+    struct bn *res,
+    uint32_t max_rounds)
 {
     bignum_from_int(res, 1); /* r = 1 */
 
@@ -24,8 +26,15 @@ void pow_mod_faster(
     bignum_assign(&tmpa, a);
     bignum_assign(&tmpb, b);
 
+    uint32_t round = 0;
     while (1)
     {
+        round++;
+        if (round > max_rounds)
+        {
+            break;
+        }
+
         if (tmpb.array[0] & 1) /* if (b % 2) */
         {
             bignum_mul(res, &tmpa, &tmp); /*   r = r * a % m */
@@ -35,7 +44,9 @@ void pow_mod_faster(
         bignum_assign(&tmpb, &tmp);
 
         if (bignum_is_zero(&tmpb))
+        {
             break;
+        }
 
         bignum_mul(&tmpa, &tmpa, &tmp);
         bignum_mod(&tmp, n, &tmpa);
@@ -69,21 +80,21 @@ void rsa1024_encrypt(
     bignum_init(&m);
     bignum_init(&c);
 
-    printf("Public key (bignum):\r\n");
+    printf("Public key:\r\n");
     bignum_dump(&n, 32);
-    printf("Exponent (bignum):\r\n");
+    printf("Exponent:\r\n");
     bignum_dump(&e, 32);
 
     bignum_from_string(&m, plaintext_hex, 256);
     bignum_to_string(&m, buf, sizeof(buf));
 
-    printf("Plaintext (bignum):\r\n");
+    printf("Plaintext:\r\n");
     bignum_dump(&m, 32);
 
-    pow_mod_faster(&m, &e, &n, &c);
+    pow_mod_faster(&m, &e, &n, &c, UINT32_MAX);
     bignum_to_string(&c, buf, sizeof(buf));
 
-    printf("Ciphertext (bignum):\r\n");
+    printf("Ciphertext:\r\n");
     bignum_dump(&c, 32);
 
     for (int i = 0; i < sizeof(buf); i++)
@@ -116,12 +127,17 @@ void rsa1024_decrypt(
     bignum_from_string(&d, private_key, 256);
     bignum_from_string(&c, cipher, 256);
 
-    printf("Private key (bignum):\r\n");
+    printf("Private key:\r\n");
     bignum_dump(&d, 32);
 
-    pow_mod_faster(&c, &d, &n, &m);
+    pow_mod_faster(&c, &d, &n, &m, MAX_ROUNDS);
 
-    printf("Decrypted plaintext (bignum):\r\n");
+    printf("Decrypted plaintext");
+#if !HOST_TEST
+    printf(" (After %u rounds):\r\n", MAX_ROUNDS);
+#else
+    printf(":\r\n");
+#endif  // !HOST_TEST
     bignum_dump(&m, 32);
 
     bignum_to_string(&m, buf, sizeof(buf));
