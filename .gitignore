@@ -48,3 +48,7 @@ __pycache__/
 # Plots
 *.png
 *.pdf
+
+# Analysis output
+output/
+plots/
