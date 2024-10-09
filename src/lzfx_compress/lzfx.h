@@ -49,7 +49,7 @@
 
 /* Hashtable size (2**LZFX_HLOG entries) */
 #ifndef LZFX_HLOG
-# define LZFX_HLOG 13
+# define LZFX_HLOG 9
 #endif
 
 /* Predefined errors. */
