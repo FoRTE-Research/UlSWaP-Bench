@@ -4,23 +4,21 @@
 #include "input.h"
 #include "common.h"
 
-#define NONE 9999
+#define NONE 255
 
-struct _NODE
+typedef struct
 {
-    uint32_t iDist;
-    uint32_t iPrev;
-};
-typedef struct _NODE NODE;
+    uint16_t iDist;
+    uint16_t iPrev;
+} NODE;
 
-struct _QITEM
+typedef struct _QITEM
 {
-    uint32_t iNode;
-    uint32_t iDist;
-    uint32_t iPrev;
     struct _QITEM *qNext;
-};
-typedef struct _QITEM QITEM;
+    uint16_t iNode;
+    uint16_t iDist;
+    uint16_t iPrev;
+} QITEM;
 
 /*
  * Dijkstra's algorithm calculates the shortest path between two nodes
@@ -35,15 +33,15 @@ typedef struct _QITEM QITEM;
 #define ARRAY_SIZE (NUM_NODES * NUM_NODES / 2)
 QITEM allocated[ARRAY_SIZE];
 QITEM *qHead = NULL;
-uint32_t notAll = 0;
+uint16_t notAll = 0;
 
-uint32_t g_qCount = 0;
+uint16_t g_qCount = 0;
 NODE rgnNodes[NUM_NODES];
-uint32_t ch;
-uint32_t iPrev, iNode;
-uint32_t i, iCost, iDist;
+uint16_t ch;
+uint16_t iPrev, iNode;
+uint16_t i, iCost, iDist;
 
-void print_path(NODE *rgnNodes, uint32_t chNode)
+void print_path(NODE *rgnNodes, uint16_t chNode)
 {
     if (rgnNodes[chNode].iPrev != NONE)
     {
@@ -52,7 +50,7 @@ void print_path(NODE *rgnNodes, uint32_t chNode)
     printf(" %d", chNode);
 }
 
-void enqueue(uint32_t iNode, uint32_t iDist, uint32_t iPrev)
+void enqueue(uint16_t iNode, uint16_t iDist, uint16_t iPrev)
 {
     QITEM *qNew = &allocated[notAll];
     notAll++;
@@ -80,7 +78,7 @@ void enqueue(uint32_t iNode, uint32_t iDist, uint32_t iPrev)
     g_qCount++;
 }
 
-void dequeue(uint32_t *piNode, uint32_t *piDist, uint32_t *piPrev)
+void dequeue(uint16_t *piNode, uint16_t *piDist, uint16_t *piPrev)
 {
     if (qHead)
     {
@@ -92,12 +90,12 @@ void dequeue(uint32_t *piNode, uint32_t *piDist, uint32_t *piPrev)
     }
 }
 
-uint32_t qcount(void)
+uint16_t qcount(void)
 {
     return (g_qCount);
 }
 
-uint32_t dijkstra(uint32_t chStart, uint32_t chEnd)
+uint16_t dijkstra(uint16_t chStart, uint16_t chEnd)
 {
     notAll = 0;
 
@@ -144,7 +142,7 @@ uint32_t dijkstra(uint32_t chStart, uint32_t chEnd)
 
 int benchmark_main(void)
 {
-    uint32_t i, j;
+    uint16_t i, j;
 
     /* make a fully connected matrix */
     // see input.h
