@@ -1,5 +1,3 @@
-/* {{{ Copyright etc. */
-
 /**********************************************************************\
 
   SUSAN Version 2l by Stephen Smith
@@ -52,11 +50,6 @@
         number = "1",
         month = "May",
         year = 1997}
-
-  To be registered for automatic (bug) updates of SUSAN, send an email.
-
-  Compile with:
-  gcc -O4 -o susan susan2l.c -lm
 
   See following section for different machine information. Please
   report any bugs (and fixes). There are a few optional changes that
@@ -183,13 +176,22 @@
 #include <math.h>
 #include <stdint.h>
 #include "common.h"
-#include "image_input.h"
+#include "input.h"
 
 #define OUTPUT_FILE "susan_smoothing_output.pgm"
 
+#define IMAGE_WIDTH 50
+#define IMAGE_HEIGHT 200
+#define DISTANCE_THRESHOLD 5.0
+#define BRIGHTNESS_THRESHOLD 20
+#define MASK_SIZE 8 // ((int32_t)(1.5 * DISTANCE_THRESHOLD)) + 1)
+#define TMP_IMAGE_SIZE (IMAGE_WIDTH + MASK_SIZE * 2) * (IMAGE_HEIGHT + MASK_SIZE * 2)
+#define N_MAX ((MASK_SIZE * 2) + 1)
+#define DP_SIZE (N_MAX * N_MAX)
+
 static uint8_t setbrightness[516];
-static uint8_t smoothening[10721];
-static uint8_t smoothening2[289];
+static uint8_t g_tmp_image[TMP_IMAGE_SIZE];
+static uint8_t g_dp[DP_SIZE];
 
 char fgetc2()
 {
@@ -236,6 +238,7 @@ int32_t getint()
 void get_image(uint8_t **in, int32_t *x_size, int32_t *y_size)
 {
     char header[100];
+    int temp;
 
     /* {{{ read header */
 
@@ -250,6 +253,8 @@ void get_image(uint8_t **in, int32_t *x_size, int32_t *y_size)
 
     *x_size = getint();
     *y_size = getint();
+    temp = getint();
+    (void)temp;
 
     *in = (uint8_t *)fakeFile;
 }
@@ -392,11 +397,9 @@ void susan_smoothing(int32_t three_by_three, uint8_t *in, float dt, int32_t x_si
         exit(0);
     }
 
-    printf("Mask size: %d\r\n", mask_size);
-
     // printf("%d\n", (x_size + mask_size * 2) * (y_size + mask_size * 2));
     // tmp_image = (uint8_t *) malloc( (x_size+mask_size*2) * (y_size+mask_size*2) );
-    tmp_image = smoothening;
+    tmp_image = g_tmp_image;
     enlarge(&in, tmp_image, &x_size, &y_size, mask_size);
 
     if (three_by_three == 0)
@@ -409,7 +412,7 @@ void susan_smoothing(int32_t three_by_three, uint8_t *in, float dt, int32_t x_si
 
         // printf("%d\n", n_max * n_max);
         // dp     = (uint8_t *)malloc(n_max*n_max);
-        dp = smoothening2;
+        dp = g_dp;
         dpt = dp;
         temp = -(dt * dt);
 
@@ -522,8 +525,8 @@ void susan_smoothing(int32_t three_by_three, uint8_t *in, float dt, int32_t x_si
 int32_t benchmark_main()
 {
     uint8_t *in, *bp;
-    float dt = 5.0;
-    int32_t bt = 20;
+    float dt = DISTANCE_THRESHOLD;
+    int32_t bt = BRIGHTNESS_THRESHOLD;
     int32_t three_by_three = 0;
     int32_t x_size = -1, y_size = -1;
 
@@ -531,17 +534,23 @@ int32_t benchmark_main()
 
     printf("Susan smoothing\r\n");
     setup_brightness_lut(&bp, bt, 2);
-    susan_smoothing(three_by_three, in, dt, x_size, y_size, bp);
 
     printf("Image width = %d\r\n", x_size);
     printf("Image height = %d\r\n", y_size);
+    printf("Brightness threshold = %d\r\n", bt);
+    printf("Distance threshold = %f\r\n", printf_float(dt));
+    printf("Mask size = %d\r\n", MASK_SIZE);
+
+    susan_smoothing(three_by_three, in, dt, x_size, y_size, bp);
 
     volatile int32_t noprint_output;
     int32_t checksum = 0;
+
     for (int32_t i = 0; i < x_size * y_size; i++)
     {
         checksum += in[i];
     }
+
     printf("Output image checksum = %d\r\n", checksum);
     noprint_output = checksum;
     (void)noprint_output;
