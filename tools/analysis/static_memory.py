@@ -12,52 +12,38 @@ Args:
     file_path (str): The full path to the file.
 
 Returns:
-    str: The output of the 'readelf -l' command.
+    str: The output of the 'readelf -S' command.
 """
-def get_readelf_segment_output(file_path:str) -> str:
-    cmd = f'{READELF_EXEC} -l {file_path}'
+def get_readelf_section_output(file_path:str) -> str:
+    cmd = f'{READELF_EXEC} -S {file_path}'
     return sp.check_output(cmd, shell=True).decode()
 
 
 """
-Parses the segment output and extracts the sizes of different segments.
+Parses the section output and extracts the sizes of different sections.
 
 Args:
-    segment_output (str): The output of the 'readelf -l' command.
+    section_output (str): The output of the 'readelf -l' command.
     file_path (str): The full path to the file.
 
 Returns:
     dict: A dictionary mapping section names to their sizes.
 """
-def get_segment_sizes(segment_output:str, file_path:str) -> dict[str, int]:
-    segment_sizes = {}
-    seg_sections = segment_output.split('Segment Sections...')[1].splitlines()
-    prog_headers = segment_output.split('Program Headers:')[1].split('Section to Segment mapping:')[0].splitlines()
+def get_section_sizes(section_output:str) -> dict[str, int]:
+    section_sizes = dict.fromkeys(MEM_TYPES, 0)
+    section_lines = section_output.split('\n')
 
-    for i, line in enumerate(prog_headers[1:]):
-        if 'LOAD' in line:
-            segment_line = seg_sections[i]
-            if '.text' in segment_line:
-                segment = '.text'
-            elif '.rodata' in segment_line:
-                segment = '.rodata'
-            elif '.data' in segment_line or '.sdata' in segment_line:
-                segment = '.data'
-            elif '.sbss' in segment_line or '.bss' in segment_line:
-                segment = '.bss'
-            else:
-                segment = 'unknown'
-                print(f'Unknown segment found: {segment_line} in {file_path}')
-            size = int(line.split()[5], 16)
-            segment_sizes[segment] = size
+    for i, line in enumerate(section_lines[4:]):
+        if '.text' in line:
+            section_sizes['.text'] += int(line.split()[-6], 16)
+        elif '.rodata' in line:
+            section_sizes['.rodata'] += int(line.split()[-6], 16)
+        elif '.data' in line or '.sdata' in line:
+            section_sizes['.data'] += int(line.split()[-6], 16)
+        elif '.bss' in line or '.sbss' in line:
+            section_sizes['.bss'] += int(line.split()[-6], 16)
 
-    if len(segment_sizes) < 1:
-        print('Segment sizes not found for ' + file_path)
-    elif len(segment_sizes) > 3:
-        print('More than 3 segments found for ' + file_path)
-
-    return segment_sizes
-
+    return section_sizes
 
 """
 Retrieves the relevant section sizes of all binary files in a directory.
@@ -74,9 +60,9 @@ def get_all_binary_sizes(directory:str) -> dict[str, dict[str, int]]:
         if file.endswith('.elf'):
             bench_name = file.split('.')[0]
             file_path = os.path.join(directory, file)
-            segment_output = get_readelf_segment_output(file_path)
-            segment_sizes = get_segment_sizes(segment_output, file_path)
-            binary_sizes[bench_name] = segment_sizes
+            section_output = get_readelf_section_output(file_path)
+            section_sizes = get_section_sizes(section_output)
+            binary_sizes[bench_name] = section_sizes
 
     return binary_sizes
 

@@ -1,5 +1,4 @@
 import os
-import sys
 from utils import *
 
 STACK_TOP = 520192
@@ -26,17 +25,3 @@ def get_runtime_memory_map(directory:str) -> dict:
         runtime_memory[bench_name] = count
 
     return runtime_memory
-
-
-# def main():
-#     count_dir = os.path.abspath(sys.argv[1])
-#     if len(sys.argv) > 2:
-#         output_file = os.path.abspath(sys.argv[2])
-#     else:
-#         output_file = None
-
-#     runtime_memory = get_runtime_memory_map(count_dir)
-
-
-# if __name__ == '__main__':
-#     main()

@@ -7,10 +7,10 @@ from runtime_memory import get_runtime_memory_map
 Plots a stacked bar chart of section sizes for each benchmark.
 
 Args:
-    binary_sizes (dict): A dictionary containing the sizes of binary files for each benchmark.
+    bench_total_mem (dict): A dictionary containing the sizes of binary files for each benchmark.
     output_file (str, optional): The path to the output file. Defaults to None.
 """
-def plot_total_memory(binary_sizes:dict[str, dict[str, int]], runtime_memory:dict[str, int], output_file:str=None):
+def plot_total_memory(bench_total_mem:dict[str, dict[str, int]], output_file:str=None):
     import matplotlib.pyplot as plt
 
     # Create a stacked bar chart of binary sizes for each benchmark
@@ -19,12 +19,9 @@ def plot_total_memory(binary_sizes:dict[str, dict[str, int]], runtime_memory:dic
     bar_width = 0.5
     bench_names = get_bench_names()
     bar_bottom = [0] * len(bench_names)
-    for segment in ['text', 'rodata', 'data', 'bss', 'stack']:
-        if segment == 'stack':
-            sizes = [runtime_memory[bench] for bench in bench_names]
-        else:
-            sizes = [binary_sizes[bench].get(f'.{segment}', 0) for bench in bench_names]
-        ax.bar(bench_names, sizes, bar_width, label=segment, bottom=bar_bottom)
+    for mem_type in MEM_TYPES:
+        sizes = [bench_total_mem[bench][mem_type] for bench in bench_names]
+        ax.bar(bench_names, sizes, bar_width, label=mem_type, bottom=bar_bottom)
         bar_bottom = [bar_bottom[i] + sizes[i] for i in range(len(bench_names))]
 
     # ax.set_xlabel('Benchmarks')
@@ -70,9 +67,18 @@ def main():
 
     binary_size_dict = get_all_binary_sizes(args.bin_dir)
     runtime_memory_map = get_runtime_memory_map(args.dump_dir)
-    for bench, sizes in binary_size_dict.items():
-        print(f'{bench}: {sizes}, stack: {runtime_memory_map[bench]}, total: {sum(sizes.values())}')
-    plot_total_memory(binary_size_dict, runtime_memory_map, args.plot_file)
+
+    total_memory_dict = binary_size_dict.copy()
+    for bench, _ in binary_size_dict.items():
+        total_memory_dict[bench]['stack'] = runtime_memory_map[bench]
+
+    for bench in get_bench_names():
+        sizes = total_memory_dict[bench]
+        nvm_size = sizes['.text'] + sizes['.rodata']
+        ram_size = sizes['.data'] + sizes['.bss'] + sizes['stack']
+        print('%20s: text = %5d, rodata = %5d, data = %5d, bss = %5d, stack = %5d, nvm = %6d, ram = %5d' %
+              (bench, sizes['.text'], sizes['.rodata'], sizes['.data'], sizes['.bss'], sizes['stack'], nvm_size, ram_size))
+    plot_total_memory(total_memory_dict, args.plot_file)
 
 
 if __name__ == '__main__':

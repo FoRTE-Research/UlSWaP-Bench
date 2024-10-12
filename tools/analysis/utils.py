@@ -11,6 +11,8 @@ ALL_BENCHMARKS = {
     'General': ['basicmath', 'bitcount', 'qsort', 'stringsearch']
 }
 
+MEM_TYPES = ['.text', '.rodata', '.data', '.bss', 'stack']
+
 def get_bench_names() -> list[str]:
     bench_names = []
     for bench_group in ALL_BENCHMARKS.values():
