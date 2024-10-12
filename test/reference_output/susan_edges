@@ -1,4 +1,6 @@
 Susan edges
-Image width = 135
-Image height = 55
-Output image checksum = 654563
+Image width = 110
+Image height = 50
+Brightness threshold = 20
+Using flat 3x3 mask with principle output only
+Output image checksum = 56255
