@@ -183,19 +183,23 @@
 #include <math.h>
 #include <stdint.h>
 #include "common.h"
-#include "image_input.h"
+#include "input.h"
 
 #define FIVE_SUPP       /* size for non-max corner suppression; SEVEN_SUPP or FIVE_SUPP */
 #define MAX_CORNERS 100 /* max corners per frame */
 
 #define OUTPUT_FILE "susan_corners_output.pgm"
 
+#define IMAGE_WIDTH 110
+#define IMAGE_HEIGHT 50
+#define BRIGHTNESS_THRESHOLD 20
+
 typedef struct
 {
     int x, y, info, dx, dy, I;
 } CORNER_LIST[MAX_CORNERS];
 
-static int32_t g_r[135 * 55];
+static int32_t g_r[IMAGE_WIDTH * IMAGE_HEIGHT];
 static uint8_t setbrightness[516];
 
 char fgetc2()
@@ -243,6 +247,7 @@ int32_t getint()
 void get_image(uint8_t **in, int32_t *x_size, int32_t *y_size)
 {
     char header[100];
+    int temp;
 
     header[0] = fgetc2();
     header[1] = fgetc2();
@@ -254,6 +259,8 @@ void get_image(uint8_t **in, int32_t *x_size, int32_t *y_size)
     }
     *x_size = getint();
     *y_size = getint();
+    temp = getint();
+    (void)temp;
 
     *in = (uint8_t *)fakeFile;
 }
@@ -603,7 +610,7 @@ void susan_corners_quick(uint8_t *in, int32_t *r, uint8_t *bp, int32_t max_no, C
 int32_t benchmark_main()
 {
     uint8_t *in, *bp;
-    int32_t bt = 20;
+    int32_t bt = BRIGHTNESS_THRESHOLD;
     int32_t drawing_mode = 0;
     int32_t max_no_corners = 2000;
     int32_t x_size = -1, y_size = -1;
@@ -612,12 +619,12 @@ int32_t benchmark_main()
     get_image(&in, &x_size, &y_size);
 
     printf("Susan corners\r\n");
+    printf("Image width = %d\r\n", x_size);
+    printf("Image height = %d\r\n", y_size);
+
     setup_brightness_lut(&bp, bt, 2);
     susan_corners_quick(in, g_r, bp, max_no_corners, corner_list, x_size, y_size);
     corner_draw(in, corner_list, x_size, drawing_mode);
-
-    printf("Image width = %d\r\n", x_size);
-    printf("Image height = %d\r\n", y_size);
 
     volatile int32_t noprint_output;
     int32_t checksum = 0;
