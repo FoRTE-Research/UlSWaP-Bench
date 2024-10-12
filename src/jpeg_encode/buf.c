@@ -25,8 +25,8 @@
 #include "conf.h"
 
 #define JPEC_BUFFER_INIT_SIZ 65536
-#define OUTPUT_BUF_SIZE 7058
-uint8_t output_buf[OUTPUT_BUF_SIZE];
+#define OUTPUT_BUF_SIZE 5593
+uint8_t g_output_buf[OUTPUT_BUF_SIZE];
 
 jpec_buffer_t g_jpec_buffer;
 
@@ -36,7 +36,7 @@ jpec_buffer_t *jpec_buffer_new2(int32_t siz)
 #if (HOST_TEST && NEW_INPUT_IMAGE)
     b->stream = siz > 0 ? malloc(siz) : NULL;
 #else
-    b->stream = output_buf;
+    b->stream = g_output_buf;
 #endif  // HOST_TEST && NEW_INPUT_IMAGE
     b->siz = OUTPUT_BUF_SIZE;
     b->len = 0;
