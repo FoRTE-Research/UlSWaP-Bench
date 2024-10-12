@@ -1,5 +1,3 @@
-/* {{{ Copyright etc. */
-
 /**********************************************************************\
 
   SUSAN Version 2l by Stephen Smith
@@ -183,12 +181,16 @@
 #include <math.h>
 #include <stdint.h>
 #include "common.h"
-#include "image_input.h"
+#include "input.h"
 
 #define OUTPUT_FILE "susan_edges_output.pgm"
 
+#define IMAGE_WIDTH 110
+#define IMAGE_HEIGHT 50
+#define BRIGHTNESS_THRESHOLD 20
+
 static uint8_t setbrightness[516];
-static int32_t g_r[135 * 55];
+static int32_t g_r[IMAGE_WIDTH * IMAGE_HEIGHT];
 
 char fgetc2()
 {
@@ -245,6 +247,7 @@ int32_t getint()
 void get_image(uint8_t **in, int32_t *x_size, int32_t *y_size)
 {
     char header[100];
+    int temp;
 
     header[0] = fgetc2();
     header[1] = fgetc2();
@@ -257,6 +260,8 @@ void get_image(uint8_t **in, int32_t *x_size, int32_t *y_size)
 
     *x_size = getint();
     *y_size = getint();
+    temp = getint();
+    (void)temp;
 
     *in = (uint8_t *)fakeFile;
 }
@@ -300,6 +305,32 @@ void int_to_uint8_t(int32_t *r, uint8_t *in, int32_t size)
     }
 
     /*printf("min=%d max=%d\n",min_r,max_r);*/
+
+    max_r -= min_r;
+
+    for (i = 0; i < size; i++)
+    {
+        in[i] = (uint8_t)((int32_t)((int32_t)(r[i] - min_r) * 255) / max_r);
+    }
+}
+
+void int_to_uchar(int32_t *r, uint8_t *in, int32_t size)
+{
+    int32_t i;
+    int32_t max_r = r[0];
+    int32_t min_r = r[0];
+
+    for (i = 0; i < size; i++)
+    {
+        if (r[i] > max_r)
+        {
+            max_r = r[i];
+        }
+        if (r[i] < min_r)
+        {
+            min_r = r[i];
+        }
+    }
 
     max_r -= min_r;
 
@@ -367,6 +398,46 @@ void edge_draw(uint8_t *in, uint8_t *mid, int32_t x_size, int32_t y_size, int32_
         midp++;
     }
 }
+
+void susan_principle_small(uint8_t *in, uint8_t *bp, int32_t *r, int32_t max_no, int32_t x_size, int32_t y_size)
+{
+    int32_t i, j, n;
+    uint8_t *p, *cp;
+
+    memset(r, 0, x_size * y_size * sizeof(int32_t));
+
+    max_no = 730; /* ho hum ;) */
+
+    for (i = 1; i < y_size - 1; i++)
+    {
+        for (j = 1; j < x_size - 1; j++)
+        {
+            n = 100;
+            p = in + (i - 1) * x_size + j - 1;
+            cp = bp + in[i * x_size + j];
+
+            n += *(cp - *p++);
+            n += *(cp - *p++);
+            n += *(cp - *p);
+            p += x_size - 2;
+
+            n += *(cp - *p);
+            p += 2;
+            n += *(cp - *p);
+            p += x_size - 2;
+
+            n += *(cp - *p++);
+            n += *(cp - *p++);
+            n += *(cp - *p);
+
+            if (n <= max_no)
+            {
+                r[i * x_size + j] = max_no - n;
+            }
+        }
+    }
+}
+
 
 void susan_edges_small(uint8_t *in, int32_t *r, uint8_t *mid, uint8_t *bp, int32_t max_no, int32_t x_size, int32_t y_size)
 {
@@ -571,12 +642,10 @@ void susan_edges_small(uint8_t *in, int32_t *r, uint8_t *mid, uint8_t *bp, int32
             }
         }
 }
-
 int32_t benchmark_main()
 {
-    uint8_t *in, *bp, *mid;
-    int32_t bt = 20;
-    int32_t drawing_mode = 0;
+    uint8_t *in, *bp;
+    int32_t bt = BRIGHTNESS_THRESHOLD;
     int32_t max_no_edges = 2650;
     int32_t x_size = -1, y_size = -1;
 
@@ -585,14 +654,13 @@ int32_t benchmark_main()
     printf("Susan edges\r\n");
     setup_brightness_lut(&bp, bt, 6);
 
-    mid = (uint8_t *)alloca(x_size * y_size);
-    memset(mid, 100, x_size * y_size); /* note not set to zero */
-
-    susan_edges_small(in, g_r, mid, bp, max_no_edges, x_size, y_size);
-    edge_draw(in, mid, x_size, y_size, drawing_mode);
-
     printf("Image width = %d\r\n", x_size);
     printf("Image height = %d\r\n", y_size);
+    printf("Brightness threshold = %d\r\n", bt);
+    printf("Using flat 3x3 mask with principle output only\r\n");
+
+    susan_principle_small(in, bp, g_r, max_no_edges, x_size, y_size);
+    int_to_uchar(g_r, in, x_size * y_size);
 
     volatile int32_t noprint_output;
     int32_t checksum = 0;
