@@ -1,5 +1,7 @@
 Susan smoothing
-Mask size: 8
-Image width = 135
-Image height = 55
-Output image checksum = 569682
+Image width = 50
+Image height = 200
+Brightness threshold = 20
+Distance threshold = 5.000000
+Mask size = 8
+Output image checksum = 774400
