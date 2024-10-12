@@ -5,7 +5,7 @@
 #include "input.h"
 
 #define OUTPUT_IMAGE_NAME "output.jpg"
-#define OUTPUT_IMAGE_QUALITY 90
+#define OUTPUT_IMAGE_QUALITY 85
 
 #define INPUT_IMAGE_WIDTH 176
 #define INPUT_IMAGE_HEIGHT 104
