@@ -6,8 +6,8 @@ VSOC_EXEC = '/home/danchiba/FrankenRV/hdl/sim/obj_dir/VSOC'
 ALL_BENCHMARKS = {
     'Security': ['aes', 'chacha20', 'poly1305', 'rsa', 'ecc', 'sha256'],
     'Communication': ['crc', 'dijkstra', 'patricia', 'lzfx_comp', 'lzfx_decomp', 'lorawan_down', 'lorawan_up'],
-    'AI': ['activity_rec', 'sensor_fusion', 'image_class', 'anomaly'],
     'Signal Processing': ['fft', 'adpcm_encode', 'mp3_encode', 'jpeg_encode', 'susan_edges', 'susan_corners', 'susan_smooth'],
+    'AI': ['activity_rec', 'sensor_fusion', 'image_class', 'anomaly'],
     'General': ['basicmath', 'bitcount', 'qsort', 'stringsearch']
 }
 
@@ -41,6 +41,17 @@ def get_line_xticks() -> list[float]:
     return positions
 
 
+def get_compact_num(num:int) -> str:
+    if num < 1000:
+        return str(num)
+    elif num < 10000:
+        return f'{round(num / 1000, 1)}K'
+    elif num < 1000000:
+        return f'{round(num / 1000)}K'
+    else:
+        return f'{num // 1000000}M'
+
+
 class RunStatus(Enum):
     SUCCESS = 1
     FAILED = 2
@@ -57,6 +68,9 @@ def parse_args():
     parser.add_argument('--dump_dir', type=str, help='Directory containing verilator dump')
     parser.add_argument('--output_dir', type=str, help='Directory to store the output files')
     parser.add_argument('--plot_file', type=str, help='File in which to store the plot')
+    parser.add_argument('--msp430', action='store_true', help='Parse for MSP430')
+    parser.add_argument('--arm', action='store_true', help='Parse for ARM')
+    parser.add_argument('--riscv', action='store_true', help='Parse for RISC-V')
 
     return parser.parse_args()
 
