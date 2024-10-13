@@ -5,12 +5,12 @@
  * to correctly redirect reset vector
  */
 
-/* Use low FRAM for RO memory
- * and use SRAM for RW memory
+/* Use FRAM for RO memory
+ * and SRAM for RW memory
  */
 /*
-*__flash =      0x00004008;
-*__flash_size = 0x0000BF78;
+*__flash =      0x00010000;
+*__flash_size = 0x00019FF0;
 *__ram =        0x00001C00;
 *__ram_size   = 0x00001000;
 *__stack_size = 0xC00;
@@ -23,9 +23,8 @@
 __flash       = 0x00010000;
 __flash_size  = 0x00019FF0;
 __ram         = 0x00029FF0;
-__ram_size    = 0x0001A000;
+__ram_size    = 0x00008000;
 __stack_size  = 0xC00;
-
 
 INCLUDE /home/harrison/ti/msp430-gcc/include/msp430fr5994_symbols.ld
 
