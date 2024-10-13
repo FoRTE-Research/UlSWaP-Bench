@@ -34,7 +34,7 @@
 #include "lzfx.h"
 
 /* Decompressor */
-int lzfx_decompress_tiny(
+int32_t lzfx_decompress_tiny(
     const uint8_t *ibuf,
     const uint32_t ilen,
     uint8_t *obuf,
