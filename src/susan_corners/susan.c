@@ -190,9 +190,9 @@
 
 #define OUTPUT_FILE "susan_corners_output.pgm"
 
-#define IMAGE_WIDTH 110
-#define IMAGE_HEIGHT 50
-#define BRIGHTNESS_THRESHOLD 20
+#define IMAGE_WIDTH 70
+#define IMAGE_HEIGHT 70
+#define BRIGHTNESS_THRESHOLD 15
 
 typedef struct
 {
