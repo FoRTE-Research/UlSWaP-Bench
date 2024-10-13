@@ -186,7 +186,7 @@
 #include "input.h"
 
 #define FIVE_SUPP       /* size for non-max corner suppression; SEVEN_SUPP or FIVE_SUPP */
-#define MAX_CORNERS 100 /* max corners per frame */
+#define MAX_CORNERS 32 /* max corners per frame */
 
 #define OUTPUT_FILE "susan_corners_output.pgm"
 
