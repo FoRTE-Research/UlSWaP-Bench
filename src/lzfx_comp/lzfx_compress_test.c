@@ -37,7 +37,7 @@ int32_t benchmark_main(void)
 
 #if HOST_TEST
     printf("Writing compressed data to %s\r\n", OUTPUT_FILENAME);
-    printf("Diff with src/lzfx_decompress/input.h to verify correctness\r\n");
+    printf("Diff with src/lzfx_decomp/input.h to verify correctness\r\n");
 
     FILE *fp = fopen(OUTPUT_FILENAME, "wt");
     if (fp == NULL)

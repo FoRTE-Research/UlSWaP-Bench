@@ -38,7 +38,7 @@ int benchmark_main(void)
 
 #if HOST_TEST
     printf("Writing decompressed data to %s\r\n", OUTPUT_FILENAME);
-    printf("Diff with src/lzfx_compress/dickens.txt to verify correctness\r\n");
+    printf("Diff with src/lzfx_comp/dickens.txt to verify correctness\r\n");
 
     FILE *fp = fopen(OUTPUT_FILENAME, "wt");
     fwrite(decompressed_data, 1, decompressed_size, fp);
