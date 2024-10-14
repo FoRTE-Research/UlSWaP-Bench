@@ -23,62 +23,7 @@ static size_t table[UCHAR_MAX + 1];
 static size_t len;
 static char *findme;
 
-/*
-**  Call this with the string to locate to initialize the table
-*/
-
-void init_search(const char *string)
-{
-    size_t i;
-
-    len = strlen(string);
-    for (i = 0; i <= UCHAR_MAX; i++) /* rdg 10/93 */
-    {
-        table[i] = len;
-    }
-    for (i = 0; i < len; i++)
-    {
-        table[(unsigned char)string[i]] = len - i - 1;
-    }
-    findme = (char *)string;
-}
-
-/*
-**  Call this with a buffer to search
-*/
-
-char *strsearch(const char *string)
-{
-    register size_t shift = 0;
-    register size_t pos = len - 1;
-    char *here;
-    size_t limit = strlen(string);
-
-    while (pos < limit)
-    {
-        while (pos < limit && (shift = table[(unsigned char)string[pos]]) > 0)
-        {
-            pos += shift;
-        }
-        if (0 == shift)
-        {
-            if (0 == strncmp(findme, here = (char *)&string[pos - len + 1], len))
-            {
-                return (here);
-            }
-            else
-            {
-                pos++;
-            }
-        }
-    }
-    return NULL;
-}
-
-int benchmark_main()
-{
-    char *here;
-    char *find_strings[] = {"Kur",
+char *find_strings[] = {"Kur",
                             "gent",
                             "lass",
                             "suns",
@@ -1696,6 +1641,62 @@ int benchmark_main()
                               "over the ugly parts",
                               "and recycling it for more than its",
                               "worth But trust me on the sunscreen"};
+
+/*
+**  Call this with the string to locate to initialize the table
+*/
+
+void init_search(const char *string)
+{
+    size_t i;
+
+    len = strlen(string);
+    for (i = 0; i <= UCHAR_MAX; i++) /* rdg 10/93 */
+    {
+        table[i] = len;
+    }
+    for (i = 0; i < len; i++)
+    {
+        table[(unsigned char)string[i]] = len - i - 1;
+    }
+    findme = (char *)string;
+}
+
+/*
+**  Call this with a buffer to search
+*/
+
+char *strsearch(const char *string)
+{
+    register size_t shift = 0;
+    register size_t pos = len - 1;
+    char *here;
+    size_t limit = strlen(string);
+
+    while (pos < limit)
+    {
+        while (pos < limit && (shift = table[(unsigned char)string[pos]]) > 0)
+        {
+            pos += shift;
+        }
+        if (0 == shift)
+        {
+            if (0 == strncmp(findme, here = (char *)&string[pos - len + 1], len))
+            {
+                return (here);
+            }
+            else
+            {
+                pos++;
+            }
+        }
+    }
+    return NULL;
+}
+
+int benchmark_main()
+{
+    char *here;
 
     for (int i = 0; find_strings[i]; i++)
     {
