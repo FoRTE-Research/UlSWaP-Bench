@@ -11,7 +11,7 @@ function (set_msp430_config)
     set(CMAKE_ASM_COMPILER ${CC_PATH}/msp430-elf-gcc PARENT_SCOPE)
 
     set(GENERAL_FLAGS "-Wall;-fno-builtin;-ffreestanding;-fno-optimize-sibling-calls;-fno-builtin-fma;-ffp-contract=off;-ffunction-sections")
-    set(MSP430_FLAGS "-mlarge;-mdata-region=upper;-mmcu=msp430fr5994;-specs=${PICOLIBC_ROOT}/picolibc.specs;-T${ARCH_DIR}/memmap.ld;-DCUSTOM_ARCH_STARTUP;-Wl,--gc-sections")
+    set(MSP430_FLAGS "-mlarge;-mdata-region=upper;-mmcu=msp430fr5994;-mhwmult=none;-specs=${PICOLIBC_ROOT}/picolibc.specs;-T${ARCH_DIR}/memmap.ld;-DCUSTOM_ARCH_STARTUP;-Wl,--gc-sections")
 
     set(ARCH_OBJDUMP "${CC_PATH}/msp430-elf-objdump" PARENT_SCOPE)
 
