@@ -5,9 +5,9 @@ VSOC_EXEC = '/home/danchiba/FrankenRV/hdl/sim/obj_dir/VSOC'
 
 ALL_BENCHMARKS = {
     'Security': ['aes', 'chacha20', 'poly1305', 'rsa', 'ecc', 'sha256'],
-    'Communication': ['crc', 'dijkstra', 'patricia', 'lzfx_compress', 'lzfx_decompress', 'lorawan_down', 'lorawan_up'],
-    'AI': ['activity_recognition', 'sensor_fusion', 'neural_net', 'anomaly'],
-    'Signal Processing': ['fft', 'adpcm_encode', 'mp3_encode', 'jpeg_encode', 'susan_edges', 'susan_corners', 'susan_smoothing'],
+    'Communication': ['crc', 'dijkstra', 'patricia', 'lzfx_comp', 'lzfx_decomp', 'lorawan_down', 'lorawan_up'],
+    'AI': ['activity_rec', 'sensor_fusion', 'image_class', 'anomaly'],
+    'Signal Processing': ['fft', 'adpcm_encode', 'mp3_encode', 'jpeg_encode', 'susan_edges', 'susan_corners', 'susan_smooth'],
     'General': ['basicmath', 'bitcount', 'qsort', 'stringsearch']
 }
 
