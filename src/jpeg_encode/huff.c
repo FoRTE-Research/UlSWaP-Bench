@@ -30,7 +30,8 @@
 #define JPEC_INT_WIDTH (int32_t)(sizeof(int32_t) * CHAR_BIT)
 #endif
 
-#if __GNUC__
+// Builtin is broken for msp430-gcc, fallback to regular implementation
+#if defined(__GNUC__) && !defined(__MSP430FR5994__)
 #define JPEC_HUFF_NBITS(JPEC_nbits, JPEC_val) \
     JPEC_nbits = (!JPEC_val) ? 0 : JPEC_INT_WIDTH - __builtin_clz(JPEC_val)
 #else
@@ -113,8 +114,9 @@ static void jpec_huff_encode_block_impl(jpec_block_t *block, jpec_huff_state_t *
     }
     JPEC_HUFF_NBITS(nbits, val);
     jpec_huff_write_bits(s, jpec_dc_code[nbits], jpec_dc_len[nbits]);
-    if (nbits)
+    if (nbits){
         jpec_huff_write_bits(s, (uint32_t)bits, nbits);
+    }
     /* AC coefficients encoding (w/ RLE of zeros) */
     int32_t nz = 0;
     for (int32_t i = 1; i < block->len; i++)
