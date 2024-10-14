@@ -6,6 +6,16 @@
 
 #define NONE 255
 
+//#if defined(__MSP430FR5994__)
+//#define UNINIT 0xf3fff
+//#else
+//#define UNINIT NULL
+//#endif
+
+#if defined(__MSP430FR5994__)
+#define NULL 0xf3fff
+#endif
+
 typedef struct
 {
     uint16_t iDist;
@@ -66,7 +76,7 @@ void enqueue(uint16_t iNode, uint16_t iDist, uint16_t iPrev)
     qNew->iPrev = iPrev;
     qNew->qNext = NULL;
 
-    if (!qLast)
+    if (qLast == NULL)
     {
         qHead = qNew;
     }
@@ -80,7 +90,7 @@ void enqueue(uint16_t iNode, uint16_t iDist, uint16_t iPrev)
 
 void dequeue(uint16_t *piNode, uint16_t *piDist, uint16_t *piPrev)
 {
-    if (qHead)
+    if (qHead != NULL)
     {
         *piNode = qHead->iNode;
         *piDist = qHead->iDist;
@@ -143,6 +153,7 @@ uint16_t dijkstra(uint16_t chStart, uint16_t chEnd)
 int benchmark_main(void)
 {
     uint16_t i, j;
+    g_qCount = 0;
 
     /* make a fully connected matrix */
     // see input.h
