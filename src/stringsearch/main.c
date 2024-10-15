@@ -23,7 +23,7 @@ static size_t table[UCHAR_MAX + 1];
 static size_t len;
 static char *findme;
 
-char *find_strings[] = {"Kur",
+const char *find_strings[] = {"Kur",
                             "gent",
                             "lass",
                             "suns",
@@ -309,7 +309,7 @@ char *find_strings[] = {"Kur",
                             "xxx",
                             "Th",
                             NULL};
-    char *search_strings[] = {"Kurt Vonneguts Commencement Address at",
+    const char *search_strings[] = {"Kurt Vonneguts Commencement Address at",
                               "MIT Ladies and gentlemen of",
                               "the class of 97 Wear",
                               "sunscreen If I could offer",
