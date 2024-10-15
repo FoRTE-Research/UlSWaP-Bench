@@ -32,10 +32,10 @@ def get_label_xtick_positions() -> list[float]:
 
 
 def get_line_xticks() -> list[float]:
-    positions = []
+    positions = [-0.25]
     bench_idx = 0
     for bench_group in ALL_BENCHMARKS.values():
-        positions.append(bench_idx + len(bench_group) - 0.5)
+        positions.append(bench_idx + len(bench_group) - 0.25)
         bench_idx += len(bench_group)
 
     return positions
@@ -46,10 +46,18 @@ def get_compact_num(num:int) -> str:
         return str(num)
     elif num < 10000:
         return f'{round(num / 1000, 1)}K'
-    elif num < 1000000:
+    elif num < 10**6:
         return f'{round(num / 1000)}K'
+    elif num < 10**7:
+        return f'{round(num / 10**6, 1)}M'
+    elif num < 10**9:
+        return f'{round(num / 10**6)}M'
+    elif num < 10**10:
+        return f'{round(num / 10**9, 1)}G'
+    elif num < 10**11:
+        return f'{round(num / 10**9)}G'
     else:
-        return f'{num // 1000000}M'
+        return 'uh-oh'
 
 
 class RunStatus(Enum):
