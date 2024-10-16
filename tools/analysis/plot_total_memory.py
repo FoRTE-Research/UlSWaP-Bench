@@ -1,3 +1,4 @@
+import csv
 from utils import *
 from static_memory import get_all_binary_sizes
 from runtime_memory import get_runtime_memory_map
@@ -79,6 +80,14 @@ def main():
         print('%20s: text = %5d, rodata = %5d, data = %5d, bss = %5d, stack = %5d, nvm = %6d, ram = %5d' %
               (bench, sizes['.text'], sizes['.rodata'], sizes['.data'], sizes['.bss'], sizes['stack'], nvm_size, ram_size))
     plot_total_memory(total_memory_dict, args.plot_file)
+
+    # create CSV file
+    with open('total_memory_riscv.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Benchmark', '.text', '.rodata', '.data', '.bss', 'stack'])
+        for bench in get_bench_names():
+            sizes = total_memory_dict[bench]
+            writer.writerow([bench, sizes['.text'], sizes['.rodata'], sizes['.data'], sizes['.bss'], sizes['stack']])
 
 
 if __name__ == '__main__':
