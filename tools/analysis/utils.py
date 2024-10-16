@@ -12,6 +12,12 @@ ALL_BENCHMARKS = {
 }
 
 MEM_TYPES = ['.text', '.rodata', '.data', '.bss', 'stack']
+NVM_MEM_TYPES = ['.text', '.rodata', '.data']
+RAM_MEM_TYPES = ['.data', '.bss', 'stack']
+ARCHITECTURES = ['RISC-V', 'MSP430', 'ARM']
+ARCH_COLORS = ['red', 'yellow', 'green']
+NVM_HATCHES = ['////', 'oo', '\\\\\\\\']
+RAM_HATCHES = ['////', 'oo', '\\\\\\\\']
 
 def get_bench_names() -> list[str]:
     bench_names = []
