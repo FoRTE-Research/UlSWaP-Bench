@@ -4,57 +4,59 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
-#define GRANULE_SIZE  576
+#define GRANULE_SIZE 576
 /* Include arch-specific instructions,
  * when defined. */
 #if defined(__mips__) && (__mips == 32)
 #include <stdint.h>
 
-#define mul(a,b) \
-({ \
-    register int32_t res; \
-    __asm__ __volatile__("mult %0, %1" : : "r" (a), "r" (b)); \
-    __asm__ __volatile__("mfhi %0" : "=r" (res)); \
-    res; \
-})
+#define mul(a, b)                                               \
+    ({                                                          \
+        register int32_t res;                                   \
+        __asm__ __volatile__("mult %0, %1" : : "r"(a), "r"(b)); \
+        __asm__ __volatile__("mfhi %0" : "=r"(res));            \
+        res;                                                    \
+    })
 
-#define mul0(hi,lo,a,b) \
-    __asm__ __volatile__("mult %0, %1" : : "r" (a), "r" (b))
+#define mul0(hi, lo, a, b) \
+    __asm__ __volatile__("mult %0, %1" : : "r"(a), "r"(b))
 
-#define muladd(hi,lo,a,b) \
-    __asm__ __volatile__("madd %0, %1" : : "r" (a), "r" (b))
+#define muladd(hi, lo, a, b) \
+    __asm__ __volatile__("madd %0, %1" : : "r"(a), "r"(b))
 
-#define mulsub(hi,lo,a,b) \
-    __asm__ __volatile__("msub %0, %1" : : "r" (a), "r" (b))
+#define mulsub(hi, lo, a, b) \
+    __asm__ __volatile__("msub %0, %1" : : "r"(a), "r"(b))
 
-#define mulz(hi,lo) \
-do { \
-    register int32_t t; \
-    __asm__ __volatile__("mfhi %0" : "=r" (t)); \
-    (hi) = t; \
-} while (0)
+#define mulz(hi, lo)                               \
+    do                                             \
+    {                                              \
+        register int32_t t;                        \
+        __asm__ __volatile__("mfhi %0" : "=r"(t)); \
+        (hi) = t;                                  \
+    } while (0)
 
-#define cmuls(dre, dim, are, aim, bre, bim) \
-do { \
-    register int32_t t1, t2, tre; \
-    __asm__ __volatile__("mult %0, %1" : : "r" (are), "r" (bre)); \
-    __asm__ __volatile__("msub %0, %1" : : "r" (aim), "r" (bim)); \
-    __asm__ __volatile__("mfhi %0; mflo %1" : "=r" (t1), "=r" (t2)); \
-    tre = (t1 << 1) | ((uint32_t)t2 >> 31); \
-    __asm__ __volatile__("mult %0, %1" : : "r" (are), "r" (bim)); \
-    __asm__ __volatile__("madd %0, %1" : : "r" (bre), "r" (aim)); \
-    dre = tre; \
-    __asm__ __volatile__("mfhi %0; mflo %1" : "=r" (t1), "=r" (t2)); \
-    dim = (t1 << 1) | ((uint32_t)t2 >> 31); \
-} while (0)
+#define cmuls(dre, dim, are, aim, bre, bim)                            \
+    do                                                                 \
+    {                                                                  \
+        register int32_t t1, t2, tre;                                  \
+        __asm__ __volatile__("mult %0, %1" : : "r"(are), "r"(bre));    \
+        __asm__ __volatile__("msub %0, %1" : : "r"(aim), "r"(bim));    \
+        __asm__ __volatile__("mfhi %0; mflo %1" : "=r"(t1), "=r"(t2)); \
+        tre = (t1 << 1) | ((uint32_t)t2 >> 31);                        \
+        __asm__ __volatile__("mult %0, %1" : : "r"(are), "r"(bim));    \
+        __asm__ __volatile__("madd %0, %1" : : "r"(bre), "r"(aim));    \
+        dre = tre;                                                     \
+        __asm__ __volatile__("mfhi %0; mflo %1" : "=r"(t1), "=r"(t2)); \
+        dim = (t1 << 1) | ((uint32_t)t2 >> 31);                        \
+    } while (0)
 
 #if __mips_isa_rev >= 2
 static inline uint32_t SWAB32(uint32_t x)
 {
     __asm__(
-    "	wsbh	%0, %1			\n"
-    "	rotr	%0, %0, 16		\n"
-    : "=r" (x) : "r" (x));
+        "	wsbh	%0, %1			\n"
+        "	rotr	%0, %0, 16		\n"
+        : "=r"(x) : "r"(x));
     return x;
 }
 #define SWAB32 SWAB32
@@ -65,107 +67,102 @@ static inline uint32_t SWAB32(uint32_t x)
 
 /* Fractional multiply */
 #if __ARM_ARCH >= 6
-#define mul(x,y) \
-({ \
-    register int32_t result; \
-    asm ("smmul %0, %2, %1" : "=r" (result) : "r" (x), "r" (y)); \
-    result ;\
-})
+#define mul(x, y)                                                \
+    ({                                                           \
+        register int32_t result;                                 \
+        asm("smmul %0, %2, %1" : "=r"(result) : "r"(x), "r"(y)); \
+        result;                                                  \
+    })
 #else
-#define mul(x,y) \
-({ \
-    register int32_t result; \
-    asm ("smull r3, %0, %2, %1" : "=r" (result) : "r" (x), "r" (y) : "r3"); \
-    result ; \
-})
+#define mul(x, y)                                                           \
+    ({                                                                      \
+        register int32_t result;                                            \
+        asm("smull r3, %0, %2, %1" : "=r"(result) : "r"(x), "r"(y) : "r3"); \
+        result;                                                             \
+    })
 #endif
 
 /* Fractional multiply with single bit left shift. */
-#define muls(x,y) \
-({ \
-    register int32_t result; \
-    asm ( \
-        "smull r3, %0, %2, %1\n\t" \
-        "movs r3, r3, lsl #1\n\t" \
-        "adc %0, %0, %0" \
-        : "=r" (result) : "r" (x), "r" (y) : "r3", "cc" \
-    ); \
-    result; \
-})
-
+#define muls(x, y)                                         \
+    ({                                                     \
+        register int32_t result;                           \
+        asm(                                               \
+            "smull r3, %0, %2, %1\n\t"                     \
+            "movs r3, r3, lsl #1\n\t"                      \
+            "adc %0, %0, %0"                               \
+            : "=r"(result) : "r"(x), "r"(y) : "r3", "cc"); \
+        result;                                            \
+    })
 
 #if __ARM_ARCH >= 6
-#define mulr(x,y) \
-({ \
-    register int32_t result; \
-    asm ( \
-        "smmulr %0, %2, %1" : "=r" (result) : "r" (x), "r" (y) \
-    ); \
-    result; \
-})
+#define mulr(x, y)                                                \
+    ({                                                            \
+        register int32_t result;                                  \
+        asm(                                                      \
+            "smmulr %0, %2, %1" : "=r"(result) : "r"(x), "r"(y)); \
+        result;                                                   \
+    })
 #else
-#define mulr(x,y) \
-({ \
-    register int32_t result; \
-    asm ( \
-        "smull r3, %0, %2, %1\n\t" \
-        "adds r3, r3, #0x80000000\n\t" \
-        "adc %0, %0, #0" \
-        : "=r" (result) : "r" (x), "r" (y) : "r3", "cc" \
-    ); \
-    result; \
-})
+#define mulr(x, y)                                         \
+    ({                                                     \
+        register int32_t result;                           \
+        asm(                                               \
+            "smull r3, %0, %2, %1\n\t"                     \
+            "adds r3, r3, #0x80000000\n\t"                 \
+            "adc %0, %0, #0"                               \
+            : "=r"(result) : "r"(x), "r"(y) : "r3", "cc"); \
+        result;                                            \
+    })
 #endif
 
-#define mulsr(x,y) \
-({ \
-    register int32_t result; \
-    asm ( \
-        "smull r3, %0, %1, %2\n\t" \
-        "movs r3, r3, lsl #1\n\t" \
-        "adc %0, %0, %0\n\t" \
-        "adds r3, r3, #0x80000000\n\t" \
-        "adc %0, %0, #0" \
-        : "=r" (result) : "r" (x), "r" (y) : "r3", "cc" \
-    ); \
-    result; \
-})
+#define mulsr(x, y)                                        \
+    ({                                                     \
+        register int32_t result;                           \
+        asm(                                               \
+            "smull r3, %0, %1, %2\n\t"                     \
+            "movs r3, r3, lsl #1\n\t"                      \
+            "adc %0, %0, %0\n\t"                           \
+            "adds r3, r3, #0x80000000\n\t"                 \
+            "adc %0, %0, #0"                               \
+            : "=r"(result) : "r"(x), "r"(y) : "r3", "cc"); \
+        result;                                            \
+    })
 
-#define mul0(hi,lo,a,b) \
-    asm ("smull %0, %1, %2, %3" : "=r" (lo), "=r" (hi) : "r" (a), "r" (b))
+#define mul0(hi, lo, a, b) \
+    asm("smull %0, %1, %2, %3" : "=r"(lo), "=r"(hi) : "r"(a), "r"(b))
 
-#define muladd(hi,lo,a,b) \
-    asm ("smlal %0, %1, %2, %3" : "+r" (lo), "+r" (hi) : "r" (a), "r" (b))
+#define muladd(hi, lo, a, b) \
+    asm("smlal %0, %1, %2, %3" : "+r"(lo), "+r"(hi) : "r"(a), "r"(b))
 
-#define mulsub(hi,lo,a,b) \
-    asm ("smlal %0, %1, %2, %3" : "+r" (lo), "+r" (hi) : "r" (a), "r" (-(b)))
+#define mulsub(hi, lo, a, b) \
+    asm("smlal %0, %1, %2, %3" : "+r"(lo), "+r"(hi) : "r"(a), "r"(-(b)))
 
-#define mulz(hi,lo)
+#define mulz(hi, lo)
 
-#define cmuls(dre, dim, are, aim, bre, bim) \
-do { \
-    register int32_t tre, tim; \
-    asm ( \
-        "smull r3, %0, %2, %4\n\t" \
-        "smlal r3, %0, %3, %5\n\t" \
-        "movs r3, r3, lsl #1\n\t" \
-        "adc %0, %0, %0\n\t" \
-        "smull r3, %1, %2, %6\n\t" \
-        "smlal r3, %1, %4, %3\n\t" \
-        "movs r3, r3, lsl #1\n\t" \
-        "adc %1, %1, %1\n\t" \
-        : "=&r" (tre), "=&r" (tim) \
-        : "r" (are), "r" (aim), "r" (bre), "r" (-(bim)), "r" (bim) \
-        : "r3", "cc" \
-    ); \
-    dre = tre; \
-    dim = tim; \
-} while (0)
+#define cmuls(dre, dim, are, aim, bre, bim)                       \
+    do                                                            \
+    {                                                             \
+        register int32_t tre, tim;                                \
+        asm(                                                      \
+            "smull r3, %0, %2, %4\n\t"                            \
+            "smlal r3, %0, %3, %5\n\t"                            \
+            "movs r3, r3, lsl #1\n\t"                             \
+            "adc %0, %0, %0\n\t"                                  \
+            "smull r3, %1, %2, %6\n\t"                            \
+            "smlal r3, %1, %4, %3\n\t"                            \
+            "movs r3, r3, lsl #1\n\t"                             \
+            "adc %1, %1, %1\n\t"                                  \
+            : "=&r"(tre), "=&r"(tim)                              \
+            : "r"(are), "r"(aim), "r"(bre), "r"(-(bim)), "r"(bim) \
+            : "r3", "cc");                                        \
+        dre = tre;                                                \
+        dim = tim;                                                \
+    } while (0)
 
 #if __ARM_ARCH >= 6
 static inline uint32_t SWAB32(uint32_t x)
 {
-    asm ("rev %0, %1" : "=r" (x) : "r" (x));
+    asm("rev %0, %1" : "=r"(x) : "r"(x));
     return x;
 }
 #define SWAB32 SWAB32
@@ -177,62 +174,62 @@ static inline uint32_t SWAB32(uint32_t x)
 #include <stdint.h>
 
 #ifndef mul
-#define mul(a, b)   (int32_t)  ( ( ((int64_t) a) * ((int64_t) b) ) >>32 )
+#define mul(a, b) (int32_t)((((int64_t)a) * ((int64_t)b)) >> 32)
 #endif
 
 #ifndef muls
-#define muls(a, b)  (int32_t)  ( ( ((int64_t) a) * ((int64_t) b) ) >>31 )
+#define muls(a, b) (int32_t)((((int64_t)a) * ((int64_t)b)) >> 31)
 #endif
 
 #ifndef mulr
-#define mulr(a, b)  (int32_t)  ( ( ( ((int64_t) a) * ((int64_t) b)) + 0x80000000LL ) >>32 )
+#define mulr(a, b) (int32_t)(((((int64_t)a) * ((int64_t)b)) + 0x80000000LL) >> 32)
 #endif
 
 #ifndef mulsr
-#define mulsr(a, b) (int32_t)  ( ( ( ((int64_t) a) * ((int64_t) b)) + 0x40000000LL ) >>31 )
+#define mulsr(a, b) (int32_t)(((((int64_t)a) * ((int64_t)b)) + 0x40000000LL) >> 31)
 #endif
 
 #ifndef mul0
-#define mul0(hi, lo, a, b)     ((hi)  = mul((a), (b)))
-#define muladd(hi, lo, a, b)   ((hi) += mul((a), (b)))
-#define mulsub(hi, lo, a, b)   ((hi) -= mul((a), (b)))
+#define mul0(hi, lo, a, b) ((hi) = mul((a), (b)))
+#define muladd(hi, lo, a, b) ((hi) += mul((a), (b)))
+#define mulsub(hi, lo, a, b) ((hi) -= mul((a), (b)))
 #define mulz(hi, lo)
 #endif
 
 #ifndef cmuls
-#define cmuls(dre, dim, are, aim, bre, bim) \
-do { \
-    int32_t tre; \
-    (tre) = (int32_t) (((int64_t) (are) * (int64_t) (bre) - (int64_t) (aim) * (int64_t) (bim)) >> 31); \
-    (dim) = (int32_t) (((int64_t) (are) * (int64_t) (bim) + (int64_t) (aim) * (int64_t) (bre)) >> 31); \
-    (dre) = tre; \
-} while (0)
+#define cmuls(dre, dim, are, aim, bre, bim)                                                           \
+    do                                                                                                \
+    {                                                                                                 \
+        int32_t tre;                                                                                  \
+        (tre) = (int32_t)(((int64_t)(are) * (int64_t)(bre) - (int64_t)(aim) * (int64_t)(bim)) >> 31); \
+        (dim) = (int32_t)(((int64_t)(are) * (int64_t)(bim) + (int64_t)(aim) * (int64_t)(bre)) >> 31); \
+        (dre) = tre;                                                                                  \
+    } while (0)
 #endif
-
 
 #ifndef SWAB32
 #if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 2))
-#define SWAB32(x)    __builtin_bswap32(x)
+#define SWAB32(x) __builtin_bswap32(x)
 #else
-#define SWAB32(x)	(((uint32_t)(x) >> 24) | (((uint32_t)(x) >> 8) & 0xff00) | (((uint32_t)(x) & 0xff00) << 8) | ((uint32_t)(x) << 24))
+#define SWAB32(x) (((uint32_t)(x) >> 24) | (((uint32_t)(x) >> 8) & 0xff00) | (((uint32_t)(x) & 0xff00) << 8) | ((uint32_t)(x) << 24))
 #endif
 
 /* #define DEBUG if you want the library to dump info to stdout */
 
-#define PI          3.14159265358979
-#define PI4         0.78539816339745
-#define PI12        0.26179938779915
-#define PI36        0.087266462599717
-#define PI64        0.049087385212
-#define SQRT2       1.41421356237
-#define LN2         0.69314718
+#define PI 3.14159265358979
+#define PI4 0.78539816339745
+#define PI12 0.26179938779915
+#define PI36 0.087266462599717
+#define PI64 0.049087385212
+#define SQRT2 1.41421356237
+#define LN2 0.69314718
 #define LN_TO_LOG10 0.2302585093
-#define BLKSIZE     1024
-#define HAN_SIZE    512 /* for loop unrolling, require that HAN_SIZE%8==0 */
+#define BLKSIZE 1024
+#define HAN_SIZE 512 /* for loop unrolling, require that HAN_SIZE%8==0 */
 #define SCALE_BLOCK 12
 #define SCALE_RANGE 64
-#define SCALE       32768
-#define SBLIMIT     32
+#define SCALE 32768
+#define SBLIMIT 32
 
 #ifndef MAX_CHANNELS
 #define MAX_CHANNELS 1
@@ -242,26 +239,28 @@ do { \
 #define MAX_GRANULES 1
 #endif
 
-typedef struct {
+typedef struct
+{
     int32_t channels;
     int32_t samplerate;
 } priv_shine_wave_t;
 
-typedef struct {
+typedef struct
+{
     int32_t version;
     int32_t layer;
     int32_t granules_per_frame;
-    int32_t mode;      /* + */ /* Stereo mode */
-    int32_t bitr;      /* + */ /* Must conform to known bitrate - see Main.c */
-    int32_t emph;      /* + */ /* De-emphasis */
+    int32_t mode; /* + */ /* Stereo mode */
+    int32_t bitr; /* + */ /* Must conform to known bitrate - see Main.c */
+    int32_t emph; /* + */ /* De-emphasis */
     int32_t padding;
     int32_t bits_per_frame;
     int32_t bits_per_slot;
     double frac_slots_per_frame;
     double slot_lag;
     int32_t whole_slots_per_frame;
-    int32_t bitrate_index;     /* + */ /* See Main.c and Layer3.c */
-    int32_t samplerate_index;  /* + */ /* See Main.c and Layer3.c */
+    int32_t bitrate_index; /* + */    /* See Main.c and Layer3.c */
+    int32_t samplerate_index; /* + */ /* See Main.c and Layer3.c */
     int32_t crc;
     int32_t ext;
     int32_t mode_ext;
@@ -269,32 +268,36 @@ typedef struct {
     // int32_t original;   /* + */
 } priv_shine_mpeg_t;
 
-typedef struct {
-    int32_t *xr;                    /* magnitudes of the spectral values */
-    int32_t xrsq[GRANULE_SIZE];     /* xr squared */
-    int32_t xrabs[GRANULE_SIZE];    /* xr absolute */
-    int32_t xrmax;                  /* maximum of xrabs array */
-    int32_t en_tot[MAX_GRANULES];   /* gr */
+typedef struct
+{
+    int32_t *xr;                  /* magnitudes of the spectral values */
+    int32_t xrsq[GRANULE_SIZE];   /* xr squared */
+    int32_t xrabs[GRANULE_SIZE];  /* xr absolute */
+    int32_t xrmax;                /* maximum of xrabs array */
+    int32_t en_tot[MAX_GRANULES]; /* gr */
     int32_t en[MAX_GRANULES][21];
     int32_t xm[MAX_GRANULES][21];
     int32_t xrmaxl[MAX_GRANULES];
-    double steptab[128]; /* 2**(-x/4)  for x = -127..0 */
-    int32_t steptabi[128];  /* 2**(-x/4)  for x = -127..0 */
+    double steptab[128];   /* 2**(-x/4)  for x = -127..0 */
+    int32_t steptabi[128]; /* 2**(-x/4)  for x = -127..0 */
     // int32_t int2idx[10000]; /* x**(3/4)   for x = 0..9999 */
 } l3loop_t;
 
-typedef struct {
+typedef struct
+{
     int32_t cos_l[18][36];
 } mdct_t;
 
-typedef struct {
+typedef struct
+{
     int32_t off[MAX_CHANNELS];
     int32_t fl[SBLIMIT][64];
     int32_t x[MAX_CHANNELS][HAN_SIZE];
 } subband_t;
 
 /* Side information */
-typedef struct {
+typedef struct
+{
     uint32_t part2_3_length;
     uint32_t big_values;
     uint32_t count1;
@@ -315,47 +318,53 @@ typedef struct {
     uint32_t slen[4];
 } gr_info;
 
-typedef struct {
+typedef struct
+{
     uint32_t private_bits;
     int32_t resvDrain;
     uint32_t scfsi[MAX_CHANNELS][4];
-    struct {
-        struct {
+    struct
+    {
+        struct
+        {
             gr_info tt;
         } ch[MAX_CHANNELS];
     } gr[MAX_GRANULES];
 } shine_side_info_t;
 
-typedef struct {
+typedef struct
+{
     double l[MAX_GRANULES][MAX_CHANNELS][21];
 } shine_psy_ratio_t;
 
-typedef struct {
+typedef struct
+{
     double l[MAX_GRANULES][MAX_CHANNELS][21];
 } shine_psy_xmin_t;
 
-typedef struct {
-    int32_t l[MAX_GRANULES][MAX_CHANNELS][22];            /* [cb] */
-    int32_t s[MAX_GRANULES][MAX_CHANNELS][13][3];         /* [window][cb] */
+typedef struct
+{
+    int32_t l[MAX_GRANULES][MAX_CHANNELS][22];    /* [cb] */
+    int32_t s[MAX_GRANULES][MAX_CHANNELS][13][3]; /* [window][cb] */
 } shine_scalefac_t;
 
-typedef struct bit_stream_struc {
-    uint8_t *data;        /* Processed data */
-    uint32_t cache;            /* bit stream cache */
-    int32_t cache_bits;     /* free bits in cache */
-    int16_t data_size;      /* Total data size */
-    int16_t data_position;  /* Data position */
+typedef struct bit_stream_struc
+{
+    uint8_t *data;         /* Processed data */
+    uint32_t cache;        /* bit stream cache */
+    int32_t cache_bits;    /* free bits in cache */
+    int16_t data_size;     /* Total data size */
+    int16_t data_position; /* Data position */
 } bitstream_t;
 
+#define MINIMUM 4     /* Minimum size of the buffer in bytes */
+#define MAX_LENGTH 32 /* Maximum length of word written or \
+                         read from bit stream */
 
-#define         MINIMUM         4    /* Minimum size of the buffer in bytes */
-#define         MAX_LENGTH      32   /* Maximum length of word written or
-                                        read from bit stream */
+#define BUFFER_SIZE 4096
 
-#define         BUFFER_SIZE     4096
-
-#define         MIN(A, B)       ((A) < (B) ? (A) : (B))
-#define         MAX(A, B)       ((A) > (B) ? (A) : (B))
+#define MIN(A, B) ((A) < (B) ? (A) : (B))
+#define MAX(A, B) ((A) > (B) ? (A) : (B))
 
 void shine_open_bit_stream(bitstream_t *bs, const int32_t size);
 
@@ -365,7 +374,8 @@ void shine_putbits(bitstream_t *bs, uint32_t val, uint32_t N);
 
 int32_t shine_get_bits_count(bitstream_t *bs);
 
-typedef struct shine_global_flags {
+typedef struct shine_global_flags
+{
     // priv_shine_wave_t wave;
     priv_shine_mpeg_t mpeg;
     bitstream_t bs;
@@ -403,164 +413,163 @@ const int32_t shine_slen2_tab[16] = {0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 1, 2, 3, 2
 
 /* Valid samplerates and bitrates. */
 const int32_t samplerates[9] = {
-        44100, 48000, 32000, /* MPEG-I */
-        22050, 24000, 16000, /* MPEG-II */
-        11025, 12000, 8000   /* MPEG-2.5 */
+    44100, 48000, 32000, /* MPEG-I */
+    22050, 24000, 16000, /* MPEG-II */
+    11025, 12000, 8000   /* MPEG-2.5 */
 };
 
 const int32_t bitrates[16][4] = {
-        /* MPEG version:
-         * 2.5, reserved, II, I */
-        {-1, -1, -1,  -1},
-        {8,  -1, 8,   32},
-        {16, -1, 16,  40},
-        {24, -1, 24,  48},
-        {32, -1, 32,  56},
-        {40, -1, 40,  64},
-        {48, -1, 48,  80},
-        {56, -1, 56,  96},
-        {64, -1, 64,  112},
-        {-1, -1, 80,  128},
-        {-1, -1, 96,  160},
-        {-1, -1, 112, 192},
-        {-1, -1, 128, 224},
-        {-1, -1, 144, 256},
-        {-1, -1, 160, 320},
-        {-1, -1, -1,  -1}
-};
+    /* MPEG version:
+     * 2.5, reserved, II, I */
+    {-1, -1, -1, -1},
+    {8, -1, 8, 32},
+    {16, -1, 16, 40},
+    {24, -1, 24, 48},
+    {32, -1, 32, 56},
+    {40, -1, 40, 64},
+    {48, -1, 48, 80},
+    {56, -1, 56, 96},
+    {64, -1, 64, 112},
+    {-1, -1, 80, 128},
+    {-1, -1, 96, 160},
+    {-1, -1, 112, 192},
+    {-1, -1, 128, 224},
+    {-1, -1, 144, 256},
+    {-1, -1, 160, 320},
+    {-1, -1, -1, -1}};
 
 const int32_t shine_scale_fact_band_index[9][23] =
-        {
-                /* MPEG-I */
-                /* Table B.8.b: 44.1 kHz */
-                {0, 4,  8,  12, 16, 20, 24, 30, 36,  44,  52,  62,  74,  90,  110, 134, 162, 196, 238, 288, 342, 418, 576},
-                /* Table B.8.c: 48 kHz */
-                {0, 4,  8,  12, 16, 20, 24, 30, 36,  42,  50,  60,  72,  88,  106, 128, 156, 190, 230, 276, 330, 384, 576},
-                /* Table B.8.a: 32 kHz */
-                {0, 4,  8,  12, 16, 20, 24, 30, 36,  44,  54,  66,  82,  102, 126, 156, 194, 240, 296, 364, 448, 550, 576},
-                /* MPEG-II */
-                /* Table B.2.b: 22.05 kHz */
-                {0, 6,  12, 18, 24, 30, 36, 44, 54,  66,  80,  96,  116, 140, 168, 200, 238, 284, 336, 396, 464, 522, 576},
-                /* Table B.2.c: 24 kHz */
-                {0, 6,  12, 18, 24, 30, 36, 44, 54,  66,  80,  96,  114, 136, 162, 194, 232, 278, 330, 394, 464, 540, 576},
-                /* Table B.2.a: 16 kHz */
-                {0, 6,  12, 18, 24, 30, 36, 44, 45,  66,  80,  96,  116, 140, 168, 200, 238, 248, 336, 396, 464, 522, 576},
+    {
+        /* MPEG-I */
+        /* Table B.8.b: 44.1 kHz */
+        {0, 4, 8, 12, 16, 20, 24, 30, 36, 44, 52, 62, 74, 90, 110, 134, 162, 196, 238, 288, 342, 418, 576},
+        /* Table B.8.c: 48 kHz */
+        {0, 4, 8, 12, 16, 20, 24, 30, 36, 42, 50, 60, 72, 88, 106, 128, 156, 190, 230, 276, 330, 384, 576},
+        /* Table B.8.a: 32 kHz */
+        {0, 4, 8, 12, 16, 20, 24, 30, 36, 44, 54, 66, 82, 102, 126, 156, 194, 240, 296, 364, 448, 550, 576},
+        /* MPEG-II */
+        /* Table B.2.b: 22.05 kHz */
+        {0, 6, 12, 18, 24, 30, 36, 44, 54, 66, 80, 96, 116, 140, 168, 200, 238, 284, 336, 396, 464, 522, 576},
+        /* Table B.2.c: 24 kHz */
+        {0, 6, 12, 18, 24, 30, 36, 44, 54, 66, 80, 96, 114, 136, 162, 194, 232, 278, 330, 394, 464, 540, 576},
+        /* Table B.2.a: 16 kHz */
+        {0, 6, 12, 18, 24, 30, 36, 44, 45, 66, 80, 96, 116, 140, 168, 200, 238, 248, 336, 396, 464, 522, 576},
 
-                /* MPEG-2.5 */
-                /* 11.025 kHz */
-                {0, 6,  12, 18, 24, 30, 36, 44, 54,  66,  80,  96,  116, 140, 168, 200, 238, 284, 336, 396, 464, 522, 576},
-                /* 12 kHz */
-                {0, 6,  12, 18, 24, 30, 36, 44, 54,  66,  80,  96,  116, 140, 168, 200, 238, 284, 336, 396, 464, 522, 576},
-                /* MPEG-2.5 8 kHz */
-                {0, 12, 24, 36, 48, 60, 72, 88, 108, 132, 160, 192, 232, 280, 336, 400, 476, 566, 568, 570, 572, 574, 576},
-        };
+        /* MPEG-2.5 */
+        /* 11.025 kHz */
+        {0, 6, 12, 18, 24, 30, 36, 44, 54, 66, 80, 96, 116, 140, 168, 200, 238, 284, 336, 396, 464, 522, 576},
+        /* 12 kHz */
+        {0, 6, 12, 18, 24, 30, 36, 44, 54, 66, 80, 96, 116, 140, 168, 200, 238, 284, 336, 396, 464, 522, 576},
+        /* MPEG-2.5 8 kHz */
+        {0, 12, 24, 36, 48, 60, 72, 88, 108, 132, 160, 192, 232, 280, 336, 400, 476, 566, 568, 570, 572, 574, 576},
+};
 
 /* note. 0.035781 is shine_enwindow maximum value */
 /* scale and convert to fixed point before storing */
-#define SHINE_EW(x)                    (int32_t)((double)(x) * 0x7fffffff)
-#define SHINE_EW2(a, b)                    SHINE_EW(a), SHINE_EW(b)
-#define SHINE_EW10(a, b, c, d, e, f, g, h, i, j)    SHINE_EW2(a,b), SHINE_EW2(c,d), SHINE_EW2(e,f), SHINE_EW2(g,h), SHINE_EW2(i,j)
+#define SHINE_EW(x) (int32_t)((double)(x) * 0x7fffffff)
+#define SHINE_EW2(a, b) SHINE_EW(a), SHINE_EW(b)
+#define SHINE_EW10(a, b, c, d, e, f, g, h, i, j) SHINE_EW2(a, b), SHINE_EW2(c, d), SHINE_EW2(e, f), SHINE_EW2(g, h), SHINE_EW2(i, j)
 
 const int32_t shine_enwindow[] = {
-        SHINE_EW10(0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000001, -0.000001,
-                   -0.000001),
-        SHINE_EW10(-0.000001, -0.000001, -0.000001, -0.000002, -0.000002, -0.000002, -0.000002, -0.000003, -0.000003,
-                   -0.000003),
-        SHINE_EW10(-0.000004, -0.000004, -0.000005, -0.000005, -0.000006, -0.000007, -0.000008, -0.000008, -0.000009,
-                   -0.000010),
-        SHINE_EW10(-0.000011, -0.000012, -0.000014, -0.000015, -0.000017, -0.000018, -0.000020, -0.000021, -0.000023,
-                   -0.000025),
-        SHINE_EW10(-0.000028, -0.000030, -0.000032, -0.000035, -0.000038, -0.000041, -0.000043, -0.000046, -0.000050,
-                   -0.000053),
-        SHINE_EW10(-0.000056, -0.000060, -0.000063, -0.000066, -0.000070, -0.000073, -0.000077, -0.000081, -0.000084,
-                   -0.000087),
-        SHINE_EW10(-0.000091, -0.000093, -0.000096, -0.000099, 0.000102, 0.000104, 0.000106, 0.000107, 0.000108,
-                   0.000109),
-        SHINE_EW10(0.000109, 0.000108, 0.000107, 0.000105, 0.000103, 0.000099, 0.000095, 0.000090, 0.000084, 0.000078),
-        SHINE_EW10(0.000070, 0.000061, 0.000051, 0.000040, 0.000027, 0.000014, -0.000001, -0.000017, -0.000034,
-                   -0.000053),
-        SHINE_EW10(-0.000073, -0.000094, -0.000116, -0.000140, -0.000165, -0.000191, -0.000219, -0.000247, -0.000277,
-                   -0.000308),
-        SHINE_EW10(-0.000339, -0.000371, -0.000404, -0.000438, -0.000473, -0.000507, -0.000542, -0.000577, -0.000612,
-                   -0.000647),
-        SHINE_EW10(-0.000681, -0.000714, -0.000747, -0.000779, -0.000810, -0.000839, -0.000866, -0.000892, -0.000915,
-                   -0.000936),
-        SHINE_EW10(-0.000954, -0.000969, -0.000981, -0.000989, -0.000994, -0.000995, -0.000992, -0.000984, 0.000971,
-                   0.000954),
-        SHINE_EW10(0.000931, 0.000903, 0.000869, 0.000829, 0.000784, 0.000732, 0.000674, 0.000610, 0.000539, 0.000463),
-        SHINE_EW10(0.000379, 0.000288, 0.000192, 0.000088, -0.000021, -0.000137, -0.000260, -0.000388, -0.000522,
-                   -0.000662),
-        SHINE_EW10(-0.000807, -0.000957, -0.001111, -0.001270, -0.001432, -0.001598, -0.001767, -0.001937, -0.002110,
-                   -0.002283),
-        SHINE_EW10(-0.002457, -0.002631, -0.002803, -0.002974, -0.003142, -0.003307, -0.003467, -0.003623, -0.003772,
-                   -0.003914),
-        SHINE_EW10(-0.004049, -0.004175, -0.004291, -0.004396, -0.004490, -0.004570, -0.004638, -0.004691, -0.004728,
-                   -0.004749),
-        SHINE_EW10(-0.004752, -0.004737, -0.004703, -0.004649, -0.004574, -0.004477, -0.004358, -0.004215, -0.004049,
-                   -0.003859),
-        SHINE_EW10(-0.003643, -0.003402, 0.003135, 0.002841, 0.002522, 0.002175, 0.001801, 0.001400, 0.000971,
-                   0.000516),
-        SHINE_EW10(0.000033, -0.000476, -0.001012, -0.001574, -0.002162, -0.002774, -0.003411, -0.004072, -0.004756,
-                   -0.005462),
-        SHINE_EW10(-0.006189, -0.006937, -0.007703, -0.008487, -0.009288, -0.010104, -0.010933, -0.011775, -0.012628,
-                   -0.013489),
-        SHINE_EW10(-0.014359, -0.015234, -0.016113, -0.016994, -0.017876, -0.018757, -0.019634, -0.020507, -0.021372,
-                   -0.022229),
-        SHINE_EW10(-0.023074, -0.023907, -0.024725, -0.025527, -0.026311, -0.027074, -0.027815, -0.028533, -0.029225,
-                   -0.029890),
-        SHINE_EW10(-0.030527, -0.031133, -0.031707, -0.032248, -0.032755, -0.033226, -0.033660, -0.034056, -0.034413,
-                   -0.034730),
-        SHINE_EW10(-0.035007, -0.035242, -0.035435, -0.035586, -0.035694, -0.035759, 0.035781, 0.035759, 0.035694,
-                   0.035586),
-        SHINE_EW10(0.035435, 0.035242, 0.035007, 0.034730, 0.034413, 0.034056, 0.033660, 0.033226, 0.032755, 0.032248),
-        SHINE_EW10(0.031707, 0.031133, 0.030527, 0.029890, 0.029225, 0.028533, 0.027815, 0.027074, 0.026311, 0.025527),
-        SHINE_EW10(0.024725, 0.023907, 0.023074, 0.022229, 0.021372, 0.020507, 0.019634, 0.018757, 0.017876, 0.016994),
-        SHINE_EW10(0.016113, 0.015234, 0.014359, 0.013489, 0.012628, 0.011775, 0.010933, 0.010104, 0.009288, 0.008487),
-        SHINE_EW10(0.007703, 0.006937, 0.006189, 0.005462, 0.004756, 0.004072, 0.003411, 0.002774, 0.002162, 0.001574),
-        SHINE_EW10(0.001012, 0.000476, -0.000033, -0.000516, -0.000971, -0.001400, -0.001801, -0.002175, -0.002522,
-                   -0.002841),
-        SHINE_EW10(0.003135, 0.003402, 0.003643, 0.003859, 0.004049, 0.004215, 0.004358, 0.004477, 0.004574, 0.004649),
-        SHINE_EW10(0.004703, 0.004737, 0.004752, 0.004749, 0.004728, 0.004691, 0.004638, 0.004570, 0.004490, 0.004396),
-        SHINE_EW10(0.004291, 0.004175, 0.004049, 0.003914, 0.003772, 0.003623, 0.003467, 0.003307, 0.003142, 0.002974),
-        SHINE_EW10(0.002803, 0.002631, 0.002457, 0.002283, 0.002110, 0.001937, 0.001767, 0.001598, 0.001432, 0.001270),
-        SHINE_EW10(0.001111, 0.000957, 0.000807, 0.000662, 0.000522, 0.000388, 0.000260, 0.000137, 0.000021, -0.000088),
-        SHINE_EW10(-0.000192, -0.000288, -0.000379, -0.000463, -0.000539, -0.000610, -0.000674, -0.000732, -0.000784,
-                   -0.000829),
-        SHINE_EW10(-0.000869, -0.000903, -0.000931, -0.000954, 0.000971, 0.000984, 0.000992, 0.000995, 0.000994,
-                   0.000989),
-        SHINE_EW10(0.000981, 0.000969, 0.000954, 0.000936, 0.000915, 0.000892, 0.000866, 0.000839, 0.000810, 0.000779),
-        SHINE_EW10(0.000747, 0.000714, 0.000681, 0.000647, 0.000612, 0.000577, 0.000542, 0.000507, 0.000473, 0.000438),
-        SHINE_EW10(0.000404, 0.000371, 0.000339, 0.000308, 0.000277, 0.000247, 0.000219, 0.000191, 0.000165, 0.000140),
-        SHINE_EW10(0.000116, 0.000094, 0.000073, 0.000053, 0.000034, 0.000017, 0.000001, -0.000014, -0.000027,
-                   -0.000040),
-        SHINE_EW10(-0.000051, -0.000061, -0.000070, -0.000078, -0.000084, -0.000090, -0.000095, -0.000099, -0.000103,
-                   -0.000105),
-        SHINE_EW10(-0.000107, -0.000108, -0.000109, -0.000109, -0.000108, -0.000107, -0.000106, -0.000104, 0.000102,
-                   0.000099),
-        SHINE_EW10(0.000096, 0.000093, 0.000091, 0.000087, 0.000084, 0.000081, 0.000077, 0.000073, 0.000070, 0.000066),
-        SHINE_EW10(0.000063, 0.000060, 0.000056, 0.000053, 0.000050, 0.000046, 0.000043, 0.000041, 0.000038, 0.000035),
-        SHINE_EW10(0.000032, 0.000030, 0.000028, 0.000025, 0.000023, 0.000021, 0.000020, 0.000018, 0.000017, 0.000015),
-        SHINE_EW10(0.000014, 0.000012, 0.000011, 0.000010, 0.000009, 0.000008, 0.000008, 0.000007, 0.000006, 0.000005),
-        SHINE_EW10(0.000005, 0.000004, 0.000004, 0.000003, 0.000003, 0.000003, 0.000002, 0.000002, 0.000002, 0.000002),
-        SHINE_EW10(0.000001, 0.000001, 0.000001, 0.000001, 0.000001, 0.000001, 0.000000, 0.000000, 0.000000, 0.000000),
-        SHINE_EW2 (0.000000, 0.000000)
-};
+    SHINE_EW10(0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000001, -0.000001,
+               -0.000001),
+    SHINE_EW10(-0.000001, -0.000001, -0.000001, -0.000002, -0.000002, -0.000002, -0.000002, -0.000003, -0.000003,
+               -0.000003),
+    SHINE_EW10(-0.000004, -0.000004, -0.000005, -0.000005, -0.000006, -0.000007, -0.000008, -0.000008, -0.000009,
+               -0.000010),
+    SHINE_EW10(-0.000011, -0.000012, -0.000014, -0.000015, -0.000017, -0.000018, -0.000020, -0.000021, -0.000023,
+               -0.000025),
+    SHINE_EW10(-0.000028, -0.000030, -0.000032, -0.000035, -0.000038, -0.000041, -0.000043, -0.000046, -0.000050,
+               -0.000053),
+    SHINE_EW10(-0.000056, -0.000060, -0.000063, -0.000066, -0.000070, -0.000073, -0.000077, -0.000081, -0.000084,
+               -0.000087),
+    SHINE_EW10(-0.000091, -0.000093, -0.000096, -0.000099, 0.000102, 0.000104, 0.000106, 0.000107, 0.000108,
+               0.000109),
+    SHINE_EW10(0.000109, 0.000108, 0.000107, 0.000105, 0.000103, 0.000099, 0.000095, 0.000090, 0.000084, 0.000078),
+    SHINE_EW10(0.000070, 0.000061, 0.000051, 0.000040, 0.000027, 0.000014, -0.000001, -0.000017, -0.000034,
+               -0.000053),
+    SHINE_EW10(-0.000073, -0.000094, -0.000116, -0.000140, -0.000165, -0.000191, -0.000219, -0.000247, -0.000277,
+               -0.000308),
+    SHINE_EW10(-0.000339, -0.000371, -0.000404, -0.000438, -0.000473, -0.000507, -0.000542, -0.000577, -0.000612,
+               -0.000647),
+    SHINE_EW10(-0.000681, -0.000714, -0.000747, -0.000779, -0.000810, -0.000839, -0.000866, -0.000892, -0.000915,
+               -0.000936),
+    SHINE_EW10(-0.000954, -0.000969, -0.000981, -0.000989, -0.000994, -0.000995, -0.000992, -0.000984, 0.000971,
+               0.000954),
+    SHINE_EW10(0.000931, 0.000903, 0.000869, 0.000829, 0.000784, 0.000732, 0.000674, 0.000610, 0.000539, 0.000463),
+    SHINE_EW10(0.000379, 0.000288, 0.000192, 0.000088, -0.000021, -0.000137, -0.000260, -0.000388, -0.000522,
+               -0.000662),
+    SHINE_EW10(-0.000807, -0.000957, -0.001111, -0.001270, -0.001432, -0.001598, -0.001767, -0.001937, -0.002110,
+               -0.002283),
+    SHINE_EW10(-0.002457, -0.002631, -0.002803, -0.002974, -0.003142, -0.003307, -0.003467, -0.003623, -0.003772,
+               -0.003914),
+    SHINE_EW10(-0.004049, -0.004175, -0.004291, -0.004396, -0.004490, -0.004570, -0.004638, -0.004691, -0.004728,
+               -0.004749),
+    SHINE_EW10(-0.004752, -0.004737, -0.004703, -0.004649, -0.004574, -0.004477, -0.004358, -0.004215, -0.004049,
+               -0.003859),
+    SHINE_EW10(-0.003643, -0.003402, 0.003135, 0.002841, 0.002522, 0.002175, 0.001801, 0.001400, 0.000971,
+               0.000516),
+    SHINE_EW10(0.000033, -0.000476, -0.001012, -0.001574, -0.002162, -0.002774, -0.003411, -0.004072, -0.004756,
+               -0.005462),
+    SHINE_EW10(-0.006189, -0.006937, -0.007703, -0.008487, -0.009288, -0.010104, -0.010933, -0.011775, -0.012628,
+               -0.013489),
+    SHINE_EW10(-0.014359, -0.015234, -0.016113, -0.016994, -0.017876, -0.018757, -0.019634, -0.020507, -0.021372,
+               -0.022229),
+    SHINE_EW10(-0.023074, -0.023907, -0.024725, -0.025527, -0.026311, -0.027074, -0.027815, -0.028533, -0.029225,
+               -0.029890),
+    SHINE_EW10(-0.030527, -0.031133, -0.031707, -0.032248, -0.032755, -0.033226, -0.033660, -0.034056, -0.034413,
+               -0.034730),
+    SHINE_EW10(-0.035007, -0.035242, -0.035435, -0.035586, -0.035694, -0.035759, 0.035781, 0.035759, 0.035694,
+               0.035586),
+    SHINE_EW10(0.035435, 0.035242, 0.035007, 0.034730, 0.034413, 0.034056, 0.033660, 0.033226, 0.032755, 0.032248),
+    SHINE_EW10(0.031707, 0.031133, 0.030527, 0.029890, 0.029225, 0.028533, 0.027815, 0.027074, 0.026311, 0.025527),
+    SHINE_EW10(0.024725, 0.023907, 0.023074, 0.022229, 0.021372, 0.020507, 0.019634, 0.018757, 0.017876, 0.016994),
+    SHINE_EW10(0.016113, 0.015234, 0.014359, 0.013489, 0.012628, 0.011775, 0.010933, 0.010104, 0.009288, 0.008487),
+    SHINE_EW10(0.007703, 0.006937, 0.006189, 0.005462, 0.004756, 0.004072, 0.003411, 0.002774, 0.002162, 0.001574),
+    SHINE_EW10(0.001012, 0.000476, -0.000033, -0.000516, -0.000971, -0.001400, -0.001801, -0.002175, -0.002522,
+               -0.002841),
+    SHINE_EW10(0.003135, 0.003402, 0.003643, 0.003859, 0.004049, 0.004215, 0.004358, 0.004477, 0.004574, 0.004649),
+    SHINE_EW10(0.004703, 0.004737, 0.004752, 0.004749, 0.004728, 0.004691, 0.004638, 0.004570, 0.004490, 0.004396),
+    SHINE_EW10(0.004291, 0.004175, 0.004049, 0.003914, 0.003772, 0.003623, 0.003467, 0.003307, 0.003142, 0.002974),
+    SHINE_EW10(0.002803, 0.002631, 0.002457, 0.002283, 0.002110, 0.001937, 0.001767, 0.001598, 0.001432, 0.001270),
+    SHINE_EW10(0.001111, 0.000957, 0.000807, 0.000662, 0.000522, 0.000388, 0.000260, 0.000137, 0.000021, -0.000088),
+    SHINE_EW10(-0.000192, -0.000288, -0.000379, -0.000463, -0.000539, -0.000610, -0.000674, -0.000732, -0.000784,
+               -0.000829),
+    SHINE_EW10(-0.000869, -0.000903, -0.000931, -0.000954, 0.000971, 0.000984, 0.000992, 0.000995, 0.000994,
+               0.000989),
+    SHINE_EW10(0.000981, 0.000969, 0.000954, 0.000936, 0.000915, 0.000892, 0.000866, 0.000839, 0.000810, 0.000779),
+    SHINE_EW10(0.000747, 0.000714, 0.000681, 0.000647, 0.000612, 0.000577, 0.000542, 0.000507, 0.000473, 0.000438),
+    SHINE_EW10(0.000404, 0.000371, 0.000339, 0.000308, 0.000277, 0.000247, 0.000219, 0.000191, 0.000165, 0.000140),
+    SHINE_EW10(0.000116, 0.000094, 0.000073, 0.000053, 0.000034, 0.000017, 0.000001, -0.000014, -0.000027,
+               -0.000040),
+    SHINE_EW10(-0.000051, -0.000061, -0.000070, -0.000078, -0.000084, -0.000090, -0.000095, -0.000099, -0.000103,
+               -0.000105),
+    SHINE_EW10(-0.000107, -0.000108, -0.000109, -0.000109, -0.000108, -0.000107, -0.000106, -0.000104, 0.000102,
+               0.000099),
+    SHINE_EW10(0.000096, 0.000093, 0.000091, 0.000087, 0.000084, 0.000081, 0.000077, 0.000073, 0.000070, 0.000066),
+    SHINE_EW10(0.000063, 0.000060, 0.000056, 0.000053, 0.000050, 0.000046, 0.000043, 0.000041, 0.000038, 0.000035),
+    SHINE_EW10(0.000032, 0.000030, 0.000028, 0.000025, 0.000023, 0.000021, 0.000020, 0.000018, 0.000017, 0.000015),
+    SHINE_EW10(0.000014, 0.000012, 0.000011, 0.000010, 0.000009, 0.000008, 0.000008, 0.000007, 0.000006, 0.000005),
+    SHINE_EW10(0.000005, 0.000004, 0.000004, 0.000003, 0.000003, 0.000003, 0.000002, 0.000002, 0.000002, 0.000002),
+    SHINE_EW10(0.000001, 0.000001, 0.000001, 0.000001, 0.000001, 0.000001, 0.000000, 0.000000, 0.000000, 0.000000),
+    SHINE_EW2(0.000000, 0.000000)};
 
 #endif
 #define HUFFBITS uint16_t
-#define HTN     34
-#define MXOFF   250
+#define HTN 34
+#define MXOFF 250
 
-struct huffcodetab {
+struct huffcodetab
+{
     uint32_t xlen;         /*max. x-index+                         */
     uint32_t ylen;         /*max. y-index+                         */
     uint32_t linbits;      /*number of linbits                     */
     uint32_t linmax;       /*max number to be stored in linbits    */
-    const HUFFBITS *table;     /*pointer to array[xlen][ylen]          */
-    const uint8_t *hlen; /*pointer to array[xlen][ylen]          */
+    const HUFFBITS *table; /*pointer to array[xlen][ylen]          */
+    const uint8_t *hlen;   /*pointer to array[xlen][ylen]          */
 };
 
-extern const struct huffcodetab shine_huffman_table[HTN];/* global memory block                */
+extern const struct huffcodetab shine_huffman_table[HTN]; /* global memory block                */
 /* array of all huffcodtable headers    */
 /* 0..31 Huffman code table 0..31       */
 /* 32,33 count1-tables                  */
@@ -577,7 +586,6 @@ void shine_ResvAdjust(gr_info *gi, shine_global_config *config);
 void shine_ResvFrameEnd(shine_global_config *config);
 
 #endif
-
 
 #ifndef L3SUBBAND_H
 #define L3SUBBAND_H
@@ -607,7 +615,6 @@ void shine_loop_initialise(shine_global_config *config);
 void shine_iteration_loop(shine_global_config *config);
 
 #endif
-
 
 const HUFFBITS dmask = 1 << (((sizeof(HUFFBITS)) << 3) - 1);
 const uint32_t hs = sizeof(HUFFBITS) << 3;
@@ -712,134 +719,135 @@ static const uint8_t t3l[] = {2, 2, 6, 3, 2, 5, 5, 5, 6};
 static const uint8_t t5l[] = {1, 3, 6, 7, 3, 3, 6, 7, 6, 6, 7, 8, 7, 6, 7, 8};
 static const uint8_t t6l[] = {3, 3, 5, 7, 3, 2, 4, 5, 4, 4, 5, 6, 6, 5, 6, 7};
 static const uint8_t t7l[] = {1, 3, 6, 8, 8, 9, 3, 4, 6, 7, 7, 8, 6, 5, 7, 8, 8, 9, 7, 7, 8, 9, 9, 9, 7, 7, 8, 9,
-                                    9, 10, 8, 8, 9, 10, 10, 10};
+                              9, 10, 8, 8, 9, 10, 10, 10};
 static const uint8_t t8l[] = {2, 3, 6, 8, 8, 9, 3, 2, 4, 8, 8, 8, 6, 4, 6, 8, 8, 9, 8, 8, 8, 9, 9, 10, 8, 7, 8, 9,
-                                    10, 10, 9, 8, 9, 9, 11, 11};
+                              10, 10, 9, 8, 9, 9, 11, 11};
 static const uint8_t t9l[] = {3, 3, 5, 6, 8, 9, 3, 3, 4, 5, 6, 8, 4, 4, 5, 6, 7, 8, 6, 5, 6, 7, 7, 8, 7, 6, 7, 7,
-                                    8, 9, 8, 7, 8, 8, 9, 9};
+                              8, 9, 8, 7, 8, 8, 9, 9};
 static const uint8_t t10l[] = {1, 3, 6, 8, 9, 9, 9, 10, 3, 4, 6, 7, 8, 9, 8, 8, 6, 6, 7, 8, 9, 10, 9, 9, 7, 7, 8,
-                                     9, 10, 10, 9, 10, 8, 8, 9, 10, 10, 10, 10, 10, 9, 9, 10, 10, 11, 11, 10, 11, 8, 8,
-                                     9, 10, 10, 10, 11, 11, 9, 8, 9, 10, 10, 11, 11, 11};
+                               9, 10, 10, 9, 10, 8, 8, 9, 10, 10, 10, 10, 10, 9, 9, 10, 10, 11, 11, 10, 11, 8, 8,
+                               9, 10, 10, 10, 11, 11, 9, 8, 9, 10, 10, 11, 11, 11};
 static const uint8_t t11l[] = {2, 3, 5, 7, 8, 9, 8, 9, 3, 3, 4, 6, 8, 8, 7, 8, 5, 5, 6, 7, 8, 9, 8, 8, 7, 6, 7, 9,
-                                     8, 10, 8, 9, 8, 8, 8, 9, 9, 10, 9, 10, 8, 8, 9, 10, 10, 11, 10, 11, 8, 7, 7, 8, 9,
-                                     10, 10, 10, 8, 7, 8, 9, 10, 10, 10, 10};
+                               8, 10, 8, 9, 8, 8, 8, 9, 9, 10, 9, 10, 8, 8, 9, 10, 10, 11, 10, 11, 8, 7, 7, 8, 9,
+                               10, 10, 10, 8, 7, 8, 9, 10, 10, 10, 10};
 static const uint8_t t12l[] = {4, 3, 5, 7, 8, 9, 9, 9, 3, 3, 4, 5, 7, 7, 8, 8, 5, 4, 5, 6, 7, 8, 7, 8, 6, 5, 6, 6,
-                                     7, 8, 8, 8, 7, 6, 7, 7, 8, 8, 8, 9, 8, 7, 8, 8, 8, 9, 8, 9, 8, 7, 7, 8, 8, 9, 9,
-                                     10, 9, 8, 8, 9, 9, 9, 9, 10};
+                               7, 8, 8, 8, 7, 6, 7, 7, 8, 8, 8, 9, 8, 7, 8, 8, 8, 9, 8, 9, 8, 7, 7, 8, 8, 9, 9,
+                               10, 9, 8, 8, 9, 9, 9, 9, 10};
 static const uint8_t t13l[] = {1, 4, 6, 7, 8, 9, 9, 10, 9, 10, 11, 11, 12, 12, 13, 13, 3, 4, 6, 7, 8, 8, 9, 9, 9,
-                                     9, 10, 10, 11, 12, 12, 12, 6, 6, 7, 8, 9, 9, 10, 10, 9, 10, 10, 11, 11, 12, 13, 13,
-                                     7, 7, 8, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 13, 13,
-                                     8, 7, 9, 9, 10, 10, 11, 11, 10, 11, 11, 12, 12, 13, 13, 14, 9, 8, 9, 10, 10, 10,
-                                     11, 11, 11, 11, 12, 11, 13, 13, 14, 14, 9, 9, 10, 10, 11, 11, 11, 11, 11, 12, 12,
-                                     12, 13, 13, 14, 14, 10, 9, 10, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 14, 16, 16,
-                                     9, 8, 9, 10,
-                                     10, 11, 11, 12, 12, 12, 12, 13, 13, 14, 15, 15, 10, 9, 10, 10, 11, 11, 11, 13, 12,
-                                     13, 13, 14, 14, 14, 16, 15, 10, 10, 10, 11, 11, 12, 12, 13, 12, 13, 14, 13, 14, 15,
-                                     16, 17, 11, 10, 10, 11, 12, 12, 12, 12, 13, 13, 13, 14, 15, 15, 15, 16, 11, 11, 11,
-                                     12, 12,
-                                     13, 12, 13, 14, 14, 15, 15, 15, 16, 16, 16, 12, 11, 12, 13, 13, 13, 14, 14, 14, 14,
-                                     14, 15, 16, 15, 16, 16, 13, 12, 12, 13, 13, 13, 15, 14, 14, 17, 15, 15, 15, 17, 16,
-                                     16, 12, 12, 13, 14, 14, 14, 15, 14, 15, 15, 16, 16, 19, 18, 19, 16};
+                               9, 10, 10, 11, 12, 12, 12, 6, 6, 7, 8, 9, 9, 10, 10, 9, 10, 10, 11, 11, 12, 13, 13,
+                               7, 7, 8, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 13, 13,
+                               8, 7, 9, 9, 10, 10, 11, 11, 10, 11, 11, 12, 12, 13, 13, 14, 9, 8, 9, 10, 10, 10,
+                               11, 11, 11, 11, 12, 11, 13, 13, 14, 14, 9, 9, 10, 10, 11, 11, 11, 11, 11, 12, 12,
+                               12, 13, 13, 14, 14, 10, 9, 10, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 14, 16, 16,
+                               9, 8, 9, 10,
+                               10, 11, 11, 12, 12, 12, 12, 13, 13, 14, 15, 15, 10, 9, 10, 10, 11, 11, 11, 13, 12,
+                               13, 13, 14, 14, 14, 16, 15, 10, 10, 10, 11, 11, 12, 12, 13, 12, 13, 14, 13, 14, 15,
+                               16, 17, 11, 10, 10, 11, 12, 12, 12, 12, 13, 13, 13, 14, 15, 15, 15, 16, 11, 11, 11,
+                               12, 12,
+                               13, 12, 13, 14, 14, 15, 15, 15, 16, 16, 16, 12, 11, 12, 13, 13, 13, 14, 14, 14, 14,
+                               14, 15, 16, 15, 16, 16, 13, 12, 12, 13, 13, 13, 15, 14, 14, 17, 15, 15, 15, 17, 16,
+                               16, 12, 12, 13, 14, 14, 14, 15, 14, 15, 15, 16, 16, 19, 18, 19, 16};
 static const uint8_t t15l[] = {3, 4, 5, 7, 7, 8, 9, 9, 9, 10, 10, 11, 11, 11, 12, 13, 4, 3, 5, 6, 7, 7, 8, 8, 8,
-                                     9, 9, 10, 10, 10, 11, 11, 5, 5, 5, 6, 7, 7, 8, 8, 8, 9, 9, 10, 10, 11, 11, 11, 6,
-                                     6, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 11, 7, 6, 7,
-                                     7, 8, 8, 9, 9, 9, 9, 10, 10, 10, 11, 11, 11, 8, 7, 7, 8, 8, 8, 9, 9, 9, 9, 10, 10,
-                                     11, 11, 11, 12, 9, 7, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 11, 11, 12, 12, 9, 8, 8, 9,
-                                     9, 9, 9, 10, 10, 10, 10, 10, 11, 11, 11, 12, 9, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10,
-                                     11, 11,
-                                     12, 12, 12, 9, 8, 9, 9, 9, 9, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 10, 9, 9, 9,
-                                     10, 10, 10, 10, 10, 11, 11, 11, 11, 12, 13, 12, 10, 9, 9, 9, 10, 10, 10, 10, 11,
-                                     11, 11, 11, 12, 12, 12, 13, 11, 10, 9, 10, 10, 10, 11, 11, 11, 11, 11, 11, 12, 12,
-                                     13, 13,
-                                     11, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 12, 13, 13, 12, 11, 11, 11, 11,
-                                     11, 11, 11, 12, 12, 12, 12, 13, 13, 12, 13, 12, 11, 11, 11, 11, 11, 11, 12, 12, 12,
-                                     12, 12, 13, 13, 13, 13};
+                               9, 9, 10, 10, 10, 11, 11, 5, 5, 5, 6, 7, 7, 8, 8, 8, 9, 9, 10, 10, 11, 11, 11, 6,
+                               6, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 11, 7, 6, 7,
+                               7, 8, 8, 9, 9, 9, 9, 10, 10, 10, 11, 11, 11, 8, 7, 7, 8, 8, 8, 9, 9, 9, 9, 10, 10,
+                               11, 11, 11, 12, 9, 7, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 11, 11, 12, 12, 9, 8, 8, 9,
+                               9, 9, 9, 10, 10, 10, 10, 10, 11, 11, 11, 12, 9, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10,
+                               11, 11,
+                               12, 12, 12, 9, 8, 9, 9, 9, 9, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 10, 9, 9, 9,
+                               10, 10, 10, 10, 10, 11, 11, 11, 11, 12, 13, 12, 10, 9, 9, 9, 10, 10, 10, 10, 11,
+                               11, 11, 11, 12, 12, 12, 13, 11, 10, 9, 10, 10, 10, 11, 11, 11, 11, 11, 11, 12, 12,
+                               13, 13,
+                               11, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 12, 13, 13, 12, 11, 11, 11, 11,
+                               11, 11, 11, 12, 12, 12, 12, 13, 13, 12, 13, 12, 11, 11, 11, 11, 11, 11, 12, 12, 12,
+                               12, 12, 13, 13, 13, 13};
 static const uint8_t t16l[] = {1, 4, 6, 8, 9, 9, 10, 10, 11, 11, 11, 12, 12, 12, 13, 9, 3, 4, 6, 7, 8, 9, 9, 9,
-                                     10, 10, 10, 11, 12, 11, 12, 8, 6, 6, 7, 8, 9, 9, 10, 10, 11, 10, 11, 11, 11, 12,
-                                     12, 9, 8, 7, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 12, 13, 13,
-                                     10, 9, 8, 9, 9, 10, 10, 11, 11, 11, 12, 12, 12, 13, 13, 13, 9, 9, 8, 9, 9, 10, 11,
-                                     11, 12, 11, 12, 12, 13, 13, 13, 14, 10, 10, 9, 9, 10, 11, 11, 11, 11, 12, 12, 12,
-                                     12, 13, 13, 14, 10, 10, 9, 10, 10, 11, 11, 11, 12, 12, 13, 13, 13, 13, 15, 15, 10,
-                                     10, 10,
-                                     10, 11, 11, 11, 12, 12, 13, 13, 13, 13, 14, 14, 14, 10, 11, 10, 10, 11, 11, 12, 12,
-                                     13, 13, 13, 13, 14, 13, 14, 13, 11, 11, 11, 10, 11, 12, 12, 12, 12, 13, 14, 14, 14,
-                                     15, 15, 14, 10, 12, 11, 11, 11, 12, 12, 13, 14, 14, 14, 14, 14, 14, 13, 14, 11, 12,
-                                     12,
-                                     12, 12, 12, 13, 13, 13, 13, 15, 14, 14, 14, 14, 16, 11, 14, 12, 12, 12, 13, 13, 14,
-                                     14, 14, 16, 15, 15, 15, 17, 15, 11, 13, 13, 11, 12, 14, 14, 13, 14, 14, 15, 16, 15,
-                                     17, 15, 14, 11, 9, 8, 8, 9, 9, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 8};
+                               10, 10, 10, 11, 12, 11, 12, 8, 6, 6, 7, 8, 9, 9, 10, 10, 11, 10, 11, 11, 11, 12,
+                               12, 9, 8, 7, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 12, 13, 13,
+                               10, 9, 8, 9, 9, 10, 10, 11, 11, 11, 12, 12, 12, 13, 13, 13, 9, 9, 8, 9, 9, 10, 11,
+                               11, 12, 11, 12, 12, 13, 13, 13, 14, 10, 10, 9, 9, 10, 11, 11, 11, 11, 12, 12, 12,
+                               12, 13, 13, 14, 10, 10, 9, 10, 10, 11, 11, 11, 12, 12, 13, 13, 13, 13, 15, 15, 10,
+                               10, 10,
+                               10, 11, 11, 11, 12, 12, 13, 13, 13, 13, 14, 14, 14, 10, 11, 10, 10, 11, 11, 12, 12,
+                               13, 13, 13, 13, 14, 13, 14, 13, 11, 11, 11, 10, 11, 12, 12, 12, 12, 13, 14, 14, 14,
+                               15, 15, 14, 10, 12, 11, 11, 11, 12, 12, 13, 14, 14, 14, 14, 14, 14, 13, 14, 11, 12,
+                               12,
+                               12, 12, 12, 13, 13, 13, 13, 15, 14, 14, 14, 14, 16, 11, 14, 12, 12, 12, 13, 13, 14,
+                               14, 14, 16, 15, 15, 15, 17, 15, 11, 13, 13, 11, 12, 14, 14, 13, 14, 14, 15, 16, 15,
+                               17, 15, 14, 11, 9, 8, 8, 9, 9, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 8};
 static const uint8_t t24l[] = {4, 4, 6, 7, 8, 9, 9, 10, 10, 11, 11, 11, 11, 11, 12, 9, 4, 4, 5, 6, 7, 8, 8, 9, 9,
-                                     9, 10, 10, 10, 10, 10, 8, 6, 5, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 10, 11, 7, 7, 6,
-                                     7, 7, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 7, 8, 7, 7, 8,
-                                     8, 8, 8, 9, 9, 9, 10, 10, 10, 10, 11, 7, 9, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10,
-                                     10, 10, 7, 9, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 10, 11, 7, 10, 8, 8, 8, 9, 9,
-                                     9, 9, 10, 10, 10, 10, 10, 11, 11, 8, 10, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10,
-                                     11, 11,
-                                     8, 10, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 11, 11, 11, 8, 11, 9, 9, 9, 9, 10, 10,
-                                     10, 10, 10, 10, 11, 11, 11, 11, 8, 11, 10, 9, 9, 9, 10, 10, 10, 10, 10, 10, 11, 11,
-                                     11, 11, 8, 11, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 8, 11, 10,
-                                     10,
-                                     10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 8, 12, 10, 10, 10, 10, 10, 10, 11,
-                                     11, 11, 11, 11, 11, 11, 11, 8, 8, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 4};
+                               9, 10, 10, 10, 10, 10, 8, 6, 5, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 10, 11, 7, 7, 6,
+                               7, 7, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 7, 8, 7, 7, 8,
+                               8, 8, 8, 9, 9, 9, 10, 10, 10, 10, 11, 7, 9, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10,
+                               10, 10, 7, 9, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 10, 11, 7, 10, 8, 8, 8, 9, 9,
+                               9, 9, 10, 10, 10, 10, 10, 11, 11, 8, 10, 9, 9, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10,
+                               11, 11,
+                               8, 10, 9, 9, 9, 9, 9, 9, 10, 10, 10, 10, 10, 11, 11, 11, 8, 11, 9, 9, 9, 9, 10, 10,
+                               10, 10, 10, 10, 11, 11, 11, 11, 8, 11, 10, 9, 9, 9, 10, 10, 10, 10, 10, 10, 11, 11,
+                               11, 11, 8, 11, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 8, 11, 10,
+                               10,
+                               10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 8, 12, 10, 10, 10, 10, 10, 10, 11,
+                               11, 11, 11, 11, 11, 11, 11, 8, 8, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 4};
 static const uint8_t t32l[] = {1, 4, 4, 5, 4, 6, 5, 6, 4, 5, 5, 6, 5, 6, 6, 6};
 static const uint8_t t33l[] = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
 
 #define NOREF -1
 const struct huffcodetab shine_huffman_table[HTN] =
-        {
-                {0,  0,  0,  0, NULL, NULL},
-                {2,  2,  0,  0,    t1HB,  t1l},
-                {3,  3,  0,  0,    t2HB,  t2l},
-                {3,  3,  0,  0,    t3HB,  t3l},
-                {0,  0,  0,  0, NULL, NULL},/* Apparently not used*/
-                {4,  4,  0,  0,    t5HB,  t5l},
-                {4,  4,  0,  0,    t6HB,  t6l},
-                {6,  6,  0,  0,    t7HB,  t7l},
-                {6,  6,  0,  0,    t8HB,  t8l},
-                {6,  6,  0,  0,    t9HB,  t9l},
-                {8,  8,  0,  0,    t10HB, t10l},
-                {8,  8,  0,  0,    t11HB, t11l},
-                {8,  8,  0,  0,    t12HB, t12l},
-                {16, 16, 0,  0,    t13HB, t13l},
-                {0,  0,  0,  0, NULL, NULL},/* Apparently not used*/
-                {16, 16, 0,  0,    t15HB, t15l},
-                {16, 16, 1,  1,    t16HB, t16l},
-                {16, 16, 2,  3,    t16HB, t16l},
-                {16, 16, 3,  7,    t16HB, t16l},
-                {16, 16, 4,  15,   t16HB, t16l},
-                {16, 16, 6,  63,   t16HB, t16l},
-                {16, 16, 8,  255,  t16HB, t16l},
-                {16, 16, 10, 1023, t16HB, t16l},
-                {16, 16, 13, 8191, t16HB, t16l},
-                {16, 16, 4,  15,   t24HB, t24l},
-                {16, 16, 5,  31,   t24HB, t24l},
-                {16, 16, 6,  63,   t24HB, t24l},
-                {16, 16, 7,  127,  t24HB, t24l},
-                {16, 16, 8,  255,  t24HB, t24l},
-                {16, 16, 9,  511,  t24HB, t24l},
-                {16, 16, 11, 2047, t24HB, t24l},
-                {16, 16, 13, 8191, t24HB, t24l},
-                {1,  16, 0,  0,    t32HB, t32l},
-                {1,  16, 0,  0,    t33HB, t33l},
-        };
-
+    {
+        {0, 0, 0, 0, NULL, NULL},
+        {2, 2, 0, 0, t1HB, t1l},
+        {3, 3, 0, 0, t2HB, t2l},
+        {3, 3, 0, 0, t3HB, t3l},
+        {0, 0, 0, 0, NULL, NULL}, /* Apparently not used*/
+        {4, 4, 0, 0, t5HB, t5l},
+        {4, 4, 0, 0, t6HB, t6l},
+        {6, 6, 0, 0, t7HB, t7l},
+        {6, 6, 0, 0, t8HB, t8l},
+        {6, 6, 0, 0, t9HB, t9l},
+        {8, 8, 0, 0, t10HB, t10l},
+        {8, 8, 0, 0, t11HB, t11l},
+        {8, 8, 0, 0, t12HB, t12l},
+        {16, 16, 0, 0, t13HB, t13l},
+        {0, 0, 0, 0, NULL, NULL}, /* Apparently not used*/
+        {16, 16, 0, 0, t15HB, t15l},
+        {16, 16, 1, 1, t16HB, t16l},
+        {16, 16, 2, 3, t16HB, t16l},
+        {16, 16, 3, 7, t16HB, t16l},
+        {16, 16, 4, 15, t16HB, t16l},
+        {16, 16, 6, 63, t16HB, t16l},
+        {16, 16, 8, 255, t16HB, t16l},
+        {16, 16, 10, 1023, t16HB, t16l},
+        {16, 16, 13, 8191, t16HB, t16l},
+        {16, 16, 4, 15, t24HB, t24l},
+        {16, 16, 5, 31, t24HB, t24l},
+        {16, 16, 6, 63, t24HB, t24l},
+        {16, 16, 7, 127, t24HB, t24l},
+        {16, 16, 8, 255, t24HB, t24l},
+        {16, 16, 9, 511, t24HB, t24l},
+        {16, 16, 11, 2047, t24HB, t24l},
+        {16, 16, 13, 8191, t24HB, t24l},
+        {1, 16, 0, 0, t32HB, t32l},
+        {1, 16, 0, 0, t33HB, t33l},
+};
 
 static int32_t granules_per_frame[4] = {
-        1,  /* MPEG 2.5 */
-        -1,  /* Reserved */
-        1,  /* MPEG II */
-        2  /* MPEG I */
+    1,  /* MPEG 2.5 */
+    -1, /* Reserved */
+    1,  /* MPEG II */
+    2   /* MPEG I */
 };
 
 /* Set default values for important vars */
-void shine_set_config_mpeg_defaults(shine_mpeg_t *mpeg) {
+void shine_set_config_mpeg_defaults(shine_mpeg_t *mpeg)
+{
     mpeg->bitr = 64;
     mpeg->emph = NONE;
     // mpeg->copyright = 0;
     // mpeg->original = 1;
 }
 
-int32_t shine_mpeg_version(int32_t samplerate_index) {
+int32_t shine_mpeg_version(int32_t samplerate_index)
+{
     /* Pick mpeg version according to samplerate index. */
     if (samplerate_index < 3)
         /* First 3 samplerates are for MPEG-I */
@@ -852,44 +860,53 @@ int32_t shine_mpeg_version(int32_t samplerate_index) {
         return MPEG_25;
 }
 
-int32_t shine_find_samplerate_index(int32_t freq) {
+int32_t shine_find_samplerate_index(int32_t freq)
+{
     int32_t i;
 
     for (i = 0; i < 9; i++)
-        if (freq == samplerates[i]) return i;
+        if (freq == samplerates[i])
+            return i;
 
     return -1; /* error - not a valid samplerate for encoder */
 }
 
-int32_t shine_find_bitrate_index(int32_t bitr, int32_t mpeg_version) {
+int32_t shine_find_bitrate_index(int32_t bitr, int32_t mpeg_version)
+{
     int32_t i;
 
     for (i = 0; i < 16; i++)
-        if (bitr == bitrates[i][mpeg_version]) return i;
+        if (bitr == bitrates[i][mpeg_version])
+            return i;
 
     return -1; /* error - not a valid samplerate for encoder */
 }
 
-int32_t shine_check_config(int32_t freq, int32_t bitr) {
+int32_t shine_check_config(int32_t freq, int32_t bitr)
+{
     int32_t samplerate_index, bitrate_index, mpeg_version;
 
     samplerate_index = shine_find_samplerate_index(freq);
-    if (samplerate_index < 0) return -1;
+    if (samplerate_index < 0)
+        return -1;
 
     mpeg_version = shine_mpeg_version(samplerate_index);
 
     bitrate_index = shine_find_bitrate_index(bitr, mpeg_version);
-    if (bitrate_index < 0) return -1;
+    if (bitrate_index < 0)
+        return -1;
 
     return mpeg_version;
 }
 
-int32_t shine_samples_per_pass(shine_t s) {
+int32_t shine_samples_per_pass(shine_t s)
+{
     return s->mpeg.granules_per_frame * GRANULE_SIZE;
 }
 
 /* Compute default encoding values. */
-void shine_initialise(shine_config_t *pub_config, shine_t config) {
+void shine_initialise(shine_config_t *pub_config, shine_t config)
+{
     double avg_slots_per_frame;
 
     // if (shine_check_config(pub_config->wave.samplerate, pub_config->mpeg.bitr) < 0)
@@ -937,8 +954,6 @@ void shine_initialise(shine_config_t *pub_config, shine_t config) {
     printf("size of mdct %zu\n", sizeof(mdct));
     printf("size of subband %zu\n", sizeof(subband));
 
-
-
     // config = calloc(1, sizeof(shine_global_config));
     if (config == NULL)
         return;
@@ -971,14 +986,14 @@ void shine_initialise(shine_config_t *pub_config, shine_t config) {
     config->mpeg.granules_per_frame = granules_per_frame[config->mpeg.version];
 
     /* Figure average number of 'slots' per frame. */
-    avg_slots_per_frame = ((double) config->mpeg.granules_per_frame * GRANULE_SIZE /
-                           ((double) SAMPLE_RATE)) *
-                          (1000 * (double) config->mpeg.bitr /
-                           (double) config->mpeg.bits_per_slot);
+    avg_slots_per_frame = ((double)config->mpeg.granules_per_frame * GRANULE_SIZE /
+                           ((double)SAMPLE_RATE)) *
+                          (1000 * (double)config->mpeg.bitr /
+                           (double)config->mpeg.bits_per_slot);
 
-    config->mpeg.whole_slots_per_frame = (int32_t) avg_slots_per_frame;
+    config->mpeg.whole_slots_per_frame = (int32_t)avg_slots_per_frame;
 
-    config->mpeg.frac_slots_per_frame = avg_slots_per_frame - (double) config->mpeg.whole_slots_per_frame;
+    config->mpeg.frac_slots_per_frame = avg_slots_per_frame - (double)config->mpeg.whole_slots_per_frame;
     config->mpeg.slot_lag = -config->mpeg.frac_slots_per_frame;
 
     if (config->mpeg.frac_slots_per_frame == 0)
@@ -986,17 +1001,19 @@ void shine_initialise(shine_config_t *pub_config, shine_t config) {
 
     shine_open_bit_stream(&config->bs, BUFFER_SIZE);
 
-    memset((char *) &config->side_info, 0, sizeof(shine_side_info_t));
+    memset((char *)&config->side_info, 0, sizeof(shine_side_info_t));
 
     /* determine the mean bitrate for main data */
     if (config->mpeg.granules_per_frame == 2) /* MPEG 1 */
         config->sideinfo_len = 8 * ((NUM_CHANNELS == 1) ? 4 + 17 : 4 + 32);
-    else                /* MPEG 2 */
+    else /* MPEG 2 */
         config->sideinfo_len = 8 * ((NUM_CHANNELS == 1) ? 4 + 9 : 4 + 17);
 }
 
-static uint8_t *shine_encode_buffer_internal(shine_global_config *config, int32_t *written, int32_t stride) {
-    if (config->mpeg.frac_slots_per_frame) {
+static uint8_t *shine_encode_buffer_internal(shine_global_config *config, int32_t *written, int32_t stride)
+{
+    if (config->mpeg.frac_slots_per_frame)
+    {
         config->mpeg.padding = (config->mpeg.slot_lag <= (config->mpeg.frac_slots_per_frame - 1.0));
         config->mpeg.slot_lag += (config->mpeg.padding - config->mpeg.frac_slots_per_frame);
     }
@@ -1020,7 +1037,8 @@ static uint8_t *shine_encode_buffer_internal(shine_global_config *config, int32_
     return config->bs.data;
 }
 
-uint8_t *shine_encode_buffer(shine_global_config *config, int16_t **data, int32_t *written) {
+uint8_t *shine_encode_buffer(shine_global_config *config, int16_t **data, int32_t *written)
+{
     config->buffer[0] = data[0];
     // if (NUM_CHANNELS == 2)
     //     config->buffer[1] = data[1];
@@ -1028,7 +1046,8 @@ uint8_t *shine_encode_buffer(shine_global_config *config, int16_t **data, int32_
     return shine_encode_buffer_internal(config, written, 1);
 }
 
-uint8_t *shine_encode_buffer_interleaved(shine_global_config *config, int16_t *data, int32_t *written) {
+uint8_t *shine_encode_buffer_interleaved(shine_global_config *config, int16_t *data, int32_t *written)
+{
     config->buffer[0] = data;
     // if (NUM_CHANNELS == 2)
     //     config->buffer[1] = data + 1;
@@ -1036,15 +1055,16 @@ uint8_t *shine_encode_buffer_interleaved(shine_global_config *config, int16_t *d
     return shine_encode_buffer_internal(config, written, NUM_CHANNELS);
 }
 
-uint8_t *shine_flush(shine_global_config *config, int32_t *written) {
+uint8_t *shine_flush(shine_global_config *config, int32_t *written)
+{
     *written = config->bs.data_position;
     config->bs.data_position = 0;
 
     return config->bs.data;
 }
 
-
-void shine_close(shine_global_config *config) {
+void shine_close(shine_global_config *config)
+{
     shine_close_bit_stream(&config->bs);
     // free(config);
 }
@@ -1057,8 +1077,6 @@ void shine_close(shine_global_config *config) {
  * Removed unused functions. Feb 2001 P.Everett
  */
 
-
-
 #if !defined(__APPLE__)
 
 #include <malloc.h>
@@ -1069,7 +1087,8 @@ void shine_close(shine_global_config *config) {
 uint8_t g_bitstream_data[BITSTREAM_SIZE];
 
 /* open the device to write the bit stream into it */
-void shine_open_bit_stream(bitstream_t *bs, int32_t size) {
+void shine_open_bit_stream(bitstream_t *bs, int32_t size)
+{
     // printf("Allocating %d bytes\n", size);
     // bs->data = (uint8_t *) malloc(size * sizeof(uint8_t));
     bs->data = g_bitstream_data;
@@ -1080,7 +1099,8 @@ void shine_open_bit_stream(bitstream_t *bs, int32_t size) {
 }
 
 /*close the device containing the bit stream */
-void shine_close_bit_stream(bitstream_t *bs) {
+void shine_close_bit_stream(bitstream_t *bs)
+{
     // if (bs->data)
     //     free(bs->data);
 }
@@ -1093,7 +1113,8 @@ void shine_close_bit_stream(bitstream_t *bs) {
  * val = value to write into the buffer
  * N = number of bits of val
  */
-void shine_putbits(bitstream_t *bs, uint32_t val, uint32_t N) {
+void shine_putbits(bitstream_t *bs, uint32_t val, uint32_t N)
+{
 #ifdef DEBUG
     if (N > 32)
         printf("Cannot write more than 32 bits at a time.\n");
@@ -1101,11 +1122,15 @@ void shine_putbits(bitstream_t *bs, uint32_t val, uint32_t N) {
         printf("Upper bits (higher than %d) are not all zeros.\n", N);
 #endif
 
-    if (bs->cache_bits > N) {
+    if (bs->cache_bits > N)
+    {
         bs->cache_bits -= N;
         bs->cache |= val << bs->cache_bits;
-    } else {
-        if (bs->data_position + sizeof(uint32_t) >= bs->data_size) {
+    }
+    else
+    {
+        if (bs->data_position + sizeof(uint32_t) >= bs->data_size)
+        {
             printf("Failure: reallocation required at %s:%d\r\n", __FILE__, __LINE__);
             exit(1);
             // bs->data = (uint8_t *) realloc(bs->data, bs->data_size + (bs->data_size / 2));
@@ -1115,9 +1140,9 @@ void shine_putbits(bitstream_t *bs, uint32_t val, uint32_t N) {
         N -= bs->cache_bits;
         bs->cache |= val >> N;
 #ifdef SHINE_BIG_ENDIAN
-        *(uint32_t*)(bs->data + bs->data_position) = bs->cache;
+        *(uint32_t *)(bs->data + bs->data_position) = bs->cache;
 #else
-        *(uint32_t *) (bs->data + bs->data_position) = SWAB32(bs->cache);
+        *(uint32_t *)(bs->data + bs->data_position) = SWAB32(bs->cache);
 #endif
         bs->data_position += sizeof(uint32_t);
         bs->cache_bits = 32 - N;
@@ -1128,10 +1153,10 @@ void shine_putbits(bitstream_t *bs, uint32_t val, uint32_t N) {
     }
 }
 
-int32_t shine_get_bits_count(bitstream_t *bs) {
+int32_t shine_get_bits_count(bitstream_t *bs)
+{
     return bs->data_position * 8 + 32 - bs->cache_bits;
 }
-
 
 static void shine_HuffmanCode(bitstream_t *bs, int32_t table_select, int32_t x, int32_t y);
 
@@ -1154,15 +1179,17 @@ static void Huffmancodebits(shine_global_config *config, int32_t *ix, gr_info *g
   in the IS).
 */
 
-void
-shine_format_bitstream(shine_global_config *config) {
+void shine_format_bitstream(shine_global_config *config)
+{
     int32_t gr, ch, i;
 
     for (ch = 0; ch < NUM_CHANNELS; ch++)
-        for (gr = 0; gr < config->mpeg.granules_per_frame; gr++) {
+        for (gr = 0; gr < config->mpeg.granules_per_frame; gr++)
+        {
             int32_t *pi = &config->l3_enc[ch][gr][0];
             int32_t *pr = &config->mdct_freq[ch][gr][0];
-            for (i = 0; i < GRANULE_SIZE; i++) {
+            for (i = 0; i < GRANULE_SIZE; i++)
+            {
                 if ((pr[i] < 0) && (pi[i] > 0))
                     pi[i] *= -1;
             }
@@ -1172,12 +1199,15 @@ shine_format_bitstream(shine_global_config *config) {
     encodeMainData(config);
 }
 
-static void encodeMainData(shine_global_config *config) {
+static void encodeMainData(shine_global_config *config)
+{
     int32_t gr, ch, sfb;
     shine_side_info_t si = config->side_info;
 
-    for (gr = 0; gr < config->mpeg.granules_per_frame; gr++) {
-        for (ch = 0; ch < NUM_CHANNELS; ch++) {
+    for (gr = 0; gr < config->mpeg.granules_per_frame; gr++)
+    {
+        for (ch = 0; ch < NUM_CHANNELS; ch++)
+        {
             gr_info *gi = &(si.gr[gr].ch[ch].tt);
             uint32_t slen1 = shine_slen1_tab[gi->scalefac_compress];
             uint32_t slen2 = shine_slen2_tab[gi->scalefac_compress];
@@ -1201,7 +1231,8 @@ static void encodeMainData(shine_global_config *config) {
     }
 }
 
-static void encodeSideInfo(shine_global_config *config) {
+static void encodeSideInfo(shine_global_config *config)
+{
     int32_t gr, ch, scfsi_band, region;
     shine_side_info_t si = config->side_info;
 
@@ -1219,13 +1250,16 @@ static void encodeSideInfo(shine_global_config *config) {
     shine_putbits(&config->bs, 1, 1); // original
     shine_putbits(&config->bs, config->mpeg.emph, 2);
 
-    if (config->mpeg.version == MPEG_I) {
+    if (config->mpeg.version == MPEG_I)
+    {
         shine_putbits(&config->bs, 0, 9);
         if (NUM_CHANNELS == 2)
             shine_putbits(&config->bs, si.private_bits, 3);
         else
             shine_putbits(&config->bs, si.private_bits, 5);
-    } else {
+    }
+    else
+    {
         shine_putbits(&config->bs, 0, 8);
         if (NUM_CHANNELS == 2)
             shine_putbits(&config->bs, si.private_bits, 2);
@@ -1234,13 +1268,15 @@ static void encodeSideInfo(shine_global_config *config) {
     }
 
     if (config->mpeg.version == MPEG_I)
-        for (ch = 0; ch < NUM_CHANNELS; ch++) {
+        for (ch = 0; ch < NUM_CHANNELS; ch++)
+        {
             for (scfsi_band = 0; scfsi_band < 4; scfsi_band++)
                 shine_putbits(&config->bs, si.scfsi[ch][scfsi_band], 1);
         }
 
     for (gr = 0; gr < config->mpeg.granules_per_frame; gr++)
-        for (ch = 0; ch < NUM_CHANNELS; ch++) {
+        for (ch = 0; ch < NUM_CHANNELS; ch++)
+        {
             gr_info *gi = &(si.gr[gr].ch[ch].tt);
 
             shine_putbits(&config->bs, gi->part2_3_length, 12);
@@ -1267,7 +1303,8 @@ static void encodeSideInfo(shine_global_config *config) {
 
 /* Note the discussion of huffmancodebits() on pages 28 and 29 of the IS, as
   well as the definitions of the side information on pages 26 and 27. */
-static void Huffmancodebits(shine_global_config *config, int32_t *ix, gr_info *gi) {
+static void Huffmancodebits(shine_global_config *config, int32_t *ix, gr_info *gi)
+{
     const int32_t *scalefac = &shine_scale_fact_band_index[config->mpeg.samplerate_index][0];
     uint32_t scalefac_index;
     int32_t region1Start, region2Start;
@@ -1286,12 +1323,14 @@ static void Huffmancodebits(shine_global_config *config, int32_t *ix, gr_info *g
     scalefac_index += gi->region1_count + 1;
     region2Start = scalefac[scalefac_index];
 
-    for (i = 0; i < bigvalues; i += 2) {
+    for (i = 0; i < bigvalues; i += 2)
+    {
         /* get table pointer */
         int32_t idx = (i >= region1Start) + (i >= region2Start);
         uint32_t tableindex = gi->table_select[idx];
         /* get huffman code */
-        if (tableindex) {
+        if (tableindex)
+        {
             x = ix[i];
             y = ix[i + 1];
             shine_HuffmanCode(&config->bs, tableindex, x, y);
@@ -1301,7 +1340,8 @@ static void Huffmancodebits(shine_global_config *config, int32_t *ix, gr_info *g
     /* 2: Write count1 area */
     h = &shine_huffman_table[gi->count1table_select + 32];
     count1End = bigvalues + (gi->count1 << 2);
-    for (i = bigvalues; i < count1End; i += 4) {
+    for (i = bigvalues; i < count1End; i += 4)
+    {
         v = ix[i];
         w = ix[i + 1];
         x = ix[i + 2];
@@ -1311,7 +1351,8 @@ static void Huffmancodebits(shine_global_config *config, int32_t *ix, gr_info *g
 
     bits = shine_get_bits_count(&config->bs) - bits;
     bits = gi->part2_3_length - gi->part2_length - bits;
-    if (bits) {
+    if (bits)
+    {
         int32_t stuffingWords = bits / 32;
         int32_t remainingBits = bits % 32;
 
@@ -1323,13 +1364,16 @@ static void Huffmancodebits(shine_global_config *config, int32_t *ix, gr_info *g
     }
 }
 
-static inline int32_t shine_abs_and_sign(int32_t *x) {
-    if (*x > 0) return 0;
+static inline int32_t shine_abs_and_sign(int32_t *x)
+{
+    if (*x > 0)
+        return 0;
     *x *= -1;
     return 1;
 }
 
-static void shine_huffman_coder_count1(bitstream_t *bs, const struct huffcodetab *h, int32_t v, int32_t w, int32_t x, int32_t y) {
+static void shine_huffman_coder_count1(bitstream_t *bs, const struct huffcodetab *h, int32_t v, int32_t w, int32_t x, int32_t y)
+{
     uint32_t signv, signw, signx, signy;
     uint32_t code = 0;
     int32_t p, cbits = 0;
@@ -1342,19 +1386,23 @@ static void shine_huffman_coder_count1(bitstream_t *bs, const struct huffcodetab
     p = v + (w << 1) + (x << 2) + (y << 3);
     shine_putbits(bs, h->table[p], h->hlen[p]);
 
-    if (v) {
+    if (v)
+    {
         code = signv;
         cbits = 1;
     }
-    if (w) {
+    if (w)
+    {
         code = (code << 1) | signw;
         cbits++;
     }
-    if (x) {
+    if (x)
+    {
         code = (code << 1) | signx;
         cbits++;
     }
-    if (y) {
+    if (y)
+    {
         code = (code << 1) | signy;
         cbits++;
     }
@@ -1362,7 +1410,8 @@ static void shine_huffman_coder_count1(bitstream_t *bs, const struct huffcodetab
 }
 
 /* Implements the pseudocode of page 98 of the IS */
-static void shine_HuffmanCode(bitstream_t *bs, int32_t table_select, int32_t x, int32_t y) {
+static void shine_HuffmanCode(bitstream_t *bs, int32_t table_select, int32_t x, int32_t y)
+{
     int32_t cbits = 0, xbits = 0;
     uint32_t code = 0, ext = 0;
     uint32_t signx, signy, ylen, idx;
@@ -1374,14 +1423,17 @@ static void shine_HuffmanCode(bitstream_t *bs, int32_t table_select, int32_t x, 
     h = &(shine_huffman_table[table_select]);
     ylen = h->ylen;
 
-    if (table_select > 15) { /* ESC-table is used */
+    if (table_select > 15)
+    { /* ESC-table is used */
         uint32_t linbitsx = 0, linbitsy = 0, linbits = h->linbits;
 
-        if (x > 14) {
+        if (x > 14)
+        {
             linbitsx = x - 15;
             x = 15;
         }
-        if (y > 14) {
+        if (y > 14)
+        {
             linbitsy = y - 15;
             y = 15;
         }
@@ -1389,21 +1441,25 @@ static void shine_HuffmanCode(bitstream_t *bs, int32_t table_select, int32_t x, 
         idx = (x * ylen) + y;
         code = h->table[idx];
         cbits = h->hlen[idx];
-        if (x > 14) {
+        if (x > 14)
+        {
             ext |= linbitsx;
             xbits += linbits;
         }
-        if (x != 0) {
+        if (x != 0)
+        {
             ext <<= 1;
             ext |= signx;
             xbits += 1;
         }
-        if (y > 14) {
+        if (y > 14)
+        {
             ext <<= linbits;
             ext |= linbitsy;
             xbits += linbits;
         }
-        if (y != 0) {
+        if (y != 0)
+        {
             ext <<= 1;
             ext |= signy;
             xbits += 1;
@@ -1411,16 +1467,20 @@ static void shine_HuffmanCode(bitstream_t *bs, int32_t table_select, int32_t x, 
 
         shine_putbits(bs, code, cbits);
         shine_putbits(bs, ext, xbits);
-    } else { /* No ESC-words */
+    }
+    else
+    { /* No ESC-words */
         idx = (x * ylen) + y;
         code = h->table[idx];
         cbits = h->hlen[idx];
-        if (x != 0) {
+        if (x != 0)
+        {
             code <<= 1;
             code |= signx;
             cbits += 1;
         }
-        if (y != 0) {
+        if (y != 0)
+        {
             code <<= 1;
             code |= signy;
             cbits += 1;
@@ -1430,8 +1490,8 @@ static void shine_HuffmanCode(bitstream_t *bs, int32_t table_select, int32_t x, 
     }
 }
 
-#define e        2.71828182845
-#define CBLIMIT  21
+#define e 2.71828182845
+#define CBLIMIT 21
 #define SFB_LMAX 22
 #define en_tot_krit 10
 #define en_dif_krit 100
@@ -1469,19 +1529,22 @@ static int32_t quantize(int32_t ix[GRANULE_SIZE], int32_t stepsize, shine_global
  * of scalefacs.
  */
 int32_t shine_inner_loop(int32_t ix[GRANULE_SIZE],
-                     int32_t max_bits, gr_info *cod_info, int32_t gr, int32_t ch,
-                     shine_global_config *config) {
+                         int32_t max_bits, gr_info *cod_info, int32_t gr, int32_t ch,
+                         shine_global_config *config)
+{
     int32_t bits, c1bits, bvbits;
 
     if (max_bits < 0)
         cod_info->quantizerStepSize--;
-    do {
-        while (quantize(ix, ++cod_info->quantizerStepSize, config) > 8192); /* within table range? */
+    do
+    {
+        while (quantize(ix, ++cod_info->quantizerStepSize, config) > 8192)
+            ; /* within table range? */
 
-        calc_runlen(ix, cod_info);                        /* rzero,count1,big_values*/
-        bits = c1bits = count1_bitcount(ix, cod_info);    /* count1_table selection*/
-        subdivide(cod_info, config);                     /* bigvalues sfb division */
-        bigv_tab_select(ix, cod_info);                    /* codebook selection*/
+        calc_runlen(ix, cod_info);                     /* rzero,count1,big_values*/
+        bits = c1bits = count1_bitcount(ix, cod_info); /* count1_table selection*/
+        subdivide(cod_info, config);                   /* bigvalues sfb division */
+        bigv_tab_select(ix, cod_info);                 /* codebook selection*/
         bits += bvbits = bigv_bitcount(ix, cod_info);  /* bit count */
     } while (bits > max_bits);
     return bits;
@@ -1496,9 +1559,10 @@ int32_t shine_inner_loop(int32_t ix[GRANULE_SIZE],
  */
 
 int32_t shine_outer_loop(int32_t max_bits,
-                     shine_psy_xmin_t *l3_xmin, /* the allowed distortion of the scalefactor */
-                     int32_t ix[GRANULE_SIZE], /* vector of quantized values ix(0..575) */
-                     int32_t gr, int32_t ch, shine_global_config *config) {
+                         shine_psy_xmin_t *l3_xmin, /* the allowed distortion of the scalefactor */
+                         int32_t ix[GRANULE_SIZE],  /* vector of quantized values ix(0..575) */
+                         int32_t gr, int32_t ch, shine_global_config *config)
+{
     int32_t bits, huff_bits;
     shine_side_info_t *side_info = &config->side_info;
     gr_info *cod_info = &side_info->gr[gr].ch[ch].tt;
@@ -1518,15 +1582,18 @@ int32_t shine_outer_loop(int32_t max_bits,
  * shine_iteration_loop:
  * ------------------
  */
-void shine_iteration_loop(shine_global_config *config) {
+void shine_iteration_loop(shine_global_config *config)
+{
     shine_psy_xmin_t l3_xmin;
     gr_info *cod_info;
     int32_t max_bits;
     int32_t ch, gr, i;
     int32_t *ix;
 
-    for (ch = NUM_CHANNELS; ch--;) {
-        for (gr = 0; gr < config->mpeg.granules_per_frame; gr++) {
+    for (ch = NUM_CHANNELS; ch--;)
+    {
+        for (gr = 0; gr < config->mpeg.granules_per_frame; gr++)
+        {
             /* setup pointers */
             ix = config->l3_enc[ch][gr];
             config->l3loop.xr = config->mdct_freq[ch][gr];
@@ -1534,14 +1601,15 @@ void shine_iteration_loop(shine_global_config *config) {
             /* Precalculate the square, abs,  and maximum,
              * for use later on.
              */
-            for (i = GRANULE_SIZE, config->l3loop.xrmax = 0; i--;) {
+            for (i = GRANULE_SIZE, config->l3loop.xrmax = 0; i--;)
+            {
                 config->l3loop.xrsq[i] = mulsr(config->l3loop.xr[i], config->l3loop.xr[i]);
                 config->l3loop.xrabs[i] = labs(config->l3loop.xr[i]);
                 if (config->l3loop.xrabs[i] > config->l3loop.xrmax)
                     config->l3loop.xrmax = config->l3loop.xrabs[i];
             }
 
-            cod_info = (gr_info *) &(config->side_info.gr[gr].ch[ch]);
+            cod_info = (gr_info *)&(config->side_info.gr[gr].ch[ch]);
             cod_info->sfb_lmax = SFB_LMAX - 1; /* gr_deco */
 
             calc_xmin(&config->ratio, cod_info, &l3_xmin, gr, ch);
@@ -1593,7 +1661,8 @@ void shine_iteration_loop(shine_global_config *config) {
  * calculation of the scalefactor select information ( scfsi ).
  */
 void calc_scfsi(shine_psy_xmin_t *l3_xmin, int32_t ch, int32_t gr,
-                shine_global_config *config) {
+                shine_global_config *config)
+{
     // shine_side_info_t *l3_side = &config->side_info;
     /* This is the scfsi_band table from 2.4.2.7 of the IS */
     // static const int32_t scfsi_band_long[5] = {0, 6, 11, 16, 21};
@@ -1623,21 +1692,22 @@ void calc_scfsi(shine_psy_xmin_t *l3_xmin, int32_t ch, int32_t gr,
     for (temp = 0, i = GRANULE_SIZE; i--;)
         temp += config->l3loop.xrsq[i] >> 10; /* a bit of scaling to avoid overflow, (not very good) */
     if (temp)
-        config->l3loop.en_tot[gr] = log((double) temp * 4.768371584e-7) / LN2; /* 1024 / 0x7fffffff */
+        config->l3loop.en_tot[gr] = log((double)temp * 4.768371584e-7) / LN2; /* 1024 / 0x7fffffff */
     else
         config->l3loop.en_tot[gr] = 0;
 
     /* the energy of each scalefactor band, en */
     /* the allowed distortion of each scalefactor band, xm */
 
-    for (sfb = 21; sfb--;) {
+    for (sfb = 21; sfb--;)
+    {
         start = scalefac_band_long[sfb];
         end = scalefac_band_long[sfb + 1];
 
         for (temp = 0, i = start; i < end; i++)
             temp += config->l3loop.xrsq[i] >> 10;
         if (temp)
-            config->l3loop.en[gr][sfb] = log((double) temp * 4.768371584e-7) / LN2; /* 1024 / 0x7fffffff */
+            config->l3loop.en[gr][sfb] = log((double)temp * 4.768371584e-7) / LN2; /* 1024 / 0x7fffffff */
         else
             config->l3loop.en[gr][sfb] = 0;
 
@@ -1647,7 +1717,8 @@ void calc_scfsi(shine_psy_xmin_t *l3_xmin, int32_t ch, int32_t gr,
             config->l3loop.xm[gr][sfb] = 0;
     }
 
-    if (gr == 1) {
+    if (gr == 1)
+    {
         printf("Reached unexpected code path (%s:%d)\r\n", __FILE__, __LINE__);
         exit(1);
         // int32_t gr2, tp;
@@ -1696,7 +1767,8 @@ void calc_scfsi(shine_psy_xmin_t *l3_xmin, int32_t ch, int32_t gr,
  * calculates the number of bits needed to encode the scalefacs in the
  * main data block.
  */
-int32_t part2_length(int32_t gr, int32_t ch, shine_global_config *config) {
+int32_t part2_length(int32_t gr, int32_t ch, shine_global_config *config)
+{
     int32_t slen1, slen2, bits;
     gr_info *gi = &config->side_info.gr[gr].ch[ch].tt;
 
@@ -1731,21 +1803,23 @@ int32_t part2_length(int32_t gr, int32_t ch, shine_global_config *config) {
 void calc_xmin(shine_psy_ratio_t *ratio,
                gr_info *cod_info,
                shine_psy_xmin_t *l3_xmin,
-               int32_t gr, int32_t ch) {
+               int32_t gr, int32_t ch)
+{
     int32_t sfb;
 
-    for (sfb = cod_info->sfb_lmax; sfb--;) {
-/*  note. xmin will always be zero with no psychoacoustic model
+    for (sfb = cod_info->sfb_lmax; sfb--;)
+    {
+        /*  note. xmin will always be zero with no psychoacoustic model
 
-    start = scalefac_band_long[ sfb ];
-    end   = scalefac_band_long[ sfb+1 ];
-    bw = end - start;
+            start = scalefac_band_long[ sfb ];
+            end   = scalefac_band_long[ sfb+1 ];
+            bw = end - start;
 
-    for ( en = 0, l = start; l < end; l++ )
-      en += config->l3loop.xrsq[l];
+            for ( en = 0, l = start; l < end; l++ )
+              en += config->l3loop.xrsq[l];
 
-    l3_xmin->l[gr][ch][sfb] = ratio->l[gr][ch][sfb] * en / bw;
-*/
+            l3_xmin->l[gr][ch][sfb] = ratio->l[gr][ch][sfb] * en / bw;
+        */
         l3_xmin->l[gr][ch][sfb] = 0;
     }
 }
@@ -1755,7 +1829,8 @@ void calc_xmin(shine_psy_ratio_t *ratio,
  * -------------------
  * Calculates the look up tables used by the iteration loop.
  */
-void shine_loop_initialise(shine_global_config *config) {
+void shine_loop_initialise(shine_global_config *config)
+{
     int32_t i;
 
     /* quantize: stepsize conversion, fourth root of 2 table.
@@ -1763,8 +1838,9 @@ void shine_loop_initialise(shine_global_config *config) {
      * in the spec because it is quicker to do x*y than x/y.
      * The 0.5 is for rounding.
      */
-    for (i = 128; i--;) {
-        config->l3loop.steptab[i] = pow(2.0, (double) (127 - i) / 4);
+    for (i = 128; i--;)
+    {
+        config->l3loop.steptab[i] = pow(2.0, (double)(127 - i) / 4);
         if ((config->l3loop.steptab[i] * 2) > 0x7fffffff) /* MAXINT = 2**31 = 2**(124/4) */
             config->l3loop.steptabi[i] = 0x7fffffff;
         else
@@ -1772,7 +1848,7 @@ void shine_loop_initialise(shine_global_config *config) {
              * In quantize, the long multiply does not shift it's result left one
              * bit to compensate.
              */
-            config->l3loop.steptabi[i] = (int32_t) ((config->l3loop.steptab[i] * 2) + 0.5);
+            config->l3loop.steptabi[i] = (int32_t)((config->l3loop.steptab[i] * 2) + 0.5);
     }
 
     /* quantize: vector conversion, three quarter power table.
@@ -1784,7 +1860,7 @@ void shine_loop_initialise(shine_global_config *config) {
 
 int32_t get_int2idx_value(int32_t i)
 {
-    return (int32_t) (sqrt(sqrt((double) i) * (double) i) - 0.0946 + 0.5);
+    return (int32_t)(sqrt(sqrt((double)i) * (double)i) - 0.0946 + 0.5);
 }
 static uint32_t count = 0;
 /*
@@ -1793,7 +1869,8 @@ static uint32_t count = 0;
  * Function: Quantization of the vector xr ( -> ix).
  * Returns maximum value of ix.
  */
-int32_t quantize(int32_t ix[GRANULE_SIZE], int32_t stepsize, shine_global_config *config) {
+int32_t quantize(int32_t ix[GRANULE_SIZE], int32_t stepsize, shine_global_config *config)
+{
     int32_t i, max, ln;
     int32_t scalei;
     double scale, dbl;
@@ -1803,15 +1880,17 @@ int32_t quantize(int32_t ix[GRANULE_SIZE], int32_t stepsize, shine_global_config
     /* a quick check to see if ixmax will be less than 8192 */
     /* this speeds up the early calls to bin_search_StepSize */
     if ((mulr(config->l3loop.xrmax, scalei)) > 165140) /* 8192**(4/3) */
-        max = 16384; /* no point in continuing, stepsize not big enough */
+        max = 16384;                                   /* no point in continuing, stepsize not big enough */
     else
-        for (i = 0, max = 0; i < GRANULE_SIZE; i++) {
+        for (i = 0, max = 0; i < GRANULE_SIZE; i++)
+        {
             /* This calculation is very sensitive. The multiply must round it's
              * result or bad things happen to the quality.
              */
             ln = mulr(labs(config->l3loop.xr[i]), scalei);
 
-            if (ln < 10000) { /* ln < 10000 catches most values */
+            if (ln < 10000)
+            { /* ln < 10000 catches most values */
                 // ix[i] = config->l3loop.int2idx[ln]; /* quick look up method */
                 // if (ln > 576)
                 // {
@@ -1820,11 +1899,12 @@ int32_t quantize(int32_t ix[GRANULE_SIZE], int32_t stepsize, shine_global_config
                 ix[i] = get_int2idx_value(ln);
                 count++;
             }
-            else {
+            else
+            {
                 /* outside table range so have to do it using floats */
-                scale = config->l3loop.steptab[stepsize + 127]; /* 2**(-stepsize/4) */
-                dbl = ((double) config->l3loop.xrabs[i]) * scale * 4.656612875e-10; /* 0x7fffffff */
-                ix[i] = (int32_t) sqrt(sqrt(dbl) * dbl); /* dbl**(3/4) */
+                scale = config->l3loop.steptab[stepsize + 127];                    /* 2**(-stepsize/4) */
+                dbl = ((double)config->l3loop.xrabs[i]) * scale * 4.656612875e-10; /* 0x7fffffff */
+                ix[i] = (int32_t)sqrt(sqrt(dbl) * dbl);                            /* dbl**(3/4) */
             }
 
             /* calculate ixmax while we're here */
@@ -1841,7 +1921,8 @@ int32_t quantize(int32_t ix[GRANULE_SIZE], int32_t stepsize, shine_global_config
  * -------
  * Function: Calculate the maximum of ix from 0 to 575
  */
-static inline int32_t ix_max(int32_t ix[GRANULE_SIZE], uint32_t begin, uint32_t end) {
+static inline int32_t ix_max(int32_t ix[GRANULE_SIZE], uint32_t begin, uint32_t end)
+{
     register int32_t i;
     register int32_t max = 0;
 
@@ -1857,7 +1938,8 @@ static inline int32_t ix_max(int32_t ix[GRANULE_SIZE], uint32_t begin, uint32_t 
  * Function: Calculation of rzero, count1, big_values
  * (Partitions ix into big values, quadruples and zeros).
  */
-void calc_runlen(int32_t ix[GRANULE_SIZE], gr_info *cod_info) {
+void calc_runlen(int32_t ix[GRANULE_SIZE], gr_info *cod_info)
+{
     int32_t i;
     int32_t rzero = 0;
 
@@ -1871,10 +1953,7 @@ void calc_runlen(int32_t ix[GRANULE_SIZE], gr_info *cod_info) {
 
     cod_info->count1 = 0;
     for (; i > 3; i -= 4)
-        if (ix[i - 1] <= 1
-            && ix[i - 2] <= 1
-            && ix[i - 3] <= 1
-            && ix[i - 4] <= 1)
+        if (ix[i - 1] <= 1 && ix[i - 2] <= 1 && ix[i - 3] <= 1 && ix[i - 4] <= 1)
             cod_info->count1++;
         else
             break;
@@ -1887,13 +1966,15 @@ void calc_runlen(int32_t ix[GRANULE_SIZE], gr_info *cod_info) {
  * ----------------
  * Determines the number of bits to encode the quadruples.
  */
-int32_t count1_bitcount(int32_t ix[GRANULE_SIZE], gr_info *cod_info) {
+int32_t count1_bitcount(int32_t ix[GRANULE_SIZE], gr_info *cod_info)
+{
     int32_t p, i, k;
     int32_t v, w, x, y, signbits;
     int32_t sum0 = 0,
             sum1 = 0;
 
-    for (i = cod_info->big_values << 1, k = 0; k < cod_info->count1; i += 4, k++) {
+    for (i = cod_info->big_values << 1, k = 0; k < cod_info->count1; i += 4, k++)
+    {
         v = ix[i];
         w = ix[i + 1];
         x = ix[i + 2];
@@ -1902,10 +1983,14 @@ int32_t count1_bitcount(int32_t ix[GRANULE_SIZE], gr_info *cod_info) {
         p = v + (w << 1) + (x << 2) + (y << 3);
 
         signbits = 0;
-        if (v != 0) signbits++;
-        if (w != 0) signbits++;
-        if (x != 0) signbits++;
-        if (y != 0) signbits++;
+        if (v != 0)
+            signbits++;
+        if (w != 0)
+            signbits++;
+        if (x != 0)
+            signbits++;
+        if (y != 0)
+            signbits++;
 
         sum0 += signbits;
         sum1 += signbits;
@@ -1914,10 +1999,13 @@ int32_t count1_bitcount(int32_t ix[GRANULE_SIZE], gr_info *cod_info) {
         sum1 += shine_huffman_table[33].hlen[p];
     }
 
-    if (sum0 < sum1) {
+    if (sum0 < sum1)
+    {
         cod_info->count1table_select = 0;
         return sum0;
-    } else {
+    }
+    else
+    {
         cod_info->count1table_select = 1;
         return sum1;
     }
@@ -1928,41 +2016,46 @@ int32_t count1_bitcount(int32_t ix[GRANULE_SIZE], gr_info *cod_info) {
  * ----------
  * presumable subdivides the bigvalue region which will use separate Huffman tables.
  */
-void subdivide(gr_info *cod_info, shine_global_config *config) {
-    static const struct {
+void subdivide(gr_info *cod_info, shine_global_config *config)
+{
+    static const struct
+    {
         uint32_t region0_count;
         uint32_t region1_count;
     } subdv_table[23] =
-            {
-                    {0, 0}, /* 0 bands */
-                    {0, 0}, /* 1 bands */
-                    {0, 0}, /* 2 bands */
-                    {0, 0}, /* 3 bands */
-                    {0, 0}, /* 4 bands */
-                    {0, 1}, /* 5 bands */
-                    {1, 1}, /* 6 bands */
-                    {1, 1}, /* 7 bands */
-                    {1, 2}, /* 8 bands */
-                    {2, 2}, /* 9 bands */
-                    {2, 3}, /* 10 bands */
-                    {2, 3}, /* 11 bands */
-                    {3, 4}, /* 12 bands */
-                    {3, 4}, /* 13 bands */
-                    {3, 4}, /* 14 bands */
-                    {4, 5}, /* 15 bands */
-                    {4, 5}, /* 16 bands */
-                    {4, 6}, /* 17 bands */
-                    {5, 6}, /* 18 bands */
-                    {5, 6}, /* 19 bands */
-                    {5, 7}, /* 20 bands */
-                    {6, 7}, /* 21 bands */
-                    {6, 7}, /* 22 bands */
-            };
+        {
+            {0, 0}, /* 0 bands */
+            {0, 0}, /* 1 bands */
+            {0, 0}, /* 2 bands */
+            {0, 0}, /* 3 bands */
+            {0, 0}, /* 4 bands */
+            {0, 1}, /* 5 bands */
+            {1, 1}, /* 6 bands */
+            {1, 1}, /* 7 bands */
+            {1, 2}, /* 8 bands */
+            {2, 2}, /* 9 bands */
+            {2, 3}, /* 10 bands */
+            {2, 3}, /* 11 bands */
+            {3, 4}, /* 12 bands */
+            {3, 4}, /* 13 bands */
+            {3, 4}, /* 14 bands */
+            {4, 5}, /* 15 bands */
+            {4, 5}, /* 16 bands */
+            {4, 6}, /* 17 bands */
+            {5, 6}, /* 18 bands */
+            {5, 6}, /* 19 bands */
+            {5, 7}, /* 20 bands */
+            {6, 7}, /* 21 bands */
+            {6, 7}, /* 22 bands */
+        };
 
-    if (!cod_info->big_values) { /* no big_values region */
+    if (!cod_info->big_values)
+    { /* no big_values region */
         cod_info->region0_count = 0;
         cod_info->region1_count = 0;
-    } else {
+    }
+    else
+    {
         const int32_t *scalefac_band_long = &shine_scale_fact_band_index[config->mpeg.samplerate_index][0];
         int32_t bigvalues_region, scfb_anz, thiscount;
 
@@ -1973,7 +2066,8 @@ void subdivide(gr_info *cod_info, shine_global_config *config) {
         while (scalefac_band_long[scfb_anz] < bigvalues_region)
             scfb_anz++;
 
-        for (thiscount = subdv_table[scfb_anz].region0_count; thiscount; thiscount--) {
+        for (thiscount = subdv_table[scfb_anz].region0_count; thiscount; thiscount--)
+        {
             if (scalefac_band_long[thiscount + 1] <= bigvalues_region)
                 break;
         }
@@ -1982,7 +2076,8 @@ void subdivide(gr_info *cod_info, shine_global_config *config) {
 
         scalefac_band_long += cod_info->region0_count + 1;
 
-        for (thiscount = subdv_table[scfb_anz].region1_count; thiscount; thiscount--) {
+        for (thiscount = subdv_table[scfb_anz].region1_count; thiscount; thiscount--)
+        {
             if (scalefac_band_long[thiscount + 1] <= bigvalues_region)
                 break;
         }
@@ -1998,7 +2093,8 @@ void subdivide(gr_info *cod_info, shine_global_config *config) {
  * ----------------
  * Function: Select huffman code tables for bigvalues regions
  */
-void bigv_tab_select(int32_t ix[GRANULE_SIZE], gr_info *cod_info) {
+void bigv_tab_select(int32_t ix[GRANULE_SIZE], gr_info *cod_info)
+{
     cod_info->table_select[0] = 0;
     cod_info->table_select[1] = 0;
     cod_info->table_select[2] = 0;
@@ -2024,7 +2120,8 @@ void bigv_tab_select(int32_t ix[GRANULE_SIZE], gr_info *cod_info) {
  * of the Huffman tables as defined in the IS (Table B.7), and will not work
  * with any arbitrary tables.
  */
-int32_t new_choose_table(int32_t ix[GRANULE_SIZE], uint32_t begin, uint32_t end) {
+int32_t new_choose_table(int32_t ix[GRANULE_SIZE], uint32_t begin, uint32_t end)
+{
     int32_t i, max;
     int32_t choice[2];
     int32_t sum[2];
@@ -2036,69 +2133,78 @@ int32_t new_choose_table(int32_t ix[GRANULE_SIZE], uint32_t begin, uint32_t end)
     choice[0] = 0;
     choice[1] = 0;
 
-    if (max < 15) {
+    if (max < 15)
+    {
         /* try tables with no linbits */
         for (i = 14; i--;)
-            if (shine_huffman_table[i].xlen > max) {
+            if (shine_huffman_table[i].xlen > max)
+            {
                 choice[0] = i;
                 break;
             }
 
         sum[0] = count_bit(ix, begin, end, choice[0]);
 
-        switch (choice[0]) {
-            case 2:
-                sum[1] = count_bit(ix, begin, end, 3);
-                if (sum[1] <= sum[0])
-                    choice[0] = 3;
-                break;
+        switch (choice[0])
+        {
+        case 2:
+            sum[1] = count_bit(ix, begin, end, 3);
+            if (sum[1] <= sum[0])
+                choice[0] = 3;
+            break;
 
-            case 5:
-                sum[1] = count_bit(ix, begin, end, 6);
-                if (sum[1] <= sum[0])
-                    choice[0] = 6;
-                break;
+        case 5:
+            sum[1] = count_bit(ix, begin, end, 6);
+            if (sum[1] <= sum[0])
+                choice[0] = 6;
+            break;
 
-            case 7:
-                sum[1] = count_bit(ix, begin, end, 8);
-                if (sum[1] <= sum[0]) {
-                    choice[0] = 8;
-                    sum[0] = sum[1];
-                }
-                sum[1] = count_bit(ix, begin, end, 9);
-                if (sum[1] <= sum[0])
-                    choice[0] = 9;
-                break;
+        case 7:
+            sum[1] = count_bit(ix, begin, end, 8);
+            if (sum[1] <= sum[0])
+            {
+                choice[0] = 8;
+                sum[0] = sum[1];
+            }
+            sum[1] = count_bit(ix, begin, end, 9);
+            if (sum[1] <= sum[0])
+                choice[0] = 9;
+            break;
 
-            case 10:
-                sum[1] = count_bit(ix, begin, end, 11);
-                if (sum[1] <= sum[0]) {
-                    choice[0] = 11;
-                    sum[0] = sum[1];
-                }
-                sum[1] = count_bit(ix, begin, end, 12);
-                if (sum[1] <= sum[0])
-                    choice[0] = 12;
-                break;
+        case 10:
+            sum[1] = count_bit(ix, begin, end, 11);
+            if (sum[1] <= sum[0])
+            {
+                choice[0] = 11;
+                sum[0] = sum[1];
+            }
+            sum[1] = count_bit(ix, begin, end, 12);
+            if (sum[1] <= sum[0])
+                choice[0] = 12;
+            break;
 
-            case 13:
-                sum[1] = count_bit(ix, begin, end, 15);
-                if (sum[1] <= sum[0])
-                    choice[0] = 15;
-                break;
+        case 13:
+            sum[1] = count_bit(ix, begin, end, 15);
+            if (sum[1] <= sum[0])
+                choice[0] = 15;
+            break;
         }
-    } else {
+    }
+    else
+    {
         /* try tables with linbits */
         max -= 15;
 
         for (i = 15; i < 24; i++)
-            if (shine_huffman_table[i].linmax >= max) {
+            if (shine_huffman_table[i].linmax >= max)
+            {
                 choice[0] = i;
                 break;
             }
 
         for (i = 24; i < 32; i++)
-            if (shine_huffman_table[i].linmax >= max) {
+            if (shine_huffman_table[i].linmax >= max)
+            {
                 choice[1] = i;
                 break;
             }
@@ -2116,15 +2222,16 @@ int32_t new_choose_table(int32_t ix[GRANULE_SIZE], uint32_t begin, uint32_t end)
  * --------------
  * Function: Count the number of bits necessary to code the bigvalues region.
  */
-int32_t bigv_bitcount(int32_t ix[GRANULE_SIZE], gr_info *gi) {
+int32_t bigv_bitcount(int32_t ix[GRANULE_SIZE], gr_info *gi)
+{
     int32_t bits = 0;
     uint32_t table;
 
-    if ((table = gi->table_select[0]))  /* region0 */
+    if ((table = gi->table_select[0])) /* region0 */
         bits += count_bit(ix, 0, gi->address1, table);
-    if ((table = gi->table_select[1]))  /* region1 */
+    if ((table = gi->table_select[1])) /* region1 */
         bits += count_bit(ix, gi->address1, gi->address2, table);
-    if ((table = gi->table_select[2]))  /* region2 */
+    if ((table = gi->table_select[2])) /* region2 */
         bits += count_bit(ix, gi->address2, gi->address3, table);
     return bits;
 }
@@ -2135,9 +2242,10 @@ int32_t bigv_bitcount(int32_t ix[GRANULE_SIZE], gr_info *gi) {
  * Function: Count the number of bits necessary to code the subregion.
  */
 int32_t count_bit(int32_t ix[GRANULE_SIZE],
-              uint32_t start,
-              uint32_t end,
-              uint32_t table) {
+                  uint32_t start,
+                  uint32_t end,
+                  uint32_t table)
+{
     uint32_t linbits, ylen;
     register int32_t i, sum;
     register int32_t x, y;
@@ -2152,15 +2260,19 @@ int32_t count_bit(int32_t ix[GRANULE_SIZE],
     ylen = h->ylen;
     linbits = h->linbits;
 
-    if (table > 15) { /* ESC-table is used */
-        for (i = start; i < end; i += 2) {
+    if (table > 15)
+    { /* ESC-table is used */
+        for (i = start; i < end; i += 2)
+        {
             x = ix[i];
             y = ix[i + 1];
-            if (x > 14) {
+            if (x > 14)
+            {
                 x = 15;
                 sum += linbits;
             }
-            if (y > 14) {
+            if (y > 14)
+            {
                 y = 15;
                 sum += linbits;
             }
@@ -2171,8 +2283,11 @@ int32_t count_bit(int32_t ix[GRANULE_SIZE],
             if (y)
                 sum++;
         }
-    } else { /* No ESC-words */
-        for (i = start; i < end; i += 2) {
+    }
+    else
+    { /* No ESC-words */
+        for (i = start; i < end; i += 2)
+        {
             x = ix[i];
             y = ix[i + 1];
 
@@ -2200,18 +2315,21 @@ int32_t count_bit(int32_t ix[GRANULE_SIZE],
  * returns a good starting quantizerStepSize.
  */
 int32_t bin_search_StepSize(int32_t desired_rate, int32_t ix[GRANULE_SIZE],
-                        gr_info *cod_info, shine_global_config *config) {
+                            gr_info *cod_info, shine_global_config *config)
+{
     int32_t bit, next, count;
 
     next = -120;
     count = 120;
 
-    do {
+    do
+    {
         int32_t half = count / 2;
 
         if (quantize(ix, next + half, config) > 8192)
-            bit = 100000;  /* fail */
-        else {
+            bit = 100000; /* fail */
+        else
+        {
             calc_runlen(ix, cod_info);           /* rzero,count1,big_values */
             bit = count1_bitcount(ix, cod_info); /* count1_table selection */
             subdivide(cod_info, config);         /* bigvalues sfb division */
@@ -2221,7 +2339,8 @@ int32_t bin_search_StepSize(int32_t desired_rate, int32_t ix[GRANULE_SIZE],
 
         if (bit < desired_rate)
             count = half;
-        else {
+        else
+        {
             next += half;
             count -= half;
         }
@@ -2231,32 +2350,33 @@ int32_t bin_search_StepSize(int32_t desired_rate, int32_t ix[GRANULE_SIZE],
 }
 
 /* This is table B.9: coefficients for aliasing reduction */
-#define MDCT_CA(coef)    (int32_t)(coef / sqrt(1.0 + (coef * coef)) * 0x7fffffff)
-#define MDCT_CS(coef)    (int32_t)(1.0  / sqrt(1.0 + (coef * coef)) * 0x7fffffff)
+#define MDCT_CA(coef) (int32_t)(coef / sqrt(1.0 + (coef * coef)) * 0x7fffffff)
+#define MDCT_CS(coef) (int32_t)(1.0 / sqrt(1.0 + (coef * coef)) * 0x7fffffff)
 
-#define MDCT_CA0    MDCT_CA(-0.6)
-#define MDCT_CA1    MDCT_CA(-0.535)
-#define MDCT_CA2    MDCT_CA(-0.33)
-#define MDCT_CA3    MDCT_CA(-0.185)
-#define MDCT_CA4    MDCT_CA(-0.095)
-#define MDCT_CA5    MDCT_CA(-0.041)
-#define MDCT_CA6    MDCT_CA(-0.0142)
-#define MDCT_CA7    MDCT_CA(-0.0037)
+#define MDCT_CA0 MDCT_CA(-0.6)
+#define MDCT_CA1 MDCT_CA(-0.535)
+#define MDCT_CA2 MDCT_CA(-0.33)
+#define MDCT_CA3 MDCT_CA(-0.185)
+#define MDCT_CA4 MDCT_CA(-0.095)
+#define MDCT_CA5 MDCT_CA(-0.041)
+#define MDCT_CA6 MDCT_CA(-0.0142)
+#define MDCT_CA7 MDCT_CA(-0.0037)
 
-#define MDCT_CS0    MDCT_CS(-0.6)
-#define MDCT_CS1    MDCT_CS(-0.535)
-#define MDCT_CS2    MDCT_CS(-0.33)
-#define MDCT_CS3    MDCT_CS(-0.185)
-#define MDCT_CS4    MDCT_CS(-0.095)
-#define MDCT_CS5    MDCT_CS(-0.041)
-#define MDCT_CS6    MDCT_CS(-0.0142)
-#define MDCT_CS7    MDCT_CS(-0.0037)
+#define MDCT_CS0 MDCT_CS(-0.6)
+#define MDCT_CS1 MDCT_CS(-0.535)
+#define MDCT_CS2 MDCT_CS(-0.33)
+#define MDCT_CS3 MDCT_CS(-0.185)
+#define MDCT_CS4 MDCT_CS(-0.095)
+#define MDCT_CS5 MDCT_CS(-0.041)
+#define MDCT_CS6 MDCT_CS(-0.0142)
+#define MDCT_CS7 MDCT_CS(-0.0037)
 
 /*
  * shine_mdct_initialise:
  * -------------------
  */
-void shine_mdct_initialise(shine_global_config *config) {
+void shine_mdct_initialise(shine_global_config *config)
+{
     int32_t m, k;
 
     /* prepare the mdct coefficients */
@@ -2264,30 +2384,33 @@ void shine_mdct_initialise(shine_global_config *config) {
         for (k = 36; k--;)
             /* combine window and mdct coefficients into a single table */
             /* scale and convert to fixed point before storing */
-            config->mdct.cos_l[m][k] = (int32_t) (sin(PI36 * (k + 0.5))
-                                                  * cos((PI / 72) * (2 * k + 19) * (2 * m + 1)) * 0x7fffffff);
+            config->mdct.cos_l[m][k] = (int32_t)(sin(PI36 * (k + 0.5)) * cos((PI / 72) * (2 * k + 19) * (2 * m + 1)) * 0x7fffffff);
 }
 
 /*
  * shine_mdct_sub:
  * ------------
  */
-void shine_mdct_sub(shine_global_config *config, int32_t stride) {
+void shine_mdct_sub(shine_global_config *config, int32_t stride)
+{
     /* note. we wish to access the array 'config->mdct_freq[2][2][576]' as
      * [2][2][32][18]. (32*18=576),
      */
-    int32_t (*mdct_enc)[18];
+    int32_t(*mdct_enc)[18];
 
     int32_t ch, gr, band, j, k;
     int32_t mdct_in[36];
 
-    for (ch = NUM_CHANNELS; ch--;) {
-        for (gr = 0; gr < config->mpeg.granules_per_frame; gr++) {
+    for (ch = NUM_CHANNELS; ch--;)
+    {
+        for (gr = 0; gr < config->mpeg.granules_per_frame; gr++)
+        {
             /* set up pointer to the part of config->mdct_freq we're using */
-            mdct_enc = (int32_t (*)[18]) config->mdct_freq[ch][gr];
+            mdct_enc = (int32_t(*)[18])config->mdct_freq[ch][gr];
 
             /* polyphase filtering */
-            for (k = 0; k < 18; k += 2) {
+            for (k = 0; k < 18; k += 2)
+            {
                 shine_window_filter_subband(&config->buffer[ch], &config->l3_sb_sample[ch][gr + 1][k][0], ch, config,
                                             stride);
                 shine_window_filter_subband(&config->buffer[ch], &config->l3_sb_sample[ch][gr + 1][k + 1][0], ch,
@@ -2300,8 +2423,10 @@ void shine_mdct_sub(shine_global_config *config, int32_t stride) {
             }
 
             /* Perform imdct of 18 previous subband samples + 18 current subband samples */
-            for (band = 0; band < 32; band++) {
-                for (k = 18; k--;) {
+            for (band = 0; band < 32; band++)
+            {
+                for (k = 18; k--;)
+                {
                     mdct_in[k] = config->l3_sb_sample[ch][gr][k][band];
                     mdct_in[k + 18] = config->l3_sb_sample[ch][gr + 1][k][band];
                 }
@@ -2311,12 +2436,14 @@ void shine_mdct_sub(shine_global_config *config, int32_t stride) {
                  * 36 coefficients in the time domain and 18 in the frequency
                  * domain.
                  */
-                for (k = 18; k--;) {
+                for (k = 18; k--;)
+                {
                     int32_t vm;
                     uint32_t vm_lo __attribute__((unused));
 
                     mul0(vm, vm_lo, mdct_in[35], config->mdct.cos_l[k][35]);
-                    for (j = 35; j; j -= 7) {
+                    for (j = 35; j; j -= 7)
+                    {
                         muladd(vm, vm_lo, mdct_in[j - 1], config->mdct.cos_l[k][j - 1]);
                         muladd(vm, vm_lo, mdct_in[j - 2], config->mdct.cos_l[k][j - 2]);
                         muladd(vm, vm_lo, mdct_in[j - 3], config->mdct.cos_l[k][j - 3]);
@@ -2330,7 +2457,8 @@ void shine_mdct_sub(shine_global_config *config, int32_t stride) {
                 }
 
                 /* Perform aliasing reduction butterfly */
-                if (band != 0) {
+                if (band != 0)
+                {
                     cmuls(mdct_enc[band][0], mdct_enc[band - 1][17 - 0], mdct_enc[band][0], mdct_enc[band - 1][17 - 0],
                           MDCT_CS0, MDCT_CA0);
                     cmuls(mdct_enc[band][1], mdct_enc[band - 1][17 - 1], mdct_enc[band][1], mdct_enc[band - 1][17 - 1],
@@ -2364,23 +2492,26 @@ void shine_mdct_sub(shine_global_config *config, int32_t stride) {
  * 9th decimal place accuracy of the filterbank tables in the ISO
  * document.  The coefficients are stored in #filter#
  */
-void shine_subband_initialise(shine_global_config *config) {
+void shine_subband_initialise(shine_global_config *config)
+{
     int32_t i, j;
     double filter;
 
-    for (i = MAX_CHANNELS; i--;) {
+    for (i = MAX_CHANNELS; i--;)
+    {
         config->subband.off[i] = 0;
         memset(config->subband.x[i], 0, sizeof(config->subband.x[i]));
     }
 
     for (i = SBLIMIT; i--;)
-        for (j = 64; j--;) {
-            if ((filter = 1e9 * cos((double) ((2 * i + 1) * (16 - j) * PI64))) >= 0)
+        for (j = 64; j--;)
+        {
+            if ((filter = 1e9 * cos((double)((2 * i + 1) * (16 - j) * PI64))) >= 0)
                 modf(filter + 0.5, &filter);
             else
                 modf(filter - 0.5, &filter);
             /* scale and convert to fixed point before storing */
-            config->subband.fl[i][j] = (int32_t) (filter * (0x7fffffff * 1e-9));
+            config->subband.fl[i][j] = (int32_t)(filter * (0x7fffffff * 1e-9));
         }
 }
 
@@ -2398,25 +2529,27 @@ void shine_subband_initialise(shine_global_config *config) {
  * picking out values from the windowed samples, and then multiplying
  * them by the filter matrix, producing 32 subband samples.
  */
-void
-shine_window_filter_subband(int16_t **buffer, int32_t s[SBLIMIT], int32_t ch, shine_global_config *config, int32_t stride) {
+void shine_window_filter_subband(int16_t **buffer, int32_t s[SBLIMIT], int32_t ch, shine_global_config *config, int32_t stride)
+{
     int32_t y[64];
     int32_t i, j;
     int16_t *ptr = *buffer;
 
     /* replace 32 oldest samples with 32 new samples */
-    for (i = 32; i--;) {
-        config->subband.x[ch][i + config->subband.off[ch]] = ((int32_t) *ptr) << 16;
+    for (i = 32; i--;)
+    {
+        config->subband.x[ch][i + config->subband.off[ch]] = ((int32_t)*ptr) << 16;
         ptr += stride;
     }
     *buffer = ptr;
 
-    for (i = 64; i--;) {
+    for (i = 64; i--;)
+    {
         int32_t s_value;
         uint32_t s_value_lo __attribute__((unused));
 
-        mul0  (s_value, s_value_lo, config->subband.x[ch][(config->subband.off[ch] + i + (0 << 6)) & (HAN_SIZE - 1)],
-               shine_enwindow[i + (0 << 6)]);
+        mul0(s_value, s_value_lo, config->subband.x[ch][(config->subband.off[ch] + i + (0 << 6)) & (HAN_SIZE - 1)],
+             shine_enwindow[i + (0 << 6)]);
         muladd(s_value, s_value_lo, config->subband.x[ch][(config->subband.off[ch] + i + (1 << 6)) & (HAN_SIZE - 1)],
                shine_enwindow[i + (1 << 6)]);
         muladd(s_value, s_value_lo, config->subband.x[ch][(config->subband.off[ch] + i + (2 << 6)) & (HAN_SIZE - 1)],
@@ -2431,18 +2564,20 @@ shine_window_filter_subband(int16_t **buffer, int32_t s[SBLIMIT], int32_t ch, sh
                shine_enwindow[i + (6 << 6)]);
         muladd(s_value, s_value_lo, config->subband.x[ch][(config->subband.off[ch] + i + (7 << 6)) & (HAN_SIZE - 1)],
                shine_enwindow[i + (7 << 6)]);
-        mulz  (s_value, s_value_lo);
+        mulz(s_value, s_value_lo);
         y[i] = s_value;
     }
 
     config->subband.off[ch] = (config->subband.off[ch] + 480) & (HAN_SIZE - 1); /* offset is modulo (HAN_SIZE)*/
 
-    for (i = SBLIMIT; i--;) {
+    for (i = SBLIMIT; i--;)
+    {
         int32_t s_value;
         uint32_t s_value_lo __attribute__((unused));
 
         mul0(s_value, s_value_lo, config->subband.fl[i][63], y[63]);
-        for (j = 63; j; j -= 7) {
+        for (j = 63; j; j -= 7)
+        {
             muladd(s_value, s_value_lo, config->subband.fl[i][j - 1], y[j - 1]);
             muladd(s_value, s_value_lo, config->subband.fl[i][j - 2], y[j - 2]);
             muladd(s_value, s_value_lo, config->subband.fl[i][j - 3], y[j - 3]);
@@ -2456,7 +2591,6 @@ shine_window_filter_subband(int16_t **buffer, int32_t s[SBLIMIT], int32_t ch, sh
     }
 }
 
-
 /*
  * shine_max_reservoir_bits:
  * ------------
@@ -2464,7 +2598,8 @@ shine_window_filter_subband(int16_t **buffer, int32_t s[SBLIMIT], int32_t ch, sh
  * allowance for the current granule based on reservoir size
  * and perceptual entropy.
  */
-int32_t shine_max_reservoir_bits(double *pe, shine_global_config *config) {
+int32_t shine_max_reservoir_bits(double *pe, shine_global_config *config)
+{
     int32_t more_bits, max_bits, add_bits, over_bits;
     int32_t mean_bits = config->mean_bits;
 
@@ -2478,7 +2613,8 @@ int32_t shine_max_reservoir_bits(double *pe, shine_global_config *config) {
 
     more_bits = *pe * 3.1 - mean_bits;
     add_bits = 0;
-    if (more_bits > 100) {
+    if (more_bits > 100)
+    {
         int32_t frac = (config->ResvSize * 6) / 10;
 
         if (frac < more_bits)
@@ -2502,7 +2638,8 @@ int32_t shine_max_reservoir_bits(double *pe, shine_global_config *config) {
  * Called after a granule's bit allocation. Readjusts the size of
  * the reservoir to reflect the granule's usage.
  */
-void shine_ResvAdjust(gr_info *gi, shine_global_config *config) {
+void shine_ResvAdjust(gr_info *gi, shine_global_config *config)
+{
     config->ResvSize += (config->mean_bits / NUM_CHANNELS) - gi->part2_3_length;
 }
 
@@ -2515,7 +2652,8 @@ void shine_ResvAdjust(gr_info *gi, shine_global_config *config) {
  * part2_3_length. The bitstream formatter will detect this and write the
  * appropriate stuffing bits to the bitstream.
  */
-void shine_ResvFrameEnd(shine_global_config *config) {
+void shine_ResvFrameEnd(shine_global_config *config)
+{
     gr_info *gi;
     int32_t gr, ch, ancillary_pad, stuffingBits;
     int32_t over_bits;
@@ -2535,27 +2673,31 @@ void shine_ResvFrameEnd(shine_global_config *config) {
     stuffingBits = over_bits + ancillary_pad;
 
     /* we must be byte aligned */
-    if ((over_bits = config->ResvSize % 8)) {
+    if ((over_bits = config->ResvSize % 8))
+    {
         stuffingBits += over_bits;
         config->ResvSize -= over_bits;
     }
 
-    if (stuffingBits) {
+    if (stuffingBits)
+    {
         /*
          * plan a: put all into the first granule
          * This was preferred by someone designing a
          * real-time decoder...
          */
-        gi = (gr_info *) &(l3_side->gr[0].ch[0]);
+        gi = (gr_info *)&(l3_side->gr[0].ch[0]);
 
         if (gi->part2_3_length + stuffingBits < 4095)
             gi->part2_3_length += stuffingBits;
-        else {
+        else
+        {
             /* plan b: distribute throughout the granules */
             for (gr = 0; gr < config->mpeg.granules_per_frame; gr++)
-                for (ch = 0; ch < NUM_CHANNELS; ch++) {
+                for (ch = 0; ch < NUM_CHANNELS; ch++)
+                {
                     int32_t extraBits, bitsThisGr;
-                    gr_info *gi = (gr_info *) &(l3_side->gr[gr].ch[ch]);
+                    gr_info *gi = (gr_info *)&(l3_side->gr[gr].ch[ch]);
                     if (!stuffingBits)
                         break;
                     extraBits = 4095 - gi->part2_3_length;
@@ -2572,5 +2714,3 @@ void shine_ResvFrameEnd(shine_global_config *config) {
         }
     }
 }
-
-
