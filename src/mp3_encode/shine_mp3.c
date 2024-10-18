@@ -269,6 +269,7 @@ typedef struct
     // int32_t original;   /* + */
 } priv_shine_mpeg_t;
 
+#define INT2IDX_SIZE 200
 typedef struct
 {
     int32_t *xr;                  /* magnitudes of the spectral values */
@@ -281,7 +282,7 @@ typedef struct
     // int32_t xrmaxl[MAX_GRANULES];
     // double steptab[128];   /* 2**(-x/4)  for x = -127..0 */
     int32_t steptabi[128]; /* 2**(-x/4)  for x = -127..0 */
-    // int32_t int2idx[10000]; /* x**(3/4)   for x = 0..9999 */
+    int32_t int2idx[INT2IDX_SIZE]; /* x**(3/4)   for x = 0..9999 */
 } l3loop_t;
 
 typedef struct
@@ -1864,8 +1865,10 @@ void shine_loop_initialise(shine_global_config *config)
     /* quantize: vector conversion, three quarter power table.
      * The 0.5 is for rounding, the .0946 comes from the spec.
      */
-    // for (i = 10000; i--;)
-    //     config->l3loop.int2idx[i] = (int32_t) (sqrt(sqrt((double) i) * (double) i) - 0.0946 + 0.5);
+    for (i = INT2IDX_SIZE; i--;)
+    {
+        config->l3loop.int2idx[i] = (int32_t) (sqrt(sqrt((double) i) * (double) i) - 0.0946 + 0.5);
+    }
 }
 
 int32_t get_int2idx_value(int32_t i)
@@ -1898,13 +1901,12 @@ int32_t quantize(int32_t ix[GRANULE_SIZE], int32_t stepsize, shine_global_config
              */
             ln = mulr(labs(config->l3loop.xr[i]), scalei);
 
-            if (ln < 10000)
-            { /* ln < 10000 catches most values */
-                // ix[i] = config->l3loop.int2idx[ln]; /* quick look up method */
-                // if (ln > 576)
-                // {
-                //     printf("ln = %d\n", ln);
-                // }
+            if (ln < INT2IDX_SIZE)
+            { /* ln < INT2IDX_SIZE (originally 10000) catches most values */
+                ix[i] = config->l3loop.int2idx[ln]; /* quick look up method */
+            }
+            else if (ln < 10000)
+            {
                 ix[i] = get_int2idx_value(ln);
             }
             else
