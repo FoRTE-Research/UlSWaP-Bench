@@ -214,7 +214,7 @@ do { \
 #if defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 2))
 #define SWAB32(x)    __builtin_bswap32(x)
 #else
-#define SWAB32(x)	(((unsigned int)(x) >> 24) | (((unsigned int)(x) >> 8) & 0xff00) | (((unsigned int)(x) & 0xff00) << 8) | ((unsigned int)(x) << 24))
+#define SWAB32(x)	(((uint32_t)(x) >> 24) | (((uint32_t)(x) >> 8) & 0xff00) | (((uint32_t)(x) & 0xff00) << 8) | ((uint32_t)(x) << 24))
 #endif
 
 /* #define DEBUG if you want the library to dump info to stdout */
@@ -243,30 +243,30 @@ do { \
 #endif
 
 typedef struct {
-    int channels;
-    int samplerate;
+    int32_t channels;
+    int32_t samplerate;
 } priv_shine_wave_t;
 
 typedef struct {
-    int version;
-    int layer;
-    int granules_per_frame;
-    int mode;      /* + */ /* Stereo mode */
-    int bitr;      /* + */ /* Must conform to known bitrate - see Main.c */
-    int emph;      /* + */ /* De-emphasis */
-    int padding;
-    int bits_per_frame;
-    int bits_per_slot;
+    int32_t version;
+    int32_t layer;
+    int32_t granules_per_frame;
+    int32_t mode;      /* + */ /* Stereo mode */
+    int32_t bitr;      /* + */ /* Must conform to known bitrate - see Main.c */
+    int32_t emph;      /* + */ /* De-emphasis */
+    int32_t padding;
+    int32_t bits_per_frame;
+    int32_t bits_per_slot;
     double frac_slots_per_frame;
     double slot_lag;
-    int whole_slots_per_frame;
-    int bitrate_index;     /* + */ /* See Main.c and Layer3.c */
-    int samplerate_index;  /* + */ /* See Main.c and Layer3.c */
-    int crc;
-    int ext;
-    int mode_ext;
-    int copyright;  /* + */
-    int original;   /* + */
+    int32_t whole_slots_per_frame;
+    int32_t bitrate_index;     /* + */ /* See Main.c and Layer3.c */
+    int32_t samplerate_index;  /* + */ /* See Main.c and Layer3.c */
+    int32_t crc;
+    int32_t ext;
+    int32_t mode_ext;
+    int32_t copyright;  /* + */
+    int32_t original;   /* + */
 } priv_shine_mpeg_t;
 
 typedef struct {
@@ -280,7 +280,7 @@ typedef struct {
     int32_t xrmaxl[MAX_GRANULES];
     double steptab[128]; /* 2**(-x/4)  for x = -127..0 */
     int32_t steptabi[128];  /* 2**(-x/4)  for x = -127..0 */
-    int int2idx[10000]; /* x**(3/4)   for x = 0..9999 */
+    int32_t int2idx[10000]; /* x**(3/4)   for x = 0..9999 */
 } l3loop_t;
 
 typedef struct {
@@ -288,37 +288,37 @@ typedef struct {
 } mdct_t;
 
 typedef struct {
-    int off[MAX_CHANNELS];
+    int32_t off[MAX_CHANNELS];
     int32_t fl[SBLIMIT][64];
     int32_t x[MAX_CHANNELS][HAN_SIZE];
 } subband_t;
 
 /* Side information */
 typedef struct {
-    unsigned part2_3_length;
-    unsigned big_values;
-    unsigned count1;
-    unsigned global_gain;
-    unsigned scalefac_compress;
-    unsigned table_select[3];
-    unsigned region0_count;
-    unsigned region1_count;
-    unsigned preflag;
-    unsigned scalefac_scale;
-    unsigned count1table_select;
-    unsigned part2_length;
-    unsigned sfb_lmax;
-    unsigned address1;
-    unsigned address2;
-    unsigned address3;
-    int quantizerStepSize;
-    unsigned slen[4];
+    uint32_t part2_3_length;
+    uint32_t big_values;
+    uint32_t count1;
+    uint32_t global_gain;
+    uint32_t scalefac_compress;
+    uint32_t table_select[3];
+    uint32_t region0_count;
+    uint32_t region1_count;
+    uint32_t preflag;
+    uint32_t scalefac_scale;
+    uint32_t count1table_select;
+    uint32_t part2_length;
+    uint32_t sfb_lmax;
+    uint32_t address1;
+    uint32_t address2;
+    uint32_t address3;
+    int32_t quantizerStepSize;
+    uint32_t slen[4];
 } gr_info;
 
 typedef struct {
-    unsigned private_bits;
-    int resvDrain;
-    unsigned scfsi[MAX_CHANNELS][4];
+    uint32_t private_bits;
+    int32_t resvDrain;
+    uint32_t scfsi[MAX_CHANNELS][4];
     struct {
         struct {
             gr_info tt;
@@ -340,11 +340,11 @@ typedef struct {
 } shine_scalefac_t;
 
 typedef struct bit_stream_struc {
-    unsigned char *data;        /* Processed data */
-    int data_size;      /* Total data size */
-    int data_position;  /* Data position */
-    unsigned int cache;            /* bit stream cache */
-    int cache_bits;     /* free bits in cache */
+    uint8_t *data;        /* Processed data */
+    int32_t data_size;      /* Total data size */
+    int32_t data_position;  /* Data position */
+    uint32_t cache;            /* bit stream cache */
+    int32_t cache_bits;     /* free bits in cache */
 } bitstream_t;
 
 
@@ -357,30 +357,30 @@ typedef struct bit_stream_struc {
 #define         MIN(A, B)       ((A) < (B) ? (A) : (B))
 #define         MAX(A, B)       ((A) > (B) ? (A) : (B))
 
-void shine_open_bit_stream(bitstream_t *bs, const int size);
+void shine_open_bit_stream(bitstream_t *bs, const int32_t size);
 
 void shine_close_bit_stream(bitstream_t *bs);
 
-void shine_putbits(bitstream_t *bs, unsigned int val, unsigned int N);
+void shine_putbits(bitstream_t *bs, uint32_t val, uint32_t N);
 
-int shine_get_bits_count(bitstream_t *bs);
+int32_t shine_get_bits_count(bitstream_t *bs);
 
 typedef struct shine_global_flags {
     priv_shine_wave_t wave;
     priv_shine_mpeg_t mpeg;
     bitstream_t bs;
     shine_side_info_t side_info;
-    int sideinfo_len;
-    int mean_bits;
+    int32_t sideinfo_len;
+    int32_t mean_bits;
     shine_psy_ratio_t ratio;
     shine_scalefac_t scalefactor;
     int16_t *buffer[MAX_CHANNELS];
     double pe[MAX_CHANNELS][MAX_GRANULES];
-    int l3_enc[MAX_CHANNELS][MAX_GRANULES][GRANULE_SIZE];
+    int32_t l3_enc[MAX_CHANNELS][MAX_GRANULES][GRANULE_SIZE];
     int32_t l3_sb_sample[MAX_CHANNELS][MAX_GRANULES + 1][18][SBLIMIT];
     int32_t mdct_freq[MAX_CHANNELS][MAX_GRANULES][GRANULE_SIZE];
-    int ResvSize;
-    int ResvMax;
+    int32_t ResvSize;
+    int32_t ResvMax;
     l3loop_t l3loop;
     mdct_t mdct;
     subband_t subband;
@@ -398,17 +398,17 @@ void shine_mdct_initialise(shine_global_config *config);
  *    idx  = fr_ps->header->sampling_frequency + (fr_ps->header->version * 3)
  */
 
-const int shine_slen1_tab[16] = {0, 0, 0, 0, 3, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4};
-const int shine_slen2_tab[16] = {0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 1, 2, 3, 2, 3};
+const int32_t shine_slen1_tab[16] = {0, 0, 0, 0, 3, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4};
+const int32_t shine_slen2_tab[16] = {0, 1, 2, 3, 0, 1, 2, 3, 1, 2, 3, 1, 2, 3, 2, 3};
 
 /* Valid samplerates and bitrates. */
-const int samplerates[9] = {
+const int32_t samplerates[9] = {
         44100, 48000, 32000, /* MPEG-I */
         22050, 24000, 16000, /* MPEG-II */
         11025, 12000, 8000   /* MPEG-2.5 */
 };
 
-const int bitrates[16][4] = {
+const int32_t bitrates[16][4] = {
         /* MPEG version:
          * 2.5, reserved, II, I */
         {-1, -1, -1,  -1},
@@ -429,7 +429,7 @@ const int bitrates[16][4] = {
         {-1, -1, -1,  -1}
 };
 
-const int shine_scale_fact_band_index[9][23] =
+const int32_t shine_scale_fact_band_index[9][23] =
         {
                 /* MPEG-I */
                 /* Table B.8.b: 44.1 kHz */
@@ -552,12 +552,12 @@ const int32_t shine_enwindow[] = {
 #define MXOFF   250
 
 struct huffcodetab {
-    unsigned int xlen;         /*max. x-index+                         */
-    unsigned int ylen;         /*max. y-index+                         */
-    unsigned int linbits;      /*number of linbits                     */
-    unsigned int linmax;       /*max number to be stored in linbits    */
+    uint32_t xlen;         /*max. x-index+                         */
+    uint32_t ylen;         /*max. y-index+                         */
+    uint32_t linbits;      /*number of linbits                     */
+    uint32_t linmax;       /*max number to be stored in linbits    */
     const HUFFBITS *table;     /*pointer to array[xlen][ylen]          */
-    const unsigned char *hlen; /*pointer to array[xlen][ylen]          */
+    const uint8_t *hlen; /*pointer to array[xlen][ylen]          */
 };
 
 extern const struct huffcodetab shine_huffman_table[HTN];/* global memory block                */
@@ -568,9 +568,9 @@ extern const struct huffcodetab shine_huffman_table[HTN];/* global memory block 
 #ifndef RESERVOIR_H
 #define RESERVOIR_H
 
-void shine_ResvFrameBegin(int frameLength, shine_global_config *config);
+void shine_ResvFrameBegin(int32_t frameLength, shine_global_config *config);
 
-int shine_max_reservoir_bits(double *pe, shine_global_config *config);
+int32_t shine_max_reservoir_bits(double *pe, shine_global_config *config);
 
 void shine_ResvAdjust(gr_info *gi, shine_global_config *config);
 
@@ -586,7 +586,7 @@ void shine_ResvFrameEnd(shine_global_config *config);
 
 void shine_subband_initialise(shine_global_config *config);
 
-void shine_window_filter_subband(int16_t **buffer, int32_t s[SBLIMIT], int k, shine_global_config *config, int stride);
+void shine_window_filter_subband(int16_t **buffer, int32_t s[SBLIMIT], int32_t k, shine_global_config *config, int32_t stride);
 
 #endif
 
@@ -595,7 +595,7 @@ void shine_window_filter_subband(int16_t **buffer, int32_t s[SBLIMIT], int k, sh
 
 // void shine_mdct_initialise();
 
-void shine_mdct_sub(shine_global_config *config, int stride);
+void shine_mdct_sub(shine_global_config *config, int32_t stride);
 
 #endif
 
@@ -610,7 +610,7 @@ void shine_iteration_loop(shine_global_config *config);
 
 
 const HUFFBITS dmask = 1 << (((sizeof(HUFFBITS)) << 3) - 1);
-const unsigned int hs = sizeof(HUFFBITS) << 3;
+const uint32_t hs = sizeof(HUFFBITS) << 3;
 
 static const HUFFBITS t1HB[] = {1, 1, 1, 0};
 static const HUFFBITS t2HB[] = {1, 2, 1, 3, 1, 1, 3, 2, 0};
@@ -706,27 +706,27 @@ static const HUFFBITS t24HB[] = {15, 13, 46, 80, 146, 262, 248, 434, 426, 669, 6
 static const HUFFBITS t32HB[] = {1, 5, 4, 5, 6, 5, 4, 4, 7, 3, 6, 0, 7, 2, 3, 1};
 static const HUFFBITS t33HB[] = {15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0};
 
-static const unsigned char t1l[] = {1, 3, 2, 3};
-static const unsigned char t2l[] = {1, 3, 6, 3, 3, 5, 5, 5, 6};
-static const unsigned char t3l[] = {2, 2, 6, 3, 2, 5, 5, 5, 6};
-static const unsigned char t5l[] = {1, 3, 6, 7, 3, 3, 6, 7, 6, 6, 7, 8, 7, 6, 7, 8};
-static const unsigned char t6l[] = {3, 3, 5, 7, 3, 2, 4, 5, 4, 4, 5, 6, 6, 5, 6, 7};
-static const unsigned char t7l[] = {1, 3, 6, 8, 8, 9, 3, 4, 6, 7, 7, 8, 6, 5, 7, 8, 8, 9, 7, 7, 8, 9, 9, 9, 7, 7, 8, 9,
+static const uint8_t t1l[] = {1, 3, 2, 3};
+static const uint8_t t2l[] = {1, 3, 6, 3, 3, 5, 5, 5, 6};
+static const uint8_t t3l[] = {2, 2, 6, 3, 2, 5, 5, 5, 6};
+static const uint8_t t5l[] = {1, 3, 6, 7, 3, 3, 6, 7, 6, 6, 7, 8, 7, 6, 7, 8};
+static const uint8_t t6l[] = {3, 3, 5, 7, 3, 2, 4, 5, 4, 4, 5, 6, 6, 5, 6, 7};
+static const uint8_t t7l[] = {1, 3, 6, 8, 8, 9, 3, 4, 6, 7, 7, 8, 6, 5, 7, 8, 8, 9, 7, 7, 8, 9, 9, 9, 7, 7, 8, 9,
                                     9, 10, 8, 8, 9, 10, 10, 10};
-static const unsigned char t8l[] = {2, 3, 6, 8, 8, 9, 3, 2, 4, 8, 8, 8, 6, 4, 6, 8, 8, 9, 8, 8, 8, 9, 9, 10, 8, 7, 8, 9,
+static const uint8_t t8l[] = {2, 3, 6, 8, 8, 9, 3, 2, 4, 8, 8, 8, 6, 4, 6, 8, 8, 9, 8, 8, 8, 9, 9, 10, 8, 7, 8, 9,
                                     10, 10, 9, 8, 9, 9, 11, 11};
-static const unsigned char t9l[] = {3, 3, 5, 6, 8, 9, 3, 3, 4, 5, 6, 8, 4, 4, 5, 6, 7, 8, 6, 5, 6, 7, 7, 8, 7, 6, 7, 7,
+static const uint8_t t9l[] = {3, 3, 5, 6, 8, 9, 3, 3, 4, 5, 6, 8, 4, 4, 5, 6, 7, 8, 6, 5, 6, 7, 7, 8, 7, 6, 7, 7,
                                     8, 9, 8, 7, 8, 8, 9, 9};
-static const unsigned char t10l[] = {1, 3, 6, 8, 9, 9, 9, 10, 3, 4, 6, 7, 8, 9, 8, 8, 6, 6, 7, 8, 9, 10, 9, 9, 7, 7, 8,
+static const uint8_t t10l[] = {1, 3, 6, 8, 9, 9, 9, 10, 3, 4, 6, 7, 8, 9, 8, 8, 6, 6, 7, 8, 9, 10, 9, 9, 7, 7, 8,
                                      9, 10, 10, 9, 10, 8, 8, 9, 10, 10, 10, 10, 10, 9, 9, 10, 10, 11, 11, 10, 11, 8, 8,
                                      9, 10, 10, 10, 11, 11, 9, 8, 9, 10, 10, 11, 11, 11};
-static const unsigned char t11l[] = {2, 3, 5, 7, 8, 9, 8, 9, 3, 3, 4, 6, 8, 8, 7, 8, 5, 5, 6, 7, 8, 9, 8, 8, 7, 6, 7, 9,
+static const uint8_t t11l[] = {2, 3, 5, 7, 8, 9, 8, 9, 3, 3, 4, 6, 8, 8, 7, 8, 5, 5, 6, 7, 8, 9, 8, 8, 7, 6, 7, 9,
                                      8, 10, 8, 9, 8, 8, 8, 9, 9, 10, 9, 10, 8, 8, 9, 10, 10, 11, 10, 11, 8, 7, 7, 8, 9,
                                      10, 10, 10, 8, 7, 8, 9, 10, 10, 10, 10};
-static const unsigned char t12l[] = {4, 3, 5, 7, 8, 9, 9, 9, 3, 3, 4, 5, 7, 7, 8, 8, 5, 4, 5, 6, 7, 8, 7, 8, 6, 5, 6, 6,
+static const uint8_t t12l[] = {4, 3, 5, 7, 8, 9, 9, 9, 3, 3, 4, 5, 7, 7, 8, 8, 5, 4, 5, 6, 7, 8, 7, 8, 6, 5, 6, 6,
                                      7, 8, 8, 8, 7, 6, 7, 7, 8, 8, 8, 9, 8, 7, 8, 8, 8, 9, 8, 9, 8, 7, 7, 8, 8, 9, 9,
                                      10, 9, 8, 8, 9, 9, 9, 9, 10};
-static const unsigned char t13l[] = {1, 4, 6, 7, 8, 9, 9, 10, 9, 10, 11, 11, 12, 12, 13, 13, 3, 4, 6, 7, 8, 8, 9, 9, 9,
+static const uint8_t t13l[] = {1, 4, 6, 7, 8, 9, 9, 10, 9, 10, 11, 11, 12, 12, 13, 13, 3, 4, 6, 7, 8, 8, 9, 9, 9,
                                      9, 10, 10, 11, 12, 12, 12, 6, 6, 7, 8, 9, 9, 10, 10, 9, 10, 10, 11, 11, 12, 13, 13,
                                      7, 7, 8, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 13, 13,
                                      8, 7, 9, 9, 10, 10, 11, 11, 10, 11, 11, 12, 12, 13, 13, 14, 9, 8, 9, 10, 10, 10,
@@ -740,7 +740,7 @@ static const unsigned char t13l[] = {1, 4, 6, 7, 8, 9, 9, 10, 9, 10, 11, 11, 12,
                                      13, 12, 13, 14, 14, 15, 15, 15, 16, 16, 16, 12, 11, 12, 13, 13, 13, 14, 14, 14, 14,
                                      14, 15, 16, 15, 16, 16, 13, 12, 12, 13, 13, 13, 15, 14, 14, 17, 15, 15, 15, 17, 16,
                                      16, 12, 12, 13, 14, 14, 14, 15, 14, 15, 15, 16, 16, 19, 18, 19, 16};
-static const unsigned char t15l[] = {3, 4, 5, 7, 7, 8, 9, 9, 9, 10, 10, 11, 11, 11, 12, 13, 4, 3, 5, 6, 7, 7, 8, 8, 8,
+static const uint8_t t15l[] = {3, 4, 5, 7, 7, 8, 9, 9, 9, 10, 10, 11, 11, 11, 12, 13, 4, 3, 5, 6, 7, 7, 8, 8, 8,
                                      9, 9, 10, 10, 10, 11, 11, 5, 5, 5, 6, 7, 7, 8, 8, 8, 9, 9, 10, 10, 11, 11, 11, 6,
                                      6, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 11, 7, 6, 7,
                                      7, 8, 8, 9, 9, 9, 9, 10, 10, 10, 11, 11, 11, 8, 7, 7, 8, 8, 8, 9, 9, 9, 9, 10, 10,
@@ -754,7 +754,7 @@ static const unsigned char t15l[] = {3, 4, 5, 7, 7, 8, 9, 9, 9, 10, 10, 11, 11, 
                                      11, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 12, 13, 13, 12, 11, 11, 11, 11,
                                      11, 11, 11, 12, 12, 12, 12, 13, 13, 12, 13, 12, 11, 11, 11, 11, 11, 11, 12, 12, 12,
                                      12, 12, 13, 13, 13, 13};
-static const unsigned char t16l[] = {1, 4, 6, 8, 9, 9, 10, 10, 11, 11, 11, 12, 12, 12, 13, 9, 3, 4, 6, 7, 8, 9, 9, 9,
+static const uint8_t t16l[] = {1, 4, 6, 8, 9, 9, 10, 10, 11, 11, 11, 12, 12, 12, 13, 9, 3, 4, 6, 7, 8, 9, 9, 9,
                                      10, 10, 10, 11, 12, 11, 12, 8, 6, 6, 7, 8, 9, 9, 10, 10, 11, 10, 11, 11, 11, 12,
                                      12, 9, 8, 7, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 12, 13, 13,
                                      10, 9, 8, 9, 9, 10, 10, 11, 11, 11, 12, 12, 12, 13, 13, 13, 9, 9, 8, 9, 9, 10, 11,
@@ -768,7 +768,7 @@ static const unsigned char t16l[] = {1, 4, 6, 8, 9, 9, 10, 10, 11, 11, 11, 12, 1
                                      12, 12, 12, 13, 13, 13, 13, 15, 14, 14, 14, 14, 16, 11, 14, 12, 12, 12, 13, 13, 14,
                                      14, 14, 16, 15, 15, 15, 17, 15, 11, 13, 13, 11, 12, 14, 14, 13, 14, 14, 15, 16, 15,
                                      17, 15, 14, 11, 9, 8, 8, 9, 9, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 8};
-static const unsigned char t24l[] = {4, 4, 6, 7, 8, 9, 9, 10, 10, 11, 11, 11, 11, 11, 12, 9, 4, 4, 5, 6, 7, 8, 8, 9, 9,
+static const uint8_t t24l[] = {4, 4, 6, 7, 8, 9, 9, 10, 10, 11, 11, 11, 11, 11, 12, 9, 4, 4, 5, 6, 7, 8, 8, 9, 9,
                                      9, 10, 10, 10, 10, 10, 8, 6, 5, 6, 7, 7, 8, 8, 9, 9, 9, 9, 10, 10, 10, 11, 7, 7, 6,
                                      7, 7, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 7, 8, 7, 7, 8,
                                      8, 8, 8, 9, 9, 9, 10, 10, 10, 10, 11, 7, 9, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10,
@@ -781,8 +781,8 @@ static const unsigned char t24l[] = {4, 4, 6, 7, 8, 9, 9, 10, 10, 11, 11, 11, 11
                                      10,
                                      10, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11, 8, 12, 10, 10, 10, 10, 10, 10, 11,
                                      11, 11, 11, 11, 11, 11, 11, 8, 8, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 4};
-static const unsigned char t32l[] = {1, 4, 4, 5, 4, 6, 5, 6, 4, 5, 5, 6, 5, 6, 6, 6};
-static const unsigned char t33l[] = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
+static const uint8_t t32l[] = {1, 4, 4, 5, 4, 6, 5, 6, 4, 5, 5, 6, 5, 6, 6, 6};
+static const uint8_t t33l[] = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
 
 #define NOREF -1
 const struct huffcodetab shine_huffman_table[HTN] =
@@ -824,7 +824,7 @@ const struct huffcodetab shine_huffman_table[HTN] =
         };
 
 
-static int granules_per_frame[4] = {
+static int32_t granules_per_frame[4] = {
         1,  /* MPEG 2.5 */
         -1,  /* Reserved */
         1,  /* MPEG II */
@@ -839,7 +839,7 @@ void shine_set_config_mpeg_defaults(shine_mpeg_t *mpeg) {
     mpeg->original = 1;
 }
 
-int shine_mpeg_version(int samplerate_index) {
+int32_t shine_mpeg_version(int32_t samplerate_index) {
     /* Pick mpeg version according to samplerate index. */
     if (samplerate_index < 3)
         /* First 3 samplerates are for MPEG-I */
@@ -852,8 +852,8 @@ int shine_mpeg_version(int samplerate_index) {
         return MPEG_25;
 }
 
-int shine_find_samplerate_index(int freq) {
-    int i;
+int32_t shine_find_samplerate_index(int32_t freq) {
+    int32_t i;
 
     for (i = 0; i < 9; i++)
         if (freq == samplerates[i]) return i;
@@ -861,8 +861,8 @@ int shine_find_samplerate_index(int freq) {
     return -1; /* error - not a valid samplerate for encoder */
 }
 
-int shine_find_bitrate_index(int bitr, int mpeg_version) {
-    int i;
+int32_t shine_find_bitrate_index(int32_t bitr, int32_t mpeg_version) {
+    int32_t i;
 
     for (i = 0; i < 16; i++)
         if (bitr == bitrates[i][mpeg_version]) return i;
@@ -870,8 +870,8 @@ int shine_find_bitrate_index(int bitr, int mpeg_version) {
     return -1; /* error - not a valid samplerate for encoder */
 }
 
-int shine_check_config(int freq, int bitr) {
-    int samplerate_index, bitrate_index, mpeg_version;
+int32_t shine_check_config(int32_t freq, int32_t bitr) {
+    int32_t samplerate_index, bitrate_index, mpeg_version;
 
     samplerate_index = shine_find_samplerate_index(freq);
     if (samplerate_index < 0) return -1;
@@ -884,7 +884,7 @@ int shine_check_config(int freq, int bitr) {
     return mpeg_version;
 }
 
-int shine_samples_per_pass(shine_t s) {
+int32_t shine_samples_per_pass(shine_t s) {
     return s->mpeg.granules_per_frame * GRANULE_SIZE;
 }
 
@@ -897,6 +897,8 @@ void shine_initialise(shine_config_t *pub_config, shine_t config) {
         printf("Invalid configuration\n");
         return;
     }
+
+    printf("%zu\n", sizeof(shine_global_config));
 
     // config = calloc(1, sizeof(shine_global_config));
     if (config == NULL)
@@ -935,7 +937,7 @@ void shine_initialise(shine_config_t *pub_config, shine_t config) {
                           (1000 * (double) config->mpeg.bitr /
                            (double) config->mpeg.bits_per_slot);
 
-    config->mpeg.whole_slots_per_frame = (int) avg_slots_per_frame;
+    config->mpeg.whole_slots_per_frame = (int32_t) avg_slots_per_frame;
 
     config->mpeg.frac_slots_per_frame = avg_slots_per_frame - (double) config->mpeg.whole_slots_per_frame;
     config->mpeg.slot_lag = -config->mpeg.frac_slots_per_frame;
@@ -954,7 +956,7 @@ void shine_initialise(shine_config_t *pub_config, shine_t config) {
         config->sideinfo_len = 8 * ((config->wave.channels == 1) ? 4 + 9 : 4 + 17);
 }
 
-static unsigned char *shine_encode_buffer_internal(shine_global_config *config, int *written, int stride) {
+static uint8_t *shine_encode_buffer_internal(shine_global_config *config, int32_t *written, int32_t stride) {
     if (config->mpeg.frac_slots_per_frame) {
         config->mpeg.padding = (config->mpeg.slot_lag <= (config->mpeg.frac_slots_per_frame - 1.0));
         config->mpeg.slot_lag += (config->mpeg.padding - config->mpeg.frac_slots_per_frame);
@@ -979,7 +981,7 @@ static unsigned char *shine_encode_buffer_internal(shine_global_config *config, 
     return config->bs.data;
 }
 
-unsigned char *shine_encode_buffer(shine_global_config *config, int16_t **data, int *written) {
+uint8_t *shine_encode_buffer(shine_global_config *config, int16_t **data, int32_t *written) {
     config->buffer[0] = data[0];
     // if (config->wave.channels == 2)
     //     config->buffer[1] = data[1];
@@ -987,7 +989,7 @@ unsigned char *shine_encode_buffer(shine_global_config *config, int16_t **data, 
     return shine_encode_buffer_internal(config, written, 1);
 }
 
-unsigned char *shine_encode_buffer_interleaved(shine_global_config *config, int16_t *data, int *written) {
+uint8_t *shine_encode_buffer_interleaved(shine_global_config *config, int16_t *data, int32_t *written) {
     config->buffer[0] = data;
     // if (config->wave.channels == 2)
     //     config->buffer[1] = data + 1;
@@ -995,7 +997,7 @@ unsigned char *shine_encode_buffer_interleaved(shine_global_config *config, int1
     return shine_encode_buffer_internal(config, written, config->wave.channels);
 }
 
-unsigned char *shine_flush(shine_global_config *config, int *written) {
+uint8_t *shine_flush(shine_global_config *config, int32_t *written) {
     *written = config->bs.data_position;
     config->bs.data_position = 0;
 
@@ -1028,9 +1030,9 @@ void shine_close(shine_global_config *config) {
 uint8_t g_bitstream_data[BITSTREAM_SIZE];
 
 /* open the device to write the bit stream into it */
-void shine_open_bit_stream(bitstream_t *bs, int size) {
+void shine_open_bit_stream(bitstream_t *bs, int32_t size) {
     // printf("Allocating %d bytes\n", size);
-    // bs->data = (unsigned char *) malloc(size * sizeof(unsigned char));
+    // bs->data = (uint8_t *) malloc(size * sizeof(uint8_t));
     bs->data = g_bitstream_data;
     bs->data_size = size;
     bs->data_position = 0;
@@ -1052,7 +1054,7 @@ void shine_close_bit_stream(bitstream_t *bs) {
  * val = value to write into the buffer
  * N = number of bits of val
  */
-void shine_putbits(bitstream_t *bs, unsigned int val, unsigned int N) {
+void shine_putbits(bitstream_t *bs, uint32_t val, uint32_t N) {
 #ifdef DEBUG
     if (N > 32)
         printf("Cannot write more than 32 bits at a time.\n");
@@ -1064,21 +1066,21 @@ void shine_putbits(bitstream_t *bs, unsigned int val, unsigned int N) {
         bs->cache_bits -= N;
         bs->cache |= val << bs->cache_bits;
     } else {
-        if (bs->data_position + sizeof(unsigned int) >= bs->data_size) {
+        if (bs->data_position + sizeof(uint32_t) >= bs->data_size) {
             printf("Failure: reallocation required at %s:%d\r\n", __FILE__, __LINE__);
             exit(1);
-            // bs->data = (unsigned char *) realloc(bs->data, bs->data_size + (bs->data_size / 2));
+            // bs->data = (uint8_t *) realloc(bs->data, bs->data_size + (bs->data_size / 2));
             // bs->data_size += (bs->data_size / 2);
         }
 
         N -= bs->cache_bits;
         bs->cache |= val >> N;
 #ifdef SHINE_BIG_ENDIAN
-        *(unsigned int*)(bs->data + bs->data_position) = bs->cache;
+        *(uint32_t*)(bs->data + bs->data_position) = bs->cache;
 #else
-        *(unsigned int *) (bs->data + bs->data_position) = SWAB32(bs->cache);
+        *(uint32_t *) (bs->data + bs->data_position) = SWAB32(bs->cache);
 #endif
-        bs->data_position += sizeof(unsigned int);
+        bs->data_position += sizeof(uint32_t);
         bs->cache_bits = 32 - N;
         if (N != 0)
             bs->cache = val << bs->cache_bits;
@@ -1087,20 +1089,20 @@ void shine_putbits(bitstream_t *bs, unsigned int val, unsigned int N) {
     }
 }
 
-int shine_get_bits_count(bitstream_t *bs) {
+int32_t shine_get_bits_count(bitstream_t *bs) {
     return bs->data_position * 8 + 32 - bs->cache_bits;
 }
 
 
-static void shine_HuffmanCode(bitstream_t *bs, int table_select, int x, int y);
+static void shine_HuffmanCode(bitstream_t *bs, int32_t table_select, int32_t x, int32_t y);
 
-static void shine_huffman_coder_count1(bitstream_t *bs, const struct huffcodetab *h, int v, int w, int x, int y);
+static void shine_huffman_coder_count1(bitstream_t *bs, const struct huffcodetab *h, int32_t v, int32_t w, int32_t x, int32_t y);
 
 static void encodeSideInfo(shine_global_config *config);
 
 static void encodeMainData(shine_global_config *config);
 
-static void Huffmancodebits(shine_global_config *config, int *ix, gr_info *gi);
+static void Huffmancodebits(shine_global_config *config, int32_t *ix, gr_info *gi);
 
 /*
   shine_format_bitstream()
@@ -1115,11 +1117,11 @@ static void Huffmancodebits(shine_global_config *config, int *ix, gr_info *gi);
 
 void
 shine_format_bitstream(shine_global_config *config) {
-    int gr, ch, i;
+    int32_t gr, ch, i;
 
     for (ch = 0; ch < config->wave.channels; ch++)
         for (gr = 0; gr < config->mpeg.granules_per_frame; gr++) {
-            int *pi = &config->l3_enc[ch][gr][0];
+            int32_t *pi = &config->l3_enc[ch][gr][0];
             int32_t *pr = &config->mdct_freq[ch][gr][0];
             for (i = 0; i < GRANULE_SIZE; i++) {
                 if ((pr[i] < 0) && (pi[i] > 0))
@@ -1132,15 +1134,15 @@ shine_format_bitstream(shine_global_config *config) {
 }
 
 static void encodeMainData(shine_global_config *config) {
-    int gr, ch, sfb;
+    int32_t gr, ch, sfb;
     shine_side_info_t si = config->side_info;
 
     for (gr = 0; gr < config->mpeg.granules_per_frame; gr++) {
         for (ch = 0; ch < config->wave.channels; ch++) {
             gr_info *gi = &(si.gr[gr].ch[ch].tt);
-            unsigned slen1 = shine_slen1_tab[gi->scalefac_compress];
-            unsigned slen2 = shine_slen2_tab[gi->scalefac_compress];
-            int *ix = &config->l3_enc[ch][gr][0];
+            uint32_t slen1 = shine_slen1_tab[gi->scalefac_compress];
+            uint32_t slen2 = shine_slen2_tab[gi->scalefac_compress];
+            int32_t *ix = &config->l3_enc[ch][gr][0];
 
             if (gr == 0 || si.scfsi[ch][0] == 0)
                 for (sfb = 0; sfb < 6; sfb++)
@@ -1161,7 +1163,7 @@ static void encodeMainData(shine_global_config *config) {
 }
 
 static void encodeSideInfo(shine_global_config *config) {
-    int gr, ch, scfsi_band, region;
+    int32_t gr, ch, scfsi_band, region;
     shine_side_info_t si = config->side_info;
 
     shine_putbits(&config->bs, 0x7ff, 11);
@@ -1226,14 +1228,14 @@ static void encodeSideInfo(shine_global_config *config) {
 
 /* Note the discussion of huffmancodebits() on pages 28 and 29 of the IS, as
   well as the definitions of the side information on pages 26 and 27. */
-static void Huffmancodebits(shine_global_config *config, int *ix, gr_info *gi) {
-    const int *scalefac = &shine_scale_fact_band_index[config->mpeg.samplerate_index][0];
-    unsigned scalefac_index;
-    int region1Start, region2Start;
-    int i, bigvalues, count1End;
-    int v, w, x, y;
+static void Huffmancodebits(shine_global_config *config, int32_t *ix, gr_info *gi) {
+    const int32_t *scalefac = &shine_scale_fact_band_index[config->mpeg.samplerate_index][0];
+    uint32_t scalefac_index;
+    int32_t region1Start, region2Start;
+    int32_t i, bigvalues, count1End;
+    int32_t v, w, x, y;
     const struct huffcodetab *h;
-    int bits;
+    int32_t bits;
 
     bits = shine_get_bits_count(&config->bs);
 
@@ -1247,8 +1249,8 @@ static void Huffmancodebits(shine_global_config *config, int *ix, gr_info *gi) {
 
     for (i = 0; i < bigvalues; i += 2) {
         /* get table pointer */
-        int idx = (i >= region1Start) + (i >= region2Start);
-        unsigned tableindex = gi->table_select[idx];
+        int32_t idx = (i >= region1Start) + (i >= region2Start);
+        uint32_t tableindex = gi->table_select[idx];
         /* get huffman code */
         if (tableindex) {
             x = ix[i];
@@ -1271,8 +1273,8 @@ static void Huffmancodebits(shine_global_config *config, int *ix, gr_info *gi) {
     bits = shine_get_bits_count(&config->bs) - bits;
     bits = gi->part2_3_length - gi->part2_length - bits;
     if (bits) {
-        int stuffingWords = bits / 32;
-        int remainingBits = bits % 32;
+        int32_t stuffingWords = bits / 32;
+        int32_t remainingBits = bits % 32;
 
         /* Due to the nature of the Huffman code tables, we will pad with ones */
         while (stuffingWords--)
@@ -1282,16 +1284,16 @@ static void Huffmancodebits(shine_global_config *config, int *ix, gr_info *gi) {
     }
 }
 
-static inline int shine_abs_and_sign(int *x) {
+static inline int32_t shine_abs_and_sign(int32_t *x) {
     if (*x > 0) return 0;
     *x *= -1;
     return 1;
 }
 
-static void shine_huffman_coder_count1(bitstream_t *bs, const struct huffcodetab *h, int v, int w, int x, int y) {
-    unsigned int signv, signw, signx, signy;
-    unsigned int code = 0;
-    int p, cbits = 0;
+static void shine_huffman_coder_count1(bitstream_t *bs, const struct huffcodetab *h, int32_t v, int32_t w, int32_t x, int32_t y) {
+    uint32_t signv, signw, signx, signy;
+    uint32_t code = 0;
+    int32_t p, cbits = 0;
 
     signv = shine_abs_and_sign(&v);
     signw = shine_abs_and_sign(&w);
@@ -1321,10 +1323,10 @@ static void shine_huffman_coder_count1(bitstream_t *bs, const struct huffcodetab
 }
 
 /* Implements the pseudocode of page 98 of the IS */
-static void shine_HuffmanCode(bitstream_t *bs, int table_select, int x, int y) {
-    int cbits = 0, xbits = 0;
-    unsigned int code = 0, ext = 0;
-    unsigned signx, signy, ylen, idx;
+static void shine_HuffmanCode(bitstream_t *bs, int32_t table_select, int32_t x, int32_t y) {
+    int32_t cbits = 0, xbits = 0;
+    uint32_t code = 0, ext = 0;
+    uint32_t signx, signy, ylen, idx;
     const struct huffcodetab *h;
 
     signx = shine_abs_and_sign(&x);
@@ -1334,7 +1336,7 @@ static void shine_HuffmanCode(bitstream_t *bs, int table_select, int x, int y) {
     ylen = h->ylen;
 
     if (table_select > 15) { /* ESC-table is used */
-        unsigned linbitsx = 0, linbitsy = 0, linbits = h->linbits;
+        uint32_t linbitsx = 0, linbitsy = 0, linbits = h->linbits;
 
         if (x > 14) {
             linbitsx = x - 15;
@@ -1397,29 +1399,29 @@ static void shine_HuffmanCode(bitstream_t *bs, int table_select, int x, int y) {
 #define en_scfsi_band_krit 10
 #define xm_scfsi_band_krit 10
 
-static void calc_scfsi(shine_psy_xmin_t *l3_xmin, int ch, int gr, shine_global_config *config);
+static void calc_scfsi(shine_psy_xmin_t *l3_xmin, int32_t ch, int32_t gr, shine_global_config *config);
 
-static int part2_length(int gr, int ch, shine_global_config *config);
+static int32_t part2_length(int32_t gr, int32_t ch, shine_global_config *config);
 
-static int bin_search_StepSize(int desired_rate, int ix[GRANULE_SIZE], gr_info *cod_info, shine_global_config *config);
+static int32_t bin_search_StepSize(int32_t desired_rate, int32_t ix[GRANULE_SIZE], gr_info *cod_info, shine_global_config *config);
 
-static int count_bit(int ix[GRANULE_SIZE], unsigned int start, unsigned int end, unsigned int table);
+static int32_t count_bit(int32_t ix[GRANULE_SIZE], uint32_t start, uint32_t end, uint32_t table);
 
-static int bigv_bitcount(int ix[GRANULE_SIZE], gr_info *gi);
+static int32_t bigv_bitcount(int32_t ix[GRANULE_SIZE], gr_info *gi);
 
-static int new_choose_table(int ix[GRANULE_SIZE], unsigned int begin, unsigned int end);
+static int32_t new_choose_table(int32_t ix[GRANULE_SIZE], uint32_t begin, uint32_t end);
 
-static void bigv_tab_select(int ix[GRANULE_SIZE], gr_info *cod_info);
+static void bigv_tab_select(int32_t ix[GRANULE_SIZE], gr_info *cod_info);
 
 static void subdivide(gr_info *cod_info, shine_global_config *config);
 
-static int count1_bitcount(int ix[GRANULE_SIZE], gr_info *cod_info);
+static int32_t count1_bitcount(int32_t ix[GRANULE_SIZE], gr_info *cod_info);
 
-static void calc_runlen(int ix[GRANULE_SIZE], gr_info *cod_info);
+static void calc_runlen(int32_t ix[GRANULE_SIZE], gr_info *cod_info);
 
-static void calc_xmin(shine_psy_ratio_t *ratio, gr_info *cod_info, shine_psy_xmin_t *l3_xmin, int gr, int ch);
+static void calc_xmin(shine_psy_ratio_t *ratio, gr_info *cod_info, shine_psy_xmin_t *l3_xmin, int32_t gr, int32_t ch);
 
-static int quantize(int ix[GRANULE_SIZE], int stepsize, shine_global_config *config);
+static int32_t quantize(int32_t ix[GRANULE_SIZE], int32_t stepsize, shine_global_config *config);
 
 /*
  * shine_inner_loop:
@@ -1427,10 +1429,10 @@ static int quantize(int ix[GRANULE_SIZE], int stepsize, shine_global_config *con
  * The code selects the best quantizerStepSize for a particular set
  * of scalefacs.
  */
-int shine_inner_loop(int ix[GRANULE_SIZE],
-                     int max_bits, gr_info *cod_info, int gr, int ch,
+int32_t shine_inner_loop(int32_t ix[GRANULE_SIZE],
+                     int32_t max_bits, gr_info *cod_info, int32_t gr, int32_t ch,
                      shine_global_config *config) {
-    int bits, c1bits, bvbits;
+    int32_t bits, c1bits, bvbits;
 
     if (max_bits < 0)
         cod_info->quantizerStepSize--;
@@ -1454,11 +1456,11 @@ int shine_inner_loop(int ix[GRANULE_SIZE],
  *  global gain. This module calls the inner iteration loop.
  */
 
-int shine_outer_loop(int max_bits,
+int32_t shine_outer_loop(int32_t max_bits,
                      shine_psy_xmin_t *l3_xmin, /* the allowed distortion of the scalefactor */
-                     int ix[GRANULE_SIZE], /* vector of quantized values ix(0..575) */
-                     int gr, int ch, shine_global_config *config) {
-    int bits, huff_bits;
+                     int32_t ix[GRANULE_SIZE], /* vector of quantized values ix(0..575) */
+                     int32_t gr, int32_t ch, shine_global_config *config) {
+    int32_t bits, huff_bits;
     shine_side_info_t *side_info = &config->side_info;
     gr_info *cod_info = &side_info->gr[gr].ch[ch].tt;
 
@@ -1480,9 +1482,9 @@ int shine_outer_loop(int max_bits,
 void shine_iteration_loop(shine_global_config *config) {
     shine_psy_xmin_t l3_xmin;
     gr_info *cod_info;
-    int max_bits;
-    int ch, gr, i;
-    int *ix;
+    int32_t max_bits;
+    int32_t ch, gr, i;
+    int32_t *ix;
 
     for (ch = config->wave.channels; ch--;) {
         for (gr = 0; gr < config->mpeg.granules_per_frame; gr++) {
@@ -1551,20 +1553,20 @@ void shine_iteration_loop(shine_global_config *config) {
  * -----------
  * calculation of the scalefactor select information ( scfsi ).
  */
-void calc_scfsi(shine_psy_xmin_t *l3_xmin, int ch, int gr,
+void calc_scfsi(shine_psy_xmin_t *l3_xmin, int32_t ch, int32_t gr,
                 shine_global_config *config) {
     // shine_side_info_t *l3_side = &config->side_info;
     /* This is the scfsi_band table from 2.4.2.7 of the IS */
-    // static const int scfsi_band_long[5] = {0, 6, 11, 16, 21};
+    // static const int32_t scfsi_band_long[5] = {0, 6, 11, 16, 21};
 
-    // int scfsi_band;
-    // unsigned scfsi_set;
+    // int32_t scfsi_band;
+    // uint32_t scfsi_set;
 
-    int sfb, start, end, i;
-    // int condition = 0;
-    int temp;
+    int32_t sfb, start, end, i;
+    // int32_t condition = 0;
+    int32_t temp;
 
-    const int *scalefac_band_long = &shine_scale_fact_band_index[config->mpeg.samplerate_index][0];
+    const int32_t *scalefac_band_long = &shine_scale_fact_band_index[config->mpeg.samplerate_index][0];
 
     /* note. it goes quite a bit faster if you uncomment the next bit and exit
        early from scfsi, but you then loose the advantage of common scale factors.
@@ -1609,7 +1611,7 @@ void calc_scfsi(shine_psy_xmin_t *l3_xmin, int ch, int gr,
     if (gr == 1) {
         printf("Reached unexpected code path (%s:%d)\r\n", __FILE__, __LINE__);
         exit(1);
-        // int gr2, tp;
+        // int32_t gr2, tp;
 
         // for (gr2 = 2; gr2--;) {
         //     /* The spectral values are not all zero */
@@ -1627,7 +1629,7 @@ void calc_scfsi(shine_psy_xmin_t *l3_xmin, int ch, int gr,
 
         // if (condition == 6) {
         //     for (scfsi_band = 0; scfsi_band < 4; scfsi_band++) {
-        //         int sum0 = 0, sum1 = 0;
+        //         int32_t sum0 = 0, sum1 = 0;
         //         l3_side->scfsi[ch][scfsi_band] = 0;
         //         start = scfsi_band_long[scfsi_band];
         //         end = scfsi_band_long[scfsi_band + 1];
@@ -1655,8 +1657,8 @@ void calc_scfsi(shine_psy_xmin_t *l3_xmin, int ch, int gr,
  * calculates the number of bits needed to encode the scalefacs in the
  * main data block.
  */
-int part2_length(int gr, int ch, shine_global_config *config) {
-    int slen1, slen2, bits;
+int32_t part2_length(int32_t gr, int32_t ch, shine_global_config *config) {
+    int32_t slen1, slen2, bits;
     gr_info *gi = &config->side_info.gr[gr].ch[ch].tt;
 
     bits = 0;
@@ -1690,8 +1692,8 @@ int part2_length(int gr, int ch, shine_global_config *config) {
 void calc_xmin(shine_psy_ratio_t *ratio,
                gr_info *cod_info,
                shine_psy_xmin_t *l3_xmin,
-               int gr, int ch) {
-    int sfb;
+               int32_t gr, int32_t ch) {
+    int32_t sfb;
 
     for (sfb = cod_info->sfb_lmax; sfb--;) {
 /*  note. xmin will always be zero with no psychoacoustic model
@@ -1715,7 +1717,7 @@ void calc_xmin(shine_psy_ratio_t *ratio,
  * Calculates the look up tables used by the iteration loop.
  */
 void shine_loop_initialise(shine_global_config *config) {
-    int i;
+    int32_t i;
 
     /* quantize: stepsize conversion, fourth root of 2 table.
      * The table is inverted (negative power) from the equation given
@@ -1738,7 +1740,7 @@ void shine_loop_initialise(shine_global_config *config) {
      * The 0.5 is for rounding, the .0946 comes from the spec.
      */
     for (i = 10000; i--;)
-        config->l3loop.int2idx[i] = (int) (sqrt(sqrt((double) i) * (double) i) - 0.0946 + 0.5);
+        config->l3loop.int2idx[i] = (int32_t) (sqrt(sqrt((double) i) * (double) i) - 0.0946 + 0.5);
 }
 
 /*
@@ -1747,8 +1749,8 @@ void shine_loop_initialise(shine_global_config *config) {
  * Function: Quantization of the vector xr ( -> ix).
  * Returns maximum value of ix.
  */
-int quantize(int ix[GRANULE_SIZE], int stepsize, shine_global_config *config) {
-    int i, max, ln;
+int32_t quantize(int32_t ix[GRANULE_SIZE], int32_t stepsize, shine_global_config *config) {
+    int32_t i, max, ln;
     int32_t scalei;
     double scale, dbl;
 
@@ -1771,7 +1773,7 @@ int quantize(int ix[GRANULE_SIZE], int stepsize, shine_global_config *config) {
                 /* outside table range so have to do it using floats */
                 scale = config->l3loop.steptab[stepsize + 127]; /* 2**(-stepsize/4) */
                 dbl = ((double) config->l3loop.xrabs[i]) * scale * 4.656612875e-10; /* 0x7fffffff */
-                ix[i] = (int) sqrt(sqrt(dbl) * dbl); /* dbl**(3/4) */
+                ix[i] = (int32_t) sqrt(sqrt(dbl) * dbl); /* dbl**(3/4) */
             }
 
             /* calculate ixmax while we're here */
@@ -1788,9 +1790,9 @@ int quantize(int ix[GRANULE_SIZE], int stepsize, shine_global_config *config) {
  * -------
  * Function: Calculate the maximum of ix from 0 to 575
  */
-static inline int ix_max(int ix[GRANULE_SIZE], unsigned int begin, unsigned int end) {
-    register int i;
-    register int max = 0;
+static inline int32_t ix_max(int32_t ix[GRANULE_SIZE], uint32_t begin, uint32_t end) {
+    register int32_t i;
+    register int32_t max = 0;
 
     for (i = begin; i < end; i++)
         if (max < ix[i])
@@ -1804,9 +1806,9 @@ static inline int ix_max(int ix[GRANULE_SIZE], unsigned int begin, unsigned int 
  * Function: Calculation of rzero, count1, big_values
  * (Partitions ix into big values, quadruples and zeros).
  */
-void calc_runlen(int ix[GRANULE_SIZE], gr_info *cod_info) {
-    int i;
-    int rzero = 0;
+void calc_runlen(int32_t ix[GRANULE_SIZE], gr_info *cod_info) {
+    int32_t i;
+    int32_t rzero = 0;
 
     for (i = GRANULE_SIZE; i > 1; i -= 2)
         if (!ix[i - 1] && !ix[i - 2])
@@ -1834,10 +1836,10 @@ void calc_runlen(int ix[GRANULE_SIZE], gr_info *cod_info) {
  * ----------------
  * Determines the number of bits to encode the quadruples.
  */
-int count1_bitcount(int ix[GRANULE_SIZE], gr_info *cod_info) {
-    int p, i, k;
-    int v, w, x, y, signbits;
-    int sum0 = 0,
+int32_t count1_bitcount(int32_t ix[GRANULE_SIZE], gr_info *cod_info) {
+    int32_t p, i, k;
+    int32_t v, w, x, y, signbits;
+    int32_t sum0 = 0,
             sum1 = 0;
 
     for (i = cod_info->big_values << 1, k = 0; k < cod_info->count1; i += 4, k++) {
@@ -1877,8 +1879,8 @@ int count1_bitcount(int ix[GRANULE_SIZE], gr_info *cod_info) {
  */
 void subdivide(gr_info *cod_info, shine_global_config *config) {
     static const struct {
-        unsigned region0_count;
-        unsigned region1_count;
+        uint32_t region0_count;
+        uint32_t region1_count;
     } subdv_table[23] =
             {
                     {0, 0}, /* 0 bands */
@@ -1910,8 +1912,8 @@ void subdivide(gr_info *cod_info, shine_global_config *config) {
         cod_info->region0_count = 0;
         cod_info->region1_count = 0;
     } else {
-        const int *scalefac_band_long = &shine_scale_fact_band_index[config->mpeg.samplerate_index][0];
-        int bigvalues_region, scfb_anz, thiscount;
+        const int32_t *scalefac_band_long = &shine_scale_fact_band_index[config->mpeg.samplerate_index][0];
+        int32_t bigvalues_region, scfb_anz, thiscount;
 
         bigvalues_region = 2 * cod_info->big_values;
 
@@ -1945,7 +1947,7 @@ void subdivide(gr_info *cod_info, shine_global_config *config) {
  * ----------------
  * Function: Select huffman code tables for bigvalues regions
  */
-void bigv_tab_select(int ix[GRANULE_SIZE], gr_info *cod_info) {
+void bigv_tab_select(int32_t ix[GRANULE_SIZE], gr_info *cod_info) {
     cod_info->table_select[0] = 0;
     cod_info->table_select[1] = 0;
     cod_info->table_select[2] = 0;
@@ -1971,10 +1973,10 @@ void bigv_tab_select(int ix[GRANULE_SIZE], gr_info *cod_info) {
  * of the Huffman tables as defined in the IS (Table B.7), and will not work
  * with any arbitrary tables.
  */
-int new_choose_table(int ix[GRANULE_SIZE], unsigned int begin, unsigned int end) {
-    int i, max;
-    int choice[2];
-    int sum[2];
+int32_t new_choose_table(int32_t ix[GRANULE_SIZE], uint32_t begin, uint32_t end) {
+    int32_t i, max;
+    int32_t choice[2];
+    int32_t sum[2];
 
     max = ix_max(ix, begin, end);
     if (!max)
@@ -2063,9 +2065,9 @@ int new_choose_table(int ix[GRANULE_SIZE], unsigned int begin, unsigned int end)
  * --------------
  * Function: Count the number of bits necessary to code the bigvalues region.
  */
-int bigv_bitcount(int ix[GRANULE_SIZE], gr_info *gi) {
-    int bits = 0;
-    unsigned int table;
+int32_t bigv_bitcount(int32_t ix[GRANULE_SIZE], gr_info *gi) {
+    int32_t bits = 0;
+    uint32_t table;
 
     if ((table = gi->table_select[0]))  /* region0 */
         bits += count_bit(ix, 0, gi->address1, table);
@@ -2081,13 +2083,13 @@ int bigv_bitcount(int ix[GRANULE_SIZE], gr_info *gi) {
  * ----------
  * Function: Count the number of bits necessary to code the subregion.
  */
-int count_bit(int ix[GRANULE_SIZE],
-              unsigned int start,
-              unsigned int end,
-              unsigned int table) {
-    unsigned linbits, ylen;
-    register int i, sum;
-    register int x, y;
+int32_t count_bit(int32_t ix[GRANULE_SIZE],
+              uint32_t start,
+              uint32_t end,
+              uint32_t table) {
+    uint32_t linbits, ylen;
+    register int32_t i, sum;
+    register int32_t x, y;
     const struct huffcodetab *h;
 
     if (!table)
@@ -2146,15 +2148,15 @@ int count_bit(int ix[GRANULE_SIZE],
  * with a call to bin_search gain defined below, which
  * returns a good starting quantizerStepSize.
  */
-int bin_search_StepSize(int desired_rate, int ix[GRANULE_SIZE],
+int32_t bin_search_StepSize(int32_t desired_rate, int32_t ix[GRANULE_SIZE],
                         gr_info *cod_info, shine_global_config *config) {
-    int bit, next, count;
+    int32_t bit, next, count;
 
     next = -120;
     count = 120;
 
     do {
-        int half = count / 2;
+        int32_t half = count / 2;
 
         if (quantize(ix, next + half, config) > 8192)
             bit = 100000;  /* fail */
@@ -2204,7 +2206,7 @@ int bin_search_StepSize(int desired_rate, int ix[GRANULE_SIZE],
  * -------------------
  */
 void shine_mdct_initialise(shine_global_config *config) {
-    int m, k;
+    int32_t m, k;
 
     /* prepare the mdct coefficients */
     for (m = 18; m--;)
@@ -2219,13 +2221,13 @@ void shine_mdct_initialise(shine_global_config *config) {
  * shine_mdct_sub:
  * ------------
  */
-void shine_mdct_sub(shine_global_config *config, int stride) {
+void shine_mdct_sub(shine_global_config *config, int32_t stride) {
     /* note. we wish to access the array 'config->mdct_freq[2][2][576]' as
      * [2][2][32][18]. (32*18=576),
      */
     int32_t (*mdct_enc)[18];
 
-    int ch, gr, band, j, k;
+    int32_t ch, gr, band, j, k;
     int32_t mdct_in[36];
 
     for (ch = config->wave.channels; ch--;) {
@@ -2312,7 +2314,7 @@ void shine_mdct_sub(shine_global_config *config, int stride) {
  * document.  The coefficients are stored in #filter#
  */
 void shine_subband_initialise(shine_global_config *config) {
-    int i, j;
+    int32_t i, j;
     double filter;
 
     for (i = MAX_CHANNELS; i--;) {
@@ -2346,9 +2348,9 @@ void shine_subband_initialise(shine_global_config *config) {
  * them by the filter matrix, producing 32 subband samples.
  */
 void
-shine_window_filter_subband(int16_t **buffer, int32_t s[SBLIMIT], int ch, shine_global_config *config, int stride) {
+shine_window_filter_subband(int16_t **buffer, int32_t s[SBLIMIT], int32_t ch, shine_global_config *config, int32_t stride) {
     int32_t y[64];
-    int i, j;
+    int32_t i, j;
     int16_t *ptr = *buffer;
 
     /* replace 32 oldest samples with 32 new samples */
@@ -2411,9 +2413,9 @@ shine_window_filter_subband(int16_t **buffer, int32_t s[SBLIMIT], int ch, shine_
  * allowance for the current granule based on reservoir size
  * and perceptual entropy.
  */
-int shine_max_reservoir_bits(double *pe, shine_global_config *config) {
-    int more_bits, max_bits, add_bits, over_bits;
-    int mean_bits = config->mean_bits;
+int32_t shine_max_reservoir_bits(double *pe, shine_global_config *config) {
+    int32_t more_bits, max_bits, add_bits, over_bits;
+    int32_t mean_bits = config->mean_bits;
 
     mean_bits /= config->wave.channels;
     max_bits = mean_bits;
@@ -2426,7 +2428,7 @@ int shine_max_reservoir_bits(double *pe, shine_global_config *config) {
     more_bits = *pe * 3.1 - mean_bits;
     add_bits = 0;
     if (more_bits > 100) {
-        int frac = (config->ResvSize * 6) / 10;
+        int32_t frac = (config->ResvSize * 6) / 10;
 
         if (frac < more_bits)
             add_bits = frac;
@@ -2464,8 +2466,8 @@ void shine_ResvAdjust(gr_info *gi, shine_global_config *config) {
  */
 void shine_ResvFrameEnd(shine_global_config *config) {
     gr_info *gi;
-    int gr, ch, ancillary_pad, stuffingBits;
-    int over_bits;
+    int32_t gr, ch, ancillary_pad, stuffingBits;
+    int32_t over_bits;
     shine_side_info_t *l3_side = &config->side_info;
 
     ancillary_pad = 0;
@@ -2501,7 +2503,7 @@ void shine_ResvFrameEnd(shine_global_config *config) {
             /* plan b: distribute throughout the granules */
             for (gr = 0; gr < config->mpeg.granules_per_frame; gr++)
                 for (ch = 0; ch < config->wave.channels; ch++) {
-                    int extraBits, bitsThisGr;
+                    int32_t extraBits, bitsThisGr;
                     gr_info *gi = (gr_info *) &(l3_side->gr[gr].ch[ch]);
                     if (!stuffingBits)
                         break;

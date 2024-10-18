@@ -32,7 +32,7 @@ void verify_output(void* output_buffer, int32_t num_bytes, uint32_t* checksum)
     }
 }
 
-int benchmark_main()
+int32_t benchmark_main()
 {
     shine_config_t config;
     int32_t  bytes_written;
@@ -55,7 +55,7 @@ int benchmark_main()
 
     /* Initiate encoder */
     shine_t shine_encoder = (shine_t)g_shine_encoder_block;
-    // printf("Shine encoder size: %u bytes\r\n", sizeof_shine_t);
+    printf("Shine encoder size: %u bytes\r\n", sizeof_shine_t);
     shine_initialise(&config, shine_encoder);
 
     int16_t* input_buffer = (int16_t*)(test_data + g_header_size_bytes);   // skip the header
