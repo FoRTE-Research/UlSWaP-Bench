@@ -275,10 +275,10 @@ typedef struct
     // int32_t xrsq[GRANULE_SIZE];   /* xr squared */
     // int32_t xrabs[GRANULE_SIZE];  /* xr absolute */
     int32_t xrmax;                /* maximum of xrabs array */
-    int32_t en_tot[MAX_GRANULES]; /* gr */
-    int32_t en[MAX_GRANULES][21];
-    int32_t xm[MAX_GRANULES][21];
-    int32_t xrmaxl[MAX_GRANULES];
+    // int32_t en_tot[MAX_GRANULES]; /* gr */
+    // int32_t en[MAX_GRANULES][21];
+    // int32_t xm[MAX_GRANULES][21];
+    // int32_t xrmaxl[MAX_GRANULES];
     // double steptab[128];   /* 2**(-x/4)  for x = -127..0 */
     int32_t steptabi[128]; /* 2**(-x/4)  for x = -127..0 */
     // int32_t int2idx[10000]; /* x**(3/4)   for x = 0..9999 */
@@ -321,9 +321,9 @@ typedef struct
 
 typedef struct
 {
-    uint32_t private_bits;
-    int32_t resvDrain;
-    uint32_t scfsi[MAX_CHANNELS][4];
+    uint16_t private_bits;
+    int16_t resvDrain;
+    uint16_t scfsi[MAX_CHANNELS][4];
     struct
     {
         struct
@@ -916,41 +916,25 @@ void shine_initialise(shine_config_t *pub_config, shine_t config)
     //     return;
     // }
 
-    shine_psy_ratio_t ratio;
-    shine_scalefac_t scalefactor;
-    int16_t *buffer[MAX_CHANNELS];
-    double pe[MAX_CHANNELS][MAX_GRANULES];
-    int32_t l3_enc[MAX_CHANNELS][MAX_GRANULES][GRANULE_SIZE];
-    int32_t l3_sb_sample[MAX_CHANNELS][MAX_GRANULES + 1][18][SBLIMIT];
-    int32_t mdct_freq[MAX_CHANNELS][MAX_GRANULES][GRANULE_SIZE];
-    int32_t ResvSize;
-    int32_t ResvMax;
-    l3loop_t l3loop;
-    mdct_t mdct;
-    subband_t subband;
-
     // Print the size of every top-level field within the struct
     printf("size of config: %zu\n", sizeof(config));
     printf("size of config->buffer: %zu\n", sizeof(config->buffer));
     printf("size of config->bs %zu\n", sizeof(config->bs));
     printf("size of config->mean_bits %zu\n", sizeof(config->mean_bits));
     printf("size of config->sideinfo_len %zu\n", sizeof(config->sideinfo_len));
-    printf("size of ratio %zu\n", sizeof(ratio));
-    printf("size of scalefactor %zu\n", sizeof(scalefactor));
     printf("size of priv_shine_mpeg_t %zu\n", sizeof(priv_shine_mpeg_t));
     printf("size of side_info_t %zu\n", sizeof(shine_side_info_t));
-    printf("size of buffer %zu\n", sizeof(buffer));
-    printf("size of pe %zu\n", sizeof(pe));
-    printf("size of l3_enc %zu\n", sizeof(l3_enc));
-    printf("size of l3_sb_sample %zu\n", sizeof(l3_sb_sample));
-    printf("size of mdct_freq %zu\n", sizeof(mdct_freq));
-    printf("size of ResvSize %zu\n", sizeof(ResvSize));
-    printf("size of ResvMax %zu\n", sizeof(ResvMax));
-    printf("size of l3loop %zu\n", sizeof(l3loop));
-    printf("size of mdct %zu\n", sizeof(mdct));
+    printf("size of buffer %zu\n", sizeof(config->buffer));
+    printf("size of pe %zu\n", sizeof(config->pe));
+    printf("size of l3_enc %zu\n", sizeof(config->l3_enc));
+    printf("size of l3_sb_sample %zu\n", sizeof(config->l3_sb_sample));
+    printf("size of mdct_freq %zu\n", sizeof(config->mdct_freq));
+    printf("size of l3loop %zu\n", sizeof(l3loop_t));
+    printf("size of mdct %zu\n", sizeof(mdct_t));
     printf("size of subband %zu\n", sizeof(subband_t));
     printf("size of shine_psy_ratio_t %zu\n", sizeof(shine_psy_ratio_t));
     printf("size of shine_scalefac_t %zu\n", sizeof(shine_scalefac_t));
+    printf("size of gr_info %zu\n", sizeof(gr_info));
 
     // config = calloc(1, sizeof(shine_global_config));
     if (config == NULL)
@@ -1664,77 +1648,79 @@ void shine_iteration_loop(shine_global_config *config)
 void calc_scfsi(shine_psy_xmin_t *l3_xmin, int32_t ch, int32_t gr,
                 shine_global_config *config)
 {
-    // shine_side_info_t *l3_side = &config->side_info;
+    shine_side_info_t *l3_side = &config->side_info;
     /* This is the scfsi_band table from 2.4.2.7 of the IS */
     // static const int32_t scfsi_band_long[5] = {0, 6, 11, 16, 21};
 
-    // int32_t scfsi_band;
+    int32_t scfsi_band;
     // uint32_t scfsi_set;
 
-    int32_t sfb, start, end, i;
+    // int32_t sfb, start, end, i;
     // int32_t condition = 0;
-    int32_t temp;
+    // int32_t temp;
 
-    const int32_t *scalefac_band_long = &shine_scale_fact_band_index[config->mpeg.samplerate_index][0];
+    // const int32_t *scalefac_band_long = &shine_scale_fact_band_index[config->mpeg.samplerate_index][0];
 
     /* note. it goes quite a bit faster if you uncomment the next bit and exit
        early from scfsi, but you then loose the advantage of common scale factors.
-
-    for(scfsi_band=0;scfsi_band<4;scfsi_band++)
-      l3_side->scfsi[ch][scfsi_band] = 0;
-    return;
-
     */
 
-    config->l3loop.xrmaxl[gr] = config->l3loop.xrmax;
-    // scfsi_set = 0;
-
-    /* the total energy of the granule */
-    for (temp = 0, i = GRANULE_SIZE; i--;)
+    for(scfsi_band=0;scfsi_band<4;scfsi_band++)
     {
-        // temp += config->l3loop.xrsq[i] >> 10; /* a bit of scaling to avoid overflow, (not very good) */
-        temp += (mulsr(config->l3loop.xr[i], config->l3loop.xr[i])) >> 10;
+      l3_side->scfsi[ch][scfsi_band] = 0;
     }
-    if (temp)
-    {
-        config->l3loop.en_tot[gr] = log((double)temp * 4.768371584e-7) / LN2; /* 1024 / 0x7fffffff */
-    }
-    else
-    {
-        config->l3loop.en_tot[gr] = 0;
-    }
+    return;
 
-    /* the energy of each scalefactor band, en */
-    /* the allowed distortion of each scalefactor band, xm */
 
-    for (sfb = 21; sfb--;)
-    {
-        start = scalefac_band_long[sfb];
-        end = scalefac_band_long[sfb + 1];
+    // config->l3loop.xrmaxl[gr] = config->l3loop.xrmax;
+    // // scfsi_set = 0;
 
-        for (temp = 0, i = start; i < end; i++)
-        {
-            // temp += config->l3loop.xrsq[i] >> 10;
-            temp += (mulsr(config->l3loop.xr[i], config->l3loop.xr[i])) >> 10;
-        }
-        if (temp)
-        {
-            config->l3loop.en[gr][sfb] = log((double)temp * 4.768371584e-7) / LN2; /* 1024 / 0x7fffffff */
-        }
-        else
-        {
-            config->l3loop.en[gr][sfb] = 0;
-        }
+    // /* the total energy of the granule */
+    // for (temp = 0, i = GRANULE_SIZE; i--;)
+    // {
+    //     // temp += config->l3loop.xrsq[i] >> 10; /* a bit of scaling to avoid overflow, (not very good) */
+    //     temp += (mulsr(config->l3loop.xr[i], config->l3loop.xr[i])) >> 10;
+    // }
+    // if (temp)
+    // {
+    //     config->l3loop.en_tot[gr] = log((double)temp * 4.768371584e-7) / LN2; /* 1024 / 0x7fffffff */
+    // }
+    // else
+    // {
+    //     config->l3loop.en_tot[gr] = 0;
+    // }
 
-        if (l3_xmin->l[gr][ch][sfb])
-        {
-            config->l3loop.xm[gr][sfb] = log(l3_xmin->l[gr][ch][sfb]) / LN2;
-        }
-        else
-        {
-            config->l3loop.xm[gr][sfb] = 0;
-        }
-    }
+    // /* the energy of each scalefactor band, en */
+    // /* the allowed distortion of each scalefactor band, xm */
+
+    // for (sfb = 21; sfb--;)
+    // {
+    //     start = scalefac_band_long[sfb];
+    //     end = scalefac_band_long[sfb + 1];
+
+    //     for (temp = 0, i = start; i < end; i++)
+    //     {
+    //         // temp += config->l3loop.xrsq[i] >> 10;
+    //         temp += (mulsr(config->l3loop.xr[i], config->l3loop.xr[i])) >> 10;
+    //     }
+    //     if (temp)
+    //     {
+    //         config->l3loop.en[gr][sfb] = log((double)temp * 4.768371584e-7) / LN2; /* 1024 / 0x7fffffff */
+    //     }
+    //     else
+    //     {
+    //         config->l3loop.en[gr][sfb] = 0;
+    //     }
+
+    //     if (l3_xmin->l[gr][ch][sfb])
+    //     {
+    //         config->l3loop.xm[gr][sfb] = log(l3_xmin->l[gr][ch][sfb]) / LN2;
+    //     }
+    //     else
+    //     {
+    //         config->l3loop.xm[gr][sfb] = 0;
+    //     }
+    // }
 
     if (gr == 1)
     {
