@@ -11,7 +11,7 @@ static const uint32_t g_header_size_bytes = 44;
 // static const uint32_t g_num_channels      = 1;
 static const uint32_t g_output_bitrate = 16;
 
-#define SHINE_ENCODER_SIZE 69100
+#define SHINE_ENCODER_SIZE 23432
 uint8_t g_shine_encoder_block[SHINE_ENCODER_SIZE];
 // shine_t shine_encoder;
 

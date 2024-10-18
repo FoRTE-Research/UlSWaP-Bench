@@ -238,6 +238,7 @@ static inline uint32_t SWAB32(uint32_t x)
 #ifndef MAX_GRANULES
 #define MAX_GRANULES 1
 #endif
+static uint32_t count = 0;
 
 typedef struct
 {
@@ -271,14 +272,14 @@ typedef struct
 typedef struct
 {
     int32_t *xr;                  /* magnitudes of the spectral values */
-    int32_t xrsq[GRANULE_SIZE];   /* xr squared */
-    int32_t xrabs[GRANULE_SIZE];  /* xr absolute */
+    // int32_t xrsq[GRANULE_SIZE];   /* xr squared */
+    // int32_t xrabs[GRANULE_SIZE];  /* xr absolute */
     int32_t xrmax;                /* maximum of xrabs array */
     int32_t en_tot[MAX_GRANULES]; /* gr */
     int32_t en[MAX_GRANULES][21];
     int32_t xm[MAX_GRANULES][21];
     int32_t xrmaxl[MAX_GRANULES];
-    double steptab[128];   /* 2**(-x/4)  for x = -127..0 */
+    // double steptab[128];   /* 2**(-x/4)  for x = -127..0 */
     int32_t steptabi[128]; /* 2**(-x/4)  for x = -127..0 */
     // int32_t int2idx[10000]; /* x**(3/4)   for x = 0..9999 */
 } l3loop_t;
@@ -914,8 +915,6 @@ void shine_initialise(shine_config_t *pub_config, shine_t config)
     //     printf("Invalid configuration\n");
     //     return;
     // }
-
-    printf("%zu\n", sizeof(shine_global_config));
 
     shine_psy_ratio_t ratio;
     shine_scalefac_t scalefactor;
@@ -1603,10 +1602,13 @@ void shine_iteration_loop(shine_global_config *config)
              */
             for (i = GRANULE_SIZE, config->l3loop.xrmax = 0; i--;)
             {
-                config->l3loop.xrsq[i] = mulsr(config->l3loop.xr[i], config->l3loop.xr[i]);
-                config->l3loop.xrabs[i] = labs(config->l3loop.xr[i]);
-                if (config->l3loop.xrabs[i] > config->l3loop.xrmax)
-                    config->l3loop.xrmax = config->l3loop.xrabs[i];
+                // config->l3loop.xrsq[i] = mulsr(config->l3loop.xr[i], config->l3loop.xr[i]);
+                // config->l3loop.xrabs[i] = labs(config->l3loop.xr[i]);
+                int32_t temp = labs(config->l3loop.xr[i]);
+                if (temp > config->l3loop.xrmax)
+                {
+                    config->l3loop.xrmax = temp;
+                }
             }
 
             cod_info = (gr_info *)&(config->side_info.gr[gr].ch[ch]);
@@ -1690,11 +1692,18 @@ void calc_scfsi(shine_psy_xmin_t *l3_xmin, int32_t ch, int32_t gr,
 
     /* the total energy of the granule */
     for (temp = 0, i = GRANULE_SIZE; i--;)
-        temp += config->l3loop.xrsq[i] >> 10; /* a bit of scaling to avoid overflow, (not very good) */
+    {
+        // temp += config->l3loop.xrsq[i] >> 10; /* a bit of scaling to avoid overflow, (not very good) */
+        temp += (mulsr(config->l3loop.xr[i], config->l3loop.xr[i])) >> 10;
+    }
     if (temp)
+    {
         config->l3loop.en_tot[gr] = log((double)temp * 4.768371584e-7) / LN2; /* 1024 / 0x7fffffff */
+    }
     else
+    {
         config->l3loop.en_tot[gr] = 0;
+    }
 
     /* the energy of each scalefactor band, en */
     /* the allowed distortion of each scalefactor band, xm */
@@ -1705,16 +1714,27 @@ void calc_scfsi(shine_psy_xmin_t *l3_xmin, int32_t ch, int32_t gr,
         end = scalefac_band_long[sfb + 1];
 
         for (temp = 0, i = start; i < end; i++)
-            temp += config->l3loop.xrsq[i] >> 10;
+        {
+            // temp += config->l3loop.xrsq[i] >> 10;
+            temp += (mulsr(config->l3loop.xr[i], config->l3loop.xr[i])) >> 10;
+        }
         if (temp)
+        {
             config->l3loop.en[gr][sfb] = log((double)temp * 4.768371584e-7) / LN2; /* 1024 / 0x7fffffff */
+        }
         else
+        {
             config->l3loop.en[gr][sfb] = 0;
+        }
 
         if (l3_xmin->l[gr][ch][sfb])
+        {
             config->l3loop.xm[gr][sfb] = log(l3_xmin->l[gr][ch][sfb]) / LN2;
+        }
         else
+        {
             config->l3loop.xm[gr][sfb] = 0;
+        }
     }
 
     if (gr == 1)
@@ -1840,15 +1860,20 @@ void shine_loop_initialise(shine_global_config *config)
      */
     for (i = 128; i--;)
     {
-        config->l3loop.steptab[i] = pow(2.0, (double)(127 - i) / 4);
-        if ((config->l3loop.steptab[i] * 2) > 0x7fffffff) /* MAXINT = 2**31 = 2**(124/4) */
+        // config->l3loop.steptab[i] = pow(2.0, (double)(127 - i) / 4);
+        double temp = pow(2.0, (double)(127 - i) / 4);
+        if ((temp * 2) > 0x7fffffff) /* MAXINT = 2**31 = 2**(124/4) */
+        {
             config->l3loop.steptabi[i] = 0x7fffffff;
+        }
         else
+        {
             /* The table is multiplied by 2 to give an extra bit of accuracy.
              * In quantize, the long multiply does not shift it's result left one
              * bit to compensate.
              */
-            config->l3loop.steptabi[i] = (int32_t)((config->l3loop.steptab[i] * 2) + 0.5);
+            config->l3loop.steptabi[i] = (int32_t)((temp * 2) + 0.5);
+        }
     }
 
     /* quantize: vector conversion, three quarter power table.
@@ -1862,7 +1887,6 @@ int32_t get_int2idx_value(int32_t i)
 {
     return (int32_t)(sqrt(sqrt((double)i) * (double)i) - 0.0946 + 0.5);
 }
-static uint32_t count = 0;
 /*
  * quantize:
  * ---------
@@ -1897,13 +1921,15 @@ int32_t quantize(int32_t ix[GRANULE_SIZE], int32_t stepsize, shine_global_config
                 //     printf("ln = %d\n", ln);
                 // }
                 ix[i] = get_int2idx_value(ln);
-                count++;
             }
             else
             {
                 /* outside table range so have to do it using floats */
-                scale = config->l3loop.steptab[stepsize + 127];                    /* 2**(-stepsize/4) */
-                dbl = ((double)config->l3loop.xrabs[i]) * scale * 4.656612875e-10; /* 0x7fffffff */
+                // scale = config->l3loop.steptab[stepsize + 127];                    /* 2**(-stepsize/4) */
+                scale = pow(2.0, (double)(-stepsize) / 4);
+                int32_t xrabs_i = labs(config->l3loop.xr[i]);
+                // dbl = ((double)config->l3loop.xrabs[i]) * scale * 4.656612875e-10; /* 0x7fffffff */
+                dbl = ((double)xrabs_i) * scale * 4.656612875e-10; /* 0x7fffffff */
                 ix[i] = (int32_t)sqrt(sqrt(dbl) * dbl);                            /* dbl**(3/4) */
             }
 
