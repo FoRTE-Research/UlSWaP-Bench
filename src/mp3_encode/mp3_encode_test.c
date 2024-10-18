@@ -5,51 +5,47 @@
 #include "input.h"
 #include "common.h"
 
-static const uint32_t g_wav_file_size     = sizeof(test_data);
+static const uint32_t g_wav_file_size = sizeof(test_data);
 static const uint32_t g_header_size_bytes = 44;
-static const uint32_t g_sample_rate       = 8000;
-static const uint32_t g_num_channels      = 1;
-static const uint32_t g_output_bitrate    = 16;
+static const uint32_t g_output_bitrate = 16;
 
-#define SHINE_ENCODER_SIZE 69100
+#define SHINE_ENCODER_SIZE 23960
 uint8_t g_shine_encoder_block[SHINE_ENCODER_SIZE];
 // shine_t shine_encoder;
 
 #if HOST_TEST
 #define OUTPUT_FILENAME "output.mp3"
-FILE* outfile;
-#endif  // HOST_TEST
+FILE *outfile;
+#endif // HOST_TEST
 
-void verify_output(void* output_buffer, int32_t num_bytes, uint32_t* checksum)
+void verify_output(void *output_buffer, int32_t num_bytes, uint32_t *checksum)
 {
 #if HOST_TEST
     fwrite(output_buffer, sizeof(uint8_t), num_bytes, outfile) / sizeof(uint8_t);
-#endif  // HOST_TEST
+#endif // HOST_TEST
 
     for (size_t i = 0; i < num_bytes; i++)
     {
-        *checksum += ((uint8_t*)output_buffer)[i];
+        *checksum += ((uint8_t *)output_buffer)[i];
     }
 }
 
-int benchmark_main()
+int32_t benchmark_main()
 {
     shine_config_t config;
-    int32_t  bytes_written;
-    uint8_t* output_data;
+    int32_t bytes_written;
+    uint8_t *output_data;
     uint32_t output_size = 0;
     uint32_t checksum = 0;
     volatile uint32_t noprint_output;
 
     shine_set_config_mpeg_defaults(&config.mpeg);
 
-    config.wave.samplerate = g_sample_rate;
-    config.wave.channels   = g_num_channels;
-    config.mpeg.bitr       = g_output_bitrate;
-    config.mpeg.mode       = MONO;
+    config.mpeg.bitr = g_output_bitrate;
+    config.mpeg.mode = MONO;
 
-    printf("Input sample rate: %d Hz\r\n", config.wave.samplerate);
-    printf("Input channels: %d\r\n", config.wave.channels);
+    printf("Input sample rate: %d Hz\r\n", SAMPLE_RATE);
+    printf("Input channels: %d\r\n", NUM_CHANNELS);
     printf("Input wav file size (total): %u bytes\r\n", g_wav_file_size);
     printf("Input wav file size (data): %u bytes\r\n", (g_wav_file_size - g_header_size_bytes));
 
@@ -58,15 +54,15 @@ int benchmark_main()
     // printf("Shine encoder size: %u bytes\r\n", sizeof_shine_t);
     shine_initialise(&config, shine_encoder);
 
-    int16_t* input_buffer = (int16_t*)(test_data + g_header_size_bytes);   // skip the header
+    int16_t *input_buffer = (int16_t *)(test_data + g_header_size_bytes); // skip the header
 
     uint32_t totalSampleCount = (g_wav_file_size - g_header_size_bytes) / sizeof(int16_t);
-    uint32_t samples_per_pass = shine_samples_per_pass(shine_encoder) * g_num_channels;
-    uint32_t num_passes       = totalSampleCount / samples_per_pass;
+    uint32_t samples_per_pass = shine_samples_per_pass(shine_encoder) * NUM_CHANNELS;
+    uint32_t num_passes = totalSampleCount / samples_per_pass;
 
 #if HOST_TEST
     outfile = fopen(OUTPUT_FILENAME, "wb");
-#endif  // HOST_TEST
+#endif // HOST_TEST
 
     for (uint32_t i = 0; i < num_passes; i++)
     {
@@ -104,7 +100,7 @@ int benchmark_main()
 #if HOST_TEST
     printf("Output written to %s\r\n", OUTPUT_FILENAME);
     fclose(outfile);
-#endif  // HOST_TEST
+#endif // HOST_TEST
 
     return 0;
 }
