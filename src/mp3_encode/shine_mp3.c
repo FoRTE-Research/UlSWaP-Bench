@@ -248,23 +248,23 @@ typedef struct
 
 typedef struct
 {
-    int32_t version;
-    int32_t layer;
-    int32_t granules_per_frame;
-    int32_t mode; /* + */ /* Stereo mode */
-    int32_t bitr; /* + */ /* Must conform to known bitrate - see Main.c */
-    int32_t emph; /* + */ /* De-emphasis */
-    int32_t padding;
-    int32_t bits_per_frame;
-    int32_t bits_per_slot;
     double frac_slots_per_frame;
     double slot_lag;
-    int32_t whole_slots_per_frame;
-    int32_t bitrate_index; /* + */    /* See Main.c and Layer3.c */
-    int32_t samplerate_index; /* + */ /* See Main.c and Layer3.c */
-    int32_t crc;
-    int32_t ext;
-    int32_t mode_ext;
+    int16_t bitr; /* + */ /* Must conform to known bitrate - see Main.c */
+    int16_t emph; /* + */ /* De-emphasis */
+    int16_t padding;
+    int16_t bits_per_frame;
+    int16_t bits_per_slot;
+    int16_t whole_slots_per_frame;
+    int16_t crc;
+    int16_t ext;
+    int8_t bitrate_index; /* + */    /* See Main.c and Layer3.c */
+    int8_t samplerate_index; /* + */ /* See Main.c and Layer3.c */
+    int8_t version;
+    int8_t layer;
+    int8_t granules_per_frame;
+    int8_t mode; /* + */ /* Stereo mode */
+    // int16_t mode_ext;
     // int32_t copyright;  /* + */
     // int32_t original;   /* + */
 } priv_shine_mpeg_t;
@@ -299,24 +299,24 @@ typedef struct
 /* Side information */
 typedef struct
 {
-    uint32_t part2_3_length;
-    uint32_t big_values;
-    uint32_t count1;
-    uint32_t global_gain;
-    uint32_t scalefac_compress;
-    uint32_t table_select[3];
-    uint32_t region0_count;
-    uint32_t region1_count;
-    uint32_t preflag;
-    uint32_t scalefac_scale;
-    uint32_t count1table_select;
-    uint32_t part2_length;
-    uint32_t sfb_lmax;
-    uint32_t address1;
-    uint32_t address2;
-    uint32_t address3;
-    int32_t quantizerStepSize;
-    uint32_t slen[4];
+    uint16_t part2_3_length;
+    uint16_t big_values;
+    uint16_t count1;
+    uint16_t global_gain;
+    uint16_t scalefac_compress;
+    uint16_t table_select[3];
+    uint16_t region0_count;
+    uint16_t region1_count;
+    uint16_t preflag;
+    uint16_t scalefac_scale;
+    uint16_t count1table_select;
+    uint16_t part2_length;
+    uint16_t sfb_lmax;
+    uint16_t address1;
+    uint16_t address2;
+    uint16_t address3;
+    uint16_t slen[4];
+    int16_t quantizerStepSize;
 } gr_info;
 
 typedef struct
@@ -419,7 +419,7 @@ const int32_t samplerates[9] = {
     11025, 12000, 8000   /* MPEG-2.5 */
 };
 
-const int32_t bitrates[16][4] = {
+const int16_t bitrates[16][4] = {
     /* MPEG version:
      * 2.5, reserved, II, I */
     {-1, -1, -1, -1},
@@ -861,9 +861,9 @@ int32_t shine_mpeg_version(int32_t samplerate_index)
         return MPEG_25;
 }
 
-int32_t shine_find_samplerate_index(int32_t freq)
+int8_t shine_find_samplerate_index(int32_t freq)
 {
-    int32_t i;
+    int8_t i;
 
     for (i = 0; i < 9; i++)
         if (freq == samplerates[i])
@@ -872,9 +872,9 @@ int32_t shine_find_samplerate_index(int32_t freq)
     return -1; /* error - not a valid samplerate for encoder */
 }
 
-int32_t shine_find_bitrate_index(int32_t bitr, int32_t mpeg_version)
+int8_t shine_find_bitrate_index(int32_t bitr, int32_t mpeg_version)
 {
-    int32_t i;
+    int8_t i;
 
     for (i = 0; i < 16; i++)
         if (bitr == bitrates[i][mpeg_version])
@@ -933,15 +933,12 @@ void shine_initialise(shine_config_t *pub_config, shine_t config)
     printf("size of config: %zu\n", sizeof(config));
     printf("size of config->buffer: %zu\n", sizeof(config->buffer));
     printf("size of config->bs %zu\n", sizeof(config->bs));
-    printf("size of config->side_info %zu\n", sizeof(config->side_info));
-    printf("size of config->mdct %zu\n", sizeof(config->mdct));
-    printf("size of config->mpeg %zu\n", sizeof(config->mpeg));
-    printf("size of config->ResvMax %zu\n", sizeof(config->ResvMax));
-    printf("size of config->ResvSize %zu\n", sizeof(config->ResvSize));
     printf("size of config->mean_bits %zu\n", sizeof(config->mean_bits));
     printf("size of config->sideinfo_len %zu\n", sizeof(config->sideinfo_len));
     printf("size of ratio %zu\n", sizeof(ratio));
     printf("size of scalefactor %zu\n", sizeof(scalefactor));
+    printf("size of priv_shine_mpeg_t %zu\n", sizeof(priv_shine_mpeg_t));
+    printf("size of side_info_t %zu\n", sizeof(shine_side_info_t));
     printf("size of buffer %zu\n", sizeof(buffer));
     printf("size of pe %zu\n", sizeof(pe));
     printf("size of l3_enc %zu\n", sizeof(l3_enc));
@@ -951,7 +948,9 @@ void shine_initialise(shine_config_t *pub_config, shine_t config)
     printf("size of ResvMax %zu\n", sizeof(ResvMax));
     printf("size of l3loop %zu\n", sizeof(l3loop));
     printf("size of mdct %zu\n", sizeof(mdct));
-    printf("size of subband %zu\n", sizeof(subband));
+    printf("size of subband %zu\n", sizeof(subband_t));
+    printf("size of shine_psy_ratio_t %zu\n", sizeof(shine_psy_ratio_t));
+    printf("size of shine_scalefac_t %zu\n", sizeof(shine_scalefac_t));
 
     // config = calloc(1, sizeof(shine_global_config));
     if (config == NULL)
@@ -976,7 +975,7 @@ void shine_initialise(shine_config_t *pub_config, shine_t config)
     config->mpeg.layer = LAYER_III;
     config->mpeg.crc = 0;
     config->mpeg.ext = 0;
-    config->mpeg.mode_ext = 0;
+    // config->mpeg.mode_ext = 0;
     config->mpeg.bits_per_slot = 8;
 
     config->mpeg.samplerate_index = shine_find_samplerate_index(SAMPLE_RATE);
@@ -1082,8 +1081,8 @@ void shine_close(shine_global_config *config)
 
 #endif
 
-#define BITSTREAM_SIZE 4096
-uint8_t g_bitstream_data[BITSTREAM_SIZE];
+// #define BITSTREAM_SIZE 4096
+uint8_t g_bitstream_data[BUFFER_SIZE];
 
 /* open the device to write the bit stream into it */
 void shine_open_bit_stream(bitstream_t *bs, int32_t size)
