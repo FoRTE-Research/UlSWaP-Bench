@@ -44,14 +44,17 @@ typedef struct {
     enum modes mode;      /* Stereo mode */
     int32_t bitr;      /* Must conform to known bitrate */
     enum emph emph;      /* De-emphasis */
-    int32_t copyright;
-    int32_t original;
+    // int32_t copyright;
+    // int32_t original;
 } shine_mpeg_t;
 
 typedef struct {
-    shine_wave_t wave;
+    // shine_wave_t wave;
     shine_mpeg_t mpeg;
 } shine_config_t;
+
+#define NUM_CHANNELS 1
+#define SAMPLE_RATE 8000
 
 /* Tables of supported audio parameters & format.
  *

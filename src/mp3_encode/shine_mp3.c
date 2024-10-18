@@ -265,8 +265,8 @@ typedef struct {
     int32_t crc;
     int32_t ext;
     int32_t mode_ext;
-    int32_t copyright;  /* + */
-    int32_t original;   /* + */
+    // int32_t copyright;  /* + */
+    // int32_t original;   /* + */
 } priv_shine_mpeg_t;
 
 typedef struct {
@@ -280,7 +280,7 @@ typedef struct {
     int32_t xrmaxl[MAX_GRANULES];
     double steptab[128]; /* 2**(-x/4)  for x = -127..0 */
     int32_t steptabi[128];  /* 2**(-x/4)  for x = -127..0 */
-    int32_t int2idx[10000]; /* x**(3/4)   for x = 0..9999 */
+    // int32_t int2idx[10000]; /* x**(3/4)   for x = 0..9999 */
 } l3loop_t;
 
 typedef struct {
@@ -341,10 +341,10 @@ typedef struct {
 
 typedef struct bit_stream_struc {
     uint8_t *data;        /* Processed data */
-    int32_t data_size;      /* Total data size */
-    int32_t data_position;  /* Data position */
     uint32_t cache;            /* bit stream cache */
     int32_t cache_bits;     /* free bits in cache */
+    int16_t data_size;      /* Total data size */
+    int16_t data_position;  /* Data position */
 } bitstream_t;
 
 
@@ -366,7 +366,7 @@ void shine_putbits(bitstream_t *bs, uint32_t val, uint32_t N);
 int32_t shine_get_bits_count(bitstream_t *bs);
 
 typedef struct shine_global_flags {
-    priv_shine_wave_t wave;
+    // priv_shine_wave_t wave;
     priv_shine_mpeg_t mpeg;
     bitstream_t bs;
     shine_side_info_t side_info;
@@ -835,8 +835,8 @@ static int32_t granules_per_frame[4] = {
 void shine_set_config_mpeg_defaults(shine_mpeg_t *mpeg) {
     mpeg->bitr = 64;
     mpeg->emph = NONE;
-    mpeg->copyright = 0;
-    mpeg->original = 1;
+    // mpeg->copyright = 0;
+    // mpeg->original = 1;
 }
 
 int32_t shine_mpeg_version(int32_t samplerate_index) {
@@ -892,13 +892,52 @@ int32_t shine_samples_per_pass(shine_t s) {
 void shine_initialise(shine_config_t *pub_config, shine_t config) {
     double avg_slots_per_frame;
 
-    if (shine_check_config(pub_config->wave.samplerate, pub_config->mpeg.bitr) < 0)
-    {
-        printf("Invalid configuration\n");
-        return;
-    }
+    // if (shine_check_config(pub_config->wave.samplerate, pub_config->mpeg.bitr) < 0)
+    // {
+    //     printf("Invalid configuration\n");
+    //     return;
+    // }
 
     printf("%zu\n", sizeof(shine_global_config));
+
+    shine_psy_ratio_t ratio;
+    shine_scalefac_t scalefactor;
+    int16_t *buffer[MAX_CHANNELS];
+    double pe[MAX_CHANNELS][MAX_GRANULES];
+    int32_t l3_enc[MAX_CHANNELS][MAX_GRANULES][GRANULE_SIZE];
+    int32_t l3_sb_sample[MAX_CHANNELS][MAX_GRANULES + 1][18][SBLIMIT];
+    int32_t mdct_freq[MAX_CHANNELS][MAX_GRANULES][GRANULE_SIZE];
+    int32_t ResvSize;
+    int32_t ResvMax;
+    l3loop_t l3loop;
+    mdct_t mdct;
+    subband_t subband;
+
+    // Print the size of every top-level field within the struct
+    printf("size of config: %zu\n", sizeof(config));
+    printf("size of config->buffer: %zu\n", sizeof(config->buffer));
+    printf("size of config->bs %zu\n", sizeof(config->bs));
+    printf("size of config->side_info %zu\n", sizeof(config->side_info));
+    printf("size of config->mdct %zu\n", sizeof(config->mdct));
+    printf("size of config->mpeg %zu\n", sizeof(config->mpeg));
+    printf("size of config->ResvMax %zu\n", sizeof(config->ResvMax));
+    printf("size of config->ResvSize %zu\n", sizeof(config->ResvSize));
+    printf("size of config->mean_bits %zu\n", sizeof(config->mean_bits));
+    printf("size of config->sideinfo_len %zu\n", sizeof(config->sideinfo_len));
+    printf("size of ratio %zu\n", sizeof(ratio));
+    printf("size of scalefactor %zu\n", sizeof(scalefactor));
+    printf("size of buffer %zu\n", sizeof(buffer));
+    printf("size of pe %zu\n", sizeof(pe));
+    printf("size of l3_enc %zu\n", sizeof(l3_enc));
+    printf("size of l3_sb_sample %zu\n", sizeof(l3_sb_sample));
+    printf("size of mdct_freq %zu\n", sizeof(mdct_freq));
+    printf("size of ResvSize %zu\n", sizeof(ResvSize));
+    printf("size of ResvMax %zu\n", sizeof(ResvMax));
+    printf("size of l3loop %zu\n", sizeof(l3loop));
+    printf("size of mdct %zu\n", sizeof(mdct));
+    printf("size of subband %zu\n", sizeof(subband));
+
+
 
     // config = calloc(1, sizeof(shine_global_config));
     if (config == NULL)
@@ -909,13 +948,13 @@ void shine_initialise(shine_config_t *pub_config, shine_t config) {
     shine_loop_initialise(config);
 
     /* Copy public config. */
-    config->wave.channels = pub_config->wave.channels;
-    config->wave.samplerate = pub_config->wave.samplerate;
+    // NUM_CHANNELS = pub_config->wave.channels;
+    // config->wave.samplerate = pub_config->wave.samplerate;
     config->mpeg.mode = pub_config->mpeg.mode;
     config->mpeg.bitr = pub_config->mpeg.bitr;
     config->mpeg.emph = pub_config->mpeg.emph;
-    config->mpeg.copyright = pub_config->mpeg.copyright;
-    config->mpeg.original = pub_config->mpeg.original;
+    // config->mpeg.copyright = pub_config->mpeg.copyright;
+    // config->mpeg.original = pub_config->mpeg.original;
 
     /* Set default values. */
     config->ResvMax = 0;
@@ -926,14 +965,14 @@ void shine_initialise(shine_config_t *pub_config, shine_t config) {
     config->mpeg.mode_ext = 0;
     config->mpeg.bits_per_slot = 8;
 
-    config->mpeg.samplerate_index = shine_find_samplerate_index(config->wave.samplerate);
+    config->mpeg.samplerate_index = shine_find_samplerate_index(SAMPLE_RATE);
     config->mpeg.version = shine_mpeg_version(config->mpeg.samplerate_index);
     config->mpeg.bitrate_index = shine_find_bitrate_index(config->mpeg.bitr, config->mpeg.version);
     config->mpeg.granules_per_frame = granules_per_frame[config->mpeg.version];
 
     /* Figure average number of 'slots' per frame. */
     avg_slots_per_frame = ((double) config->mpeg.granules_per_frame * GRANULE_SIZE /
-                           ((double) config->wave.samplerate)) *
+                           ((double) SAMPLE_RATE)) *
                           (1000 * (double) config->mpeg.bitr /
                            (double) config->mpeg.bits_per_slot);
 
@@ -951,9 +990,9 @@ void shine_initialise(shine_config_t *pub_config, shine_t config) {
 
     /* determine the mean bitrate for main data */
     if (config->mpeg.granules_per_frame == 2) /* MPEG 1 */
-        config->sideinfo_len = 8 * ((config->wave.channels == 1) ? 4 + 17 : 4 + 32);
+        config->sideinfo_len = 8 * ((NUM_CHANNELS == 1) ? 4 + 17 : 4 + 32);
     else                /* MPEG 2 */
-        config->sideinfo_len = 8 * ((config->wave.channels == 1) ? 4 + 9 : 4 + 17);
+        config->sideinfo_len = 8 * ((NUM_CHANNELS == 1) ? 4 + 9 : 4 + 17);
 }
 
 static uint8_t *shine_encode_buffer_internal(shine_global_config *config, int32_t *written, int32_t stride) {
@@ -983,7 +1022,7 @@ static uint8_t *shine_encode_buffer_internal(shine_global_config *config, int32_
 
 uint8_t *shine_encode_buffer(shine_global_config *config, int16_t **data, int32_t *written) {
     config->buffer[0] = data[0];
-    // if (config->wave.channels == 2)
+    // if (NUM_CHANNELS == 2)
     //     config->buffer[1] = data[1];
 
     return shine_encode_buffer_internal(config, written, 1);
@@ -991,10 +1030,10 @@ uint8_t *shine_encode_buffer(shine_global_config *config, int16_t **data, int32_
 
 uint8_t *shine_encode_buffer_interleaved(shine_global_config *config, int16_t *data, int32_t *written) {
     config->buffer[0] = data;
-    // if (config->wave.channels == 2)
+    // if (NUM_CHANNELS == 2)
     //     config->buffer[1] = data + 1;
 
-    return shine_encode_buffer_internal(config, written, config->wave.channels);
+    return shine_encode_buffer_internal(config, written, NUM_CHANNELS);
 }
 
 uint8_t *shine_flush(shine_global_config *config, int32_t *written) {
@@ -1119,7 +1158,7 @@ void
 shine_format_bitstream(shine_global_config *config) {
     int32_t gr, ch, i;
 
-    for (ch = 0; ch < config->wave.channels; ch++)
+    for (ch = 0; ch < NUM_CHANNELS; ch++)
         for (gr = 0; gr < config->mpeg.granules_per_frame; gr++) {
             int32_t *pi = &config->l3_enc[ch][gr][0];
             int32_t *pr = &config->mdct_freq[ch][gr][0];
@@ -1138,7 +1177,7 @@ static void encodeMainData(shine_global_config *config) {
     shine_side_info_t si = config->side_info;
 
     for (gr = 0; gr < config->mpeg.granules_per_frame; gr++) {
-        for (ch = 0; ch < config->wave.channels; ch++) {
+        for (ch = 0; ch < NUM_CHANNELS; ch++) {
             gr_info *gi = &(si.gr[gr].ch[ch].tt);
             uint32_t slen1 = shine_slen1_tab[gi->scalefac_compress];
             uint32_t slen2 = shine_slen2_tab[gi->scalefac_compress];
@@ -1175,33 +1214,33 @@ static void encodeSideInfo(shine_global_config *config) {
     shine_putbits(&config->bs, config->mpeg.padding, 1);
     shine_putbits(&config->bs, config->mpeg.ext, 1);
     shine_putbits(&config->bs, config->mpeg.mode, 2);
-    shine_putbits(&config->bs, config->mpeg.mode_ext, 2);
-    shine_putbits(&config->bs, config->mpeg.copyright, 1);
-    shine_putbits(&config->bs, config->mpeg.original, 1);
+    shine_putbits(&config->bs, 0, 2); // mode extension
+    shine_putbits(&config->bs, 0, 1); // copyright
+    shine_putbits(&config->bs, 1, 1); // original
     shine_putbits(&config->bs, config->mpeg.emph, 2);
 
     if (config->mpeg.version == MPEG_I) {
         shine_putbits(&config->bs, 0, 9);
-        if (config->wave.channels == 2)
+        if (NUM_CHANNELS == 2)
             shine_putbits(&config->bs, si.private_bits, 3);
         else
             shine_putbits(&config->bs, si.private_bits, 5);
     } else {
         shine_putbits(&config->bs, 0, 8);
-        if (config->wave.channels == 2)
+        if (NUM_CHANNELS == 2)
             shine_putbits(&config->bs, si.private_bits, 2);
         else
             shine_putbits(&config->bs, si.private_bits, 1);
     }
 
     if (config->mpeg.version == MPEG_I)
-        for (ch = 0; ch < config->wave.channels; ch++) {
+        for (ch = 0; ch < NUM_CHANNELS; ch++) {
             for (scfsi_band = 0; scfsi_band < 4; scfsi_band++)
                 shine_putbits(&config->bs, si.scfsi[ch][scfsi_band], 1);
         }
 
     for (gr = 0; gr < config->mpeg.granules_per_frame; gr++)
-        for (ch = 0; ch < config->wave.channels; ch++) {
+        for (ch = 0; ch < NUM_CHANNELS; ch++) {
             gr_info *gi = &(si.gr[gr].ch[ch].tt);
 
             shine_putbits(&config->bs, gi->part2_3_length, 12);
@@ -1486,7 +1525,7 @@ void shine_iteration_loop(shine_global_config *config) {
     int32_t ch, gr, i;
     int32_t *ix;
 
-    for (ch = config->wave.channels; ch--;) {
+    for (ch = NUM_CHANNELS; ch--;) {
         for (gr = 0; gr < config->mpeg.granules_per_frame; gr++) {
             /* setup pointers */
             ix = config->l3_enc[ch][gr];
@@ -1739,10 +1778,15 @@ void shine_loop_initialise(shine_global_config *config) {
     /* quantize: vector conversion, three quarter power table.
      * The 0.5 is for rounding, the .0946 comes from the spec.
      */
-    for (i = 10000; i--;)
-        config->l3loop.int2idx[i] = (int32_t) (sqrt(sqrt((double) i) * (double) i) - 0.0946 + 0.5);
+    // for (i = 10000; i--;)
+    //     config->l3loop.int2idx[i] = (int32_t) (sqrt(sqrt((double) i) * (double) i) - 0.0946 + 0.5);
 }
 
+int32_t get_int2idx_value(int32_t i)
+{
+    return (int32_t) (sqrt(sqrt((double) i) * (double) i) - 0.0946 + 0.5);
+}
+static uint32_t count = 0;
 /*
  * quantize:
  * ---------
@@ -1767,8 +1811,15 @@ int32_t quantize(int32_t ix[GRANULE_SIZE], int32_t stepsize, shine_global_config
              */
             ln = mulr(labs(config->l3loop.xr[i]), scalei);
 
-            if (ln < 10000) /* ln < 10000 catches most values */
-                ix[i] = config->l3loop.int2idx[ln]; /* quick look up method */
+            if (ln < 10000) { /* ln < 10000 catches most values */
+                // ix[i] = config->l3loop.int2idx[ln]; /* quick look up method */
+                // if (ln > 576)
+                // {
+                //     printf("ln = %d\n", ln);
+                // }
+                ix[i] = get_int2idx_value(ln);
+                count++;
+            }
             else {
                 /* outside table range so have to do it using floats */
                 scale = config->l3loop.steptab[stepsize + 127]; /* 2**(-stepsize/4) */
@@ -1781,7 +1832,7 @@ int32_t quantize(int32_t ix[GRANULE_SIZE], int32_t stepsize, shine_global_config
             if (max < ix[i])
                 max = ix[i];
         }
-
+    // printf("count = %d\n", count);
     return max;
 }
 
@@ -2230,7 +2281,7 @@ void shine_mdct_sub(shine_global_config *config, int32_t stride) {
     int32_t ch, gr, band, j, k;
     int32_t mdct_in[36];
 
-    for (ch = config->wave.channels; ch--;) {
+    for (ch = NUM_CHANNELS; ch--;) {
         for (gr = 0; gr < config->mpeg.granules_per_frame; gr++) {
             /* set up pointer to the part of config->mdct_freq we're using */
             mdct_enc = (int32_t (*)[18]) config->mdct_freq[ch][gr];
@@ -2417,7 +2468,7 @@ int32_t shine_max_reservoir_bits(double *pe, shine_global_config *config) {
     int32_t more_bits, max_bits, add_bits, over_bits;
     int32_t mean_bits = config->mean_bits;
 
-    mean_bits /= config->wave.channels;
+    mean_bits /= NUM_CHANNELS;
     max_bits = mean_bits;
 
     if (max_bits > 4095)
@@ -2452,7 +2503,7 @@ int32_t shine_max_reservoir_bits(double *pe, shine_global_config *config) {
  * the reservoir to reflect the granule's usage.
  */
 void shine_ResvAdjust(gr_info *gi, shine_global_config *config) {
-    config->ResvSize += (config->mean_bits / config->wave.channels) - gi->part2_3_length;
+    config->ResvSize += (config->mean_bits / NUM_CHANNELS) - gi->part2_3_length;
 }
 
 /*
@@ -2473,7 +2524,7 @@ void shine_ResvFrameEnd(shine_global_config *config) {
     ancillary_pad = 0;
 
     /* just in case mean_bits is odd, this is necessary... */
-    if ((config->wave.channels == 2) && (config->mean_bits & 1))
+    if ((NUM_CHANNELS == 2) && (config->mean_bits & 1))
         config->ResvSize += 1;
 
     over_bits = config->ResvSize - config->ResvMax;
@@ -2502,7 +2553,7 @@ void shine_ResvFrameEnd(shine_global_config *config) {
         else {
             /* plan b: distribute throughout the granules */
             for (gr = 0; gr < config->mpeg.granules_per_frame; gr++)
-                for (ch = 0; ch < config->wave.channels; ch++) {
+                for (ch = 0; ch < NUM_CHANNELS; ch++) {
                     int32_t extraBits, bitsThisGr;
                     gr_info *gi = (gr_info *) &(l3_side->gr[gr].ch[ch]);
                     if (!stuffingBits)

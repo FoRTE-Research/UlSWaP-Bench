@@ -7,8 +7,8 @@
 
 static const uint32_t g_wav_file_size     = sizeof(test_data);
 static const uint32_t g_header_size_bytes = 44;
-static const uint32_t g_sample_rate       = 8000;
-static const uint32_t g_num_channels      = 1;
+// static const uint32_t g_sample_rate       = 8000;
+// static const uint32_t g_num_channels      = 1;
 static const uint32_t g_output_bitrate    = 16;
 
 #define SHINE_ENCODER_SIZE 69100
@@ -43,13 +43,13 @@ int32_t benchmark_main()
 
     shine_set_config_mpeg_defaults(&config.mpeg);
 
-    config.wave.samplerate = g_sample_rate;
-    config.wave.channels   = g_num_channels;
+    // config.wave.samplerate = g_sample_rate;
+    // config.wave.channels   = g_num_channels;
     config.mpeg.bitr       = g_output_bitrate;
     config.mpeg.mode       = MONO;
 
-    printf("Input sample rate: %d Hz\r\n", config.wave.samplerate);
-    printf("Input channels: %d\r\n", config.wave.channels);
+    printf("Input sample rate: %d Hz\r\n", SAMPLE_RATE);
+    printf("Input channels: %d\r\n", NUM_CHANNELS);
     printf("Input wav file size (total): %u bytes\r\n", g_wav_file_size);
     printf("Input wav file size (data): %u bytes\r\n", (g_wav_file_size - g_header_size_bytes));
 
@@ -61,7 +61,7 @@ int32_t benchmark_main()
     int16_t* input_buffer = (int16_t*)(test_data + g_header_size_bytes);   // skip the header
 
     uint32_t totalSampleCount = (g_wav_file_size - g_header_size_bytes) / sizeof(int16_t);
-    uint32_t samples_per_pass = shine_samples_per_pass(shine_encoder) * g_num_channels;
+    uint32_t samples_per_pass = shine_samples_per_pass(shine_encoder) * NUM_CHANNELS;
     uint32_t num_passes       = totalSampleCount / samples_per_pass;
 
 #if HOST_TEST
