@@ -363,7 +363,7 @@ typedef struct bit_stream_struc
 #define MAX_LENGTH 32 /* Maximum length of word written or \
                          read from bit stream */
 
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 512
 
 #define MIN(A, B) ((A) < (B) ? (A) : (B))
 #define MAX(A, B) ((A) > (B) ? (A) : (B))
