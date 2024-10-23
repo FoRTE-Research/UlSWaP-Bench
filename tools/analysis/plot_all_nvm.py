@@ -26,17 +26,20 @@ def plot_grouped_stacked_nvm(output_file:str=None) -> None:
     import numpy as np
     import matplotlib.patches as mpatches
 
-    XTICK_SIZE_MAIN = 6
-    XTICK_SIZE_SEC = 6
-    YTICK_SIZE = 6
-    YAXIS_LABEL_SIZE = 6
-    LEGEND_SIZE = 6
+    FONT_SIZE = 8
+    XTICK_SIZE_MAIN = 8
+    XTICK_SIZE_SEC = 8
+    YTICK_SIZE = 8
+    YAXIS_LABEL_SIZE = 8
+    LEGEND_SIZE = 8
 
-    mpl.rcParams['hatch.linewidth'] = 0.6
+    BAR_LINE_WIDTH = 1
+    HATCH_LINE_WIDTH = 0.5
+    mpl.rcParams['hatch.linewidth'] = HATCH_LINE_WIDTH
 
     fig, ax = plt.subplots()
     fig.set_figwidth(6.5)
-    fig.set_figheight(4)
+    fig.set_figheight(3.5)
     bar_width = 0.27
 
     bench_names = get_bench_names()
@@ -51,17 +54,17 @@ def plot_grouped_stacked_nvm(output_file:str=None) -> None:
         msp_sizes = [msp_nvm[bench][mem_type] for bench in bench_names]
         arm_sizes = [arm_nvm[bench][mem_type] for bench in bench_names]
 
-        riscv_bar = ax.bar(positions, riscv_sizes, bar_width, hatch=NVM_HATCHES[i], color='red', edgecolor='black', bottom=riscv_bar_bottoms)
-        msp430_bar = ax.bar(positions + bar_width, msp_sizes, bar_width, hatch=NVM_HATCHES[i], color='yellow', edgecolor='black', bottom=msp_bar_bottoms)
-        arm_bar = ax.bar(positions + 2 * bar_width, arm_sizes, bar_width, hatch=NVM_HATCHES[i], color='green', edgecolor='black', bottom=arm_bar_bottoms)
+        riscv_bar = ax.bar(positions, riscv_sizes, bar_width, hatch=ARCH_HATCHES[0], color=NVM_COLORS[i], edgecolor='black', bottom=riscv_bar_bottoms, linewidth=BAR_LINE_WIDTH)
+        msp430_bar = ax.bar(positions + bar_width, msp_sizes, bar_width, hatch=ARCH_HATCHES[1], color=NVM_COLORS[i], edgecolor='black', bottom=msp_bar_bottoms, linewidth=BAR_LINE_WIDTH)
+        arm_bar = ax.bar(positions + 2 * bar_width, arm_sizes, bar_width, hatch=ARCH_HATCHES[2], color=NVM_COLORS[i], edgecolor='black', bottom=arm_bar_bottoms, linewidth=BAR_LINE_WIDTH)
 
         riscv_bar_bottoms = [riscv_bar_bottoms[i] + riscv_sizes[i] for i in range(len(bench_names))]
         msp_bar_bottoms = [msp_bar_bottoms[i] + msp_sizes[i] for i in range(len(bench_names))]
         arm_bar_bottoms = [arm_bar_bottoms[i] + arm_sizes[i] for i in range(len(bench_names))]
 
     # Legends
-    arch_patches = [mpatches.Patch(facecolor=ARCH_COLORS[i], edgecolor='black', label=ARCHITECTURES[i]) for i in range(len(ARCHITECTURES))]
-    mem_patches = [mpatches.Patch(facecolor='white', edgecolor='black', hatch=NVM_HATCHES[i], label=NVM_MEM_TYPES[i]) for i in range(len(NVM_MEM_TYPES))]
+    arch_patches = [mpatches.Patch(facecolor='white', hatch=ARCH_HATCHES[i], edgecolor='black', label=ARCHITECTURES[i]) for i in range(len(ARCHITECTURES))]
+    mem_patches = [mpatches.Patch(facecolor=NVM_COLORS[i], edgecolor='black', label=NVM_MEM_TYPES[i]) for i in range(len(NVM_MEM_TYPES))]
 
     arch_legend = ax.legend(handles=arch_patches, title='Architecture', loc='upper right', fontsize=LEGEND_SIZE, title_fontsize=LEGEND_SIZE)
     ax.add_artist(arch_legend)
@@ -81,16 +84,18 @@ def plot_grouped_stacked_nvm(output_file:str=None) -> None:
     # Lines between the categories:
     sec2 = ax.secondary_xaxis(location=0)
     sec2.set_xticks(get_line_xticks(), labels=[])
-    sec2.tick_params('x', length=65, width=1)
+    sec2.tick_params('x', length=82, width=1)
 
     # X-axis limits
     ax.set_xlim(-0.5, len(get_bench_names()))
 
     # Y-axis label
-    ax.set_ylabel('Size (bytes)', fontsize=YAXIS_LABEL_SIZE)
-    plt.yticks(fontsize=YTICK_SIZE)
+    ax.set_ylabel('Size (KiB)', fontsize=YAXIS_LABEL_SIZE, labelpad=0)
+    plt.yticks(np.arange(0, 132000, 16384), fontsize=YTICK_SIZE, labels=[str(int(i/1024)) for i in range(0, 132000, 16384)])
     ax.grid(axis='y')
-    ax.axhline(65536, color='black', linewidth=1, linestyle='--')
+    ax.axhline(65536, color='black', linewidth=1, linestyle='--', label='64KB')
+    ax.text(-0.3, 65536+1300, 'Small \u2191', fontsize=FONT_SIZE, va='bottom')
+    ax.text(-0.3, 65536-2900, 'Tiny   \u2193', fontsize=FONT_SIZE, va='top')
 
 
     plt.tight_layout()

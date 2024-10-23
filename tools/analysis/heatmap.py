@@ -1,4 +1,4 @@
-import matplotlib
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -32,6 +32,12 @@ def heatmap(data:list[list[int]],
         All other arguments are forwarded to `imshow`.
     """
 
+    FONT_SIZE = 7.2
+    XTICK_SIZE_MAIN = FONT_SIZE
+    YTICK_SIZE = FONT_SIZE
+    YAXIS_LABEL_SIZE = FONT_SIZE
+    COLORBAR_LABEL_SIZE = FONT_SIZE
+
     if ax is None:
         ax = plt.gca()
 
@@ -42,12 +48,14 @@ def heatmap(data:list[list[int]],
     im = ax.imshow(data, **kwargs)
 
     # Create colorbar
-    cbar = ax.figure.colorbar(im, ax=ax, fraction=0.025, **cbar_kw)
-    cbar.ax.set_ylabel(cbarlabel, rotation=-90, va="bottom")
+    cbar = ax.figure.colorbar(im, ax=ax, fraction=0.025, pad=0.01, aspect=70, **cbar_kw)
+    cbar.ax.set_ylabel(cbarlabel, rotation=-90, va="bottom", fontsize=COLORBAR_LABEL_SIZE)
+    cbar.ax.tick_params(labelsize=COLORBAR_LABEL_SIZE)
+
 
     # Show all ticks and label them with the respective list entries.
-    ax.set_xticks(np.arange(data.shape[1]), labels=col_labels)
-    ax.set_yticks(np.arange(data.shape[0]), labels=row_labels)
+    ax.set_xticks(np.arange(data.shape[1]), labels=col_labels, fontsize=XTICK_SIZE_MAIN)
+    ax.set_yticks(np.arange(data.shape[0]), labels=row_labels, fontsize=YTICK_SIZE)
 
     # Let the horizontal axes labeling appear on top.
     ax.tick_params(top=False, bottom=True,
@@ -62,7 +70,7 @@ def heatmap(data:list[list[int]],
 
     ax.set_xticks(np.arange(data.shape[1]+1)-.5, minor=True)
     ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
-    ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
+    ax.grid(which="minor", color="w", linestyle='-', linewidth=2)
     ax.tick_params(which="minor", bottom=False, left=False)
 
     return im, cbar
@@ -113,7 +121,7 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
 
     # Get the formatter in case a string is supplied
     if isinstance(valfmt, str):
-        valfmt = matplotlib.ticker.StrMethodFormatter(valfmt)
+        valfmt = mpl.ticker.StrMethodFormatter(valfmt)
 
     # Loop over the data and create a `Text` for each "pixel".
     # Change the text's color depending on the data.

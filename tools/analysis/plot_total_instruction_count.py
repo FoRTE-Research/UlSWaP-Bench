@@ -2,7 +2,7 @@ from utils import *
 
 ARM_CSV_FILE = 'output/arm_counts.csv'
 RISCV_DUMP_DIR = 'output/totcount'
-MSP430_DUMP_DIR = 'output/msp430_count'
+MSP430_DUMP_DIR = 'output/msp430_counts2'
 
 def get_runtime_count_msp430(file_path:str) -> int:
     with open(file_path, 'r') as f:
@@ -75,15 +75,21 @@ def get_runtime_count_map_riscv(directory:str) -> dict:
 
 
 def plot_total_instruction_count(output_file:str=None) -> None:
+    import matplotlib as mpl
     import matplotlib.pyplot as plt
     import numpy as np
 
-    XTICK_SIZE_MAIN = 6
-    XTICK_SIZE_SEC = 6
-    YTICK_SIZE = 6
-    YAXIS_LABEL_SIZE = 6
-    BAR_TEXT_SIZE = 3.5
+    FONT_SIZE = 8
+    XTICK_SIZE_MAIN = FONT_SIZE
+    XTICK_SIZE_SEC = FONT_SIZE
+    YTICK_SIZE = FONT_SIZE
+    YAXIS_LABEL_SIZE = FONT_SIZE
+    BAR_TEXT_SIZE = 4
     FACTOR = 1000
+
+    BAR_LINE_WIDTH = 1
+    HATCH_LINE_WIDTH = 0.5
+    mpl.rcParams['hatch.linewidth'] = HATCH_LINE_WIDTH
 
     archs = ['RISC-V', 'MSP430', 'ARM']
     bench_list = get_bench_names()
@@ -105,39 +111,25 @@ def plot_total_instruction_count(output_file:str=None) -> None:
     x = np.arange(len(get_bench_names()))  # the label locations
     width = 0.27  # the width of the bars
     multiplier = 0
-    print(x)
 
     for arch, counts in runtime_counts.items():
-        print(arch, counts)
         offset = width * multiplier
-        # smaller_counts = [round(count / FACTOR) for count in counts]
-        rects = ax.bar(x + offset, counts, width, label=arch)
-        ax.bar_label(rects, padding=1, fontsize=BAR_TEXT_SIZE, labels=[get_compact_num(count) for count in counts], rotation=90)
+        rects = ax.bar(x + offset, counts, width, label=arch, color=ARCH_COLORS[multiplier], hatch=ARCH_HATCHES[multiplier], edgecolor='black', linewidth=BAR_LINE_WIDTH)
         multiplier += 1
 
-    # plt.bar(x-0.2, runtime_counts['RISC-V'], width, label='RISC-V')
-    # plt.bar(x, runtime_counts['MSP430'], width, label='MSP430')
-    # plt.bar(x+0.2, runtime_counts['ARM'], width, label='ARM')
-
-    # for bench in runtime_counts.keys():
-    #     runtime_counts[bench] = round(runtime_counts[bench] / FACTOR)
-
-    # ax.bar(runtime_counts.keys(), runtime_counts.values())
-    ax.set_ylabel(f'Total instructions', fontsize=YAXIS_LABEL_SIZE)
+    ax.set_ylabel(f'Total instructions executed', fontsize=YAXIS_LABEL_SIZE, labelpad=1)
     ax.set_xticks(x + width * (len(archs) - 1) / 2, labels=get_bench_names())
-    # ax.set_xticks(x, labels=get_bench_names())
 
+    # Category labels
     sec = ax.secondary_xaxis(location=0)
     sec.set_xticks(get_label_xtick_positions(), labels=list('\n\n\n\n\n\n\n\n' + group for group in ALL_BENCHMARKS.keys()), weight='bold', size=XTICK_SIZE_SEC)
-
     sec.tick_params('x', length=0)
 
     # Lines between the categories:
     sec2 = ax.secondary_xaxis(location=0)
     sec2.set_xticks(get_line_xticks(), labels=[])
-    sec2.tick_params('x', length=65, width=1)
+    sec2.tick_params('x', length=82, width=1)
     ax.set_xlim(-0.5, len(get_bench_names()))
-    # ax.set_xlim(0.5, len(get_bench_names()))
 
     # print total size on top of each bar
     # for bench, count in runtime_counts.items():
@@ -147,7 +139,7 @@ def plot_total_instruction_count(output_file:str=None) -> None:
 
     plt.xticks(rotation=90, ha='center', fontsize=XTICK_SIZE_MAIN)
     plt.yticks(fontsize=YTICK_SIZE)
-    plt.legend(loc='upper left', fontsize=5)
+    plt.legend(fontsize=FONT_SIZE, bbox_to_anchor=(0.23, 1))
     ax.grid(axis='y')
     plt.tight_layout()
 
@@ -170,14 +162,6 @@ def main():
     g_runtime_counts_msp = get_runtime_count_map_msp430(MSP430_DUMP_DIR)
     g_runtime_counts_arm = get_runtime_count_map_arm(ARM_CSV_FILE)
 
-    # if args.msp430:
-    #     runtime_counts = get_runtime_count_map_msp430(args.dump_dir)
-    # elif args.arm:
-    #     runtime_counts = get_runtime_count_map_arm(args.dump_file)
-    # else:
-    #     runtime_counts = get_runtime_count_map(args.dump_dir)
-
-    # print(runtime_counts)
     plot_total_instruction_count(args.plot_file)
 
 

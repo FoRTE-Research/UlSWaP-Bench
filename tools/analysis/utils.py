@@ -7,7 +7,7 @@ ALL_BENCHMARKS = {
     'Security': ['aes', 'chacha20', 'poly1305', 'rsa', 'ecc', 'sha256'],
     'Communication': ['crc', 'dijkstra', 'patricia', 'lzfx_comp', 'lzfx_decomp', 'lorawan_down', 'lorawan_up'],
     'Signal Processing': ['fft', 'adpcm_encode', 'mp3_encode', 'jpeg_encode', 'susan_edges', 'susan_corners', 'susan_smooth'],
-    'AI': ['activity_rec', 'sensor_fusion', 'image_class', 'anomaly'],
+    'AI': ['image_class', 'anomaly', 'activity_rec', 'sensor_fusion'],
     'General': ['basicmath', 'bitcount', 'qsort', 'stringsearch']
 }
 
@@ -15,9 +15,9 @@ MEM_TYPES = ['.text', '.rodata', '.data', '.bss', 'stack']
 NVM_MEM_TYPES = ['.text', '.rodata', '.data']
 RAM_MEM_TYPES = ['.data', '.bss', 'stack']
 ARCHITECTURES = ['RISC-V', 'MSP430', 'ARM']
-ARCH_COLORS = ['red', 'yellow', 'green']
-NVM_HATCHES = ['////', 'oo', '\\\\\\\\']
-RAM_HATCHES = ['////', 'oo', '\\\\\\\\']
+ARCH_COLORS = ['tab:purple', 'tab:orange', 'yellow']
+MEM_COLORS = ['tab:purple', 'tab:orange', 'yellow']
+ARCH_HATCHES = ['////', '......', '\\\\\\\\']
 
 def get_bench_names() -> list[str]:
     bench_names = []
@@ -31,7 +31,7 @@ def get_label_xtick_positions() -> list[float]:
     positions = []
     bench_idx = 0
     for i, bench_group in enumerate(ALL_BENCHMARKS.keys()):
-        positions.append(bench_idx + (len(ALL_BENCHMARKS[bench_group]) - 1) / 2)
+        positions.append(bench_idx + (len(ALL_BENCHMARKS[bench_group]) - 0.5) / 2)
         bench_idx += len(ALL_BENCHMARKS[bench_group])
 
     return positions

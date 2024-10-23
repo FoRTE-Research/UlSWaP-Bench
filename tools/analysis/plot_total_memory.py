@@ -77,12 +77,12 @@ def main():
         sizes = total_memory_dict[bench]
         nvm_size = sizes['.text'] + sizes['.rodata'] + sizes['.data']
         ram_size = sizes['.data'] + sizes['.bss'] + sizes['stack']
-        print('%20s: text = %5d, rodata = %5d, data = %5d, bss = %5d, stack = %5d, nvm = %6d, ram = %5d' %
+        print('%13s: text = %5d, rodata = %5d, data = %5d, bss = %5d, stack = %5d, nvm = %6d, ram = %5d' %
               (bench, sizes['.text'], sizes['.rodata'], sizes['.data'], sizes['.bss'], sizes['stack'], nvm_size, ram_size))
-    plot_total_memory(total_memory_dict, args.plot_file)
+    # plot_total_memory(total_memory_dict, args.plot_file)
 
     # create CSV file
-    with open('total_memory_riscv.csv', 'w', newline='') as csvfile:
+    with open('output/riscv_totmem.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(['Benchmark', '.text', '.rodata', '.data', '.bss', 'stack'])
         for bench in get_bench_names():
