@@ -3,20 +3,20 @@ cmake_minimum_required(VERSION 3.20)
 project(Benchmarks C ASM)
 
 # Create a list of available architectures
-file(GLOB available_architectures RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/arch ${CMAKE_CURRENT_SOURCE_DIR}/arch/*)
+file(GLOB available_architectures RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/hw ${CMAKE_CURRENT_SOURCE_DIR}/hw/*)
 
 # Make sure the user has specified an architecture
 if(NOT ARCH)
-    message(FATAL_ERROR "Please specify an architecture to build the benchmarks for")
-    message("Available architectures: ${available_architectures}")
+    message(FATAL_ERROR "Please specify a hardware platform to build the benchmarks for")
+    message("Available platforms: ${available_architectures}")
 endif()
 
 # Make sure all specified architectures are valid
 if(NOT ${ARCH} IN_LIST available_architectures)
-    message(FATAL_ERROR "Architecture ${arch} is not available")
+    message(FATAL_ERROR "Hardware platform ${ARCH} is not available")
 else()
-    include(arch/${ARCH}/config.cmake)
-    set(ARCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/arch/${ARCH})
+    include(hw/${ARCH}/config.cmake)
+    set(ARCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/hw/${ARCH})
     cmake_language(CALL set_${ARCH}_config)
 endif()
 
