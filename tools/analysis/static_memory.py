@@ -66,3 +66,6 @@ def get_all_binary_sizes(directory:str) -> dict[str, dict[str, int]]:
 
     return binary_sizes
 
+
+if __name__ == '__main__':
+    print('This file is a module and not intended to be run directly.')

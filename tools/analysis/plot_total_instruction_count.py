@@ -151,8 +151,19 @@ def plot_total_instruction_count(output_file:str=None) -> None:
     return
 
 
+help_msg = '''
+This script retrieves and plots the total instruction count for each benchmark for all 3 architectures
+as a grouped bar chart.
+The input for RISC-V and MSP430 are directories and for ARM is a CSV file. The formats are architecture specific.
+If no output file is specified, the plot will be displayed.
+'''
+
+
 def main():
-    args = parse_args()
+    parent_parser = get_parent_parser(False, False)
+    parser = argparse.ArgumentParser(parents=[parent_parser], description=help_msg)
+    args = parser.parse_args()
+    output_file = args.output
 
     global g_runtime_counts_riscv
     global g_runtime_counts_msp
@@ -162,7 +173,7 @@ def main():
     g_runtime_counts_msp = get_runtime_count_map_msp430(MSP430_DUMP_DIR)
     g_runtime_counts_arm = get_runtime_count_map_arm(ARM_CSV_FILE)
 
-    plot_total_instruction_count(args.plot_file)
+    plot_total_instruction_count(output_file)
 
 
 if __name__ == '__main__':

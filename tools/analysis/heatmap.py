@@ -135,3 +135,7 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
             texts.append(text)
 
     return texts
+
+
+if __name__ == '__main__':
+    print('This file is a module and not intended to be run directly.')

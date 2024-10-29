@@ -75,18 +75,31 @@ def failure_callback(msg:str):
     print("Thread pool error: " + str(msg))
 
 
+help_msg = '''
+This script runs a Verilator executable for which the firmware is taken from the hex file(s) provided.
+The input can be a single hex file or a directory containing multiple hex files.
+If a directory is provided, all hex files in that directory are processed in parallel.
+The output will be saved in the specified output directory.
+'''
+
+
 def main():
-    args = parse_args()
-    output_dir = args.output_dir
+    parent_parser = get_parent_parser(True, True)
+    parser = argparse.ArgumentParser(parents=[parent_parser], description=help_msg)
+    args = parser.parse_args()
+
+    output_dir = args.output
     check_dir_exists(output_dir, True)
 
-    if (args.hex_file is not None):
-        res = run_verilator(args.hex_file, output_dir)
+    if (check_file_exists(args.input)):
+        res = run_verilator(args.input, output_dir)
         success_callback(res)
-        return
+    elif (check_dir_exists(args.input, False)):
+        run_all_verilator(args.input, output_dir)
     else:
-        run_all_verilator(args.hex_dir, output_dir)
-        return
+        print('Invalid input. Please provide a valid hex file or directory containing hex files.')
+
+    return
 
 
 if __name__ == '__main__':

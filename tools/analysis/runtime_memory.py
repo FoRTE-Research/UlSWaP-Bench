@@ -25,3 +25,7 @@ def get_runtime_memory_map(directory:str) -> dict:
         runtime_memory[bench_name] = count
 
     return runtime_memory
+
+
+if __name__ == '__main__':
+    print('This file is a module and not intended to be run directly.')

@@ -189,56 +189,5 @@ def disassemble_riscv_full(hex_value:str) -> RISCVInstruction|None:
     return instruction
 
 
-# def plot_instruction_count(instruction_count):
-#     import matplotlib.pyplot as plt
-
-#     # Sort the instruction count dictionary by values
-#     sorted_instruction_count = dict(sorted(instruction_count.items(), key=lambda item: item[1], reverse=True))
-
-#     # Plot the instruction count
-#     plt.figure(figsize=(10, 6))
-#     plt.bar(sorted_instruction_count.keys(), sorted_instruction_count.values(), color='skyblue')
-#     plt.xlabel('Instructions')
-#     plt.ylabel('Count')
-#     plt.title('Dynamic Instruction Count')
-#     plt.xticks(rotation=90)
-#     plt.show()
-
-
-# def main():
-#     input_file = sys.argv[1]
-#     output_file = sys.argv[2]
-#     # instruction_count = {}
-#     all_instructions = []
-
-#     with open(input_file, 'r') as f:
-#         hex_lines = f.readlines()
-
-#     for hex_line in hex_lines:
-#         if ('$finish' in hex_line):
-#             break
-
-#         address = hex_line.strip().split()[0]
-#         hex_instruction = hex_line.strip().split()[1]
-#         if (hex_instruction == '00100073'):
-#             # print('EBREAK found')
-#             break
-#         instruction = disassemble_riscv(hex_instruction)
-#         if instruction is None:
-#             print(f'Unknown instruction at {address}: {hex_instruction}')
-#         else:
-#             instruction.set_address(address)
-#             all_instructions.append(instruction)
-#             # instruction_count[instruction] = instruction_count.get(instruction, 0) + 1
-
-#     with open(output_file, 'wb') as f:
-#         pickle.dump(all_instructions, f)
-
-#     # for instruction, count in instruction_count.items():
-#     #     print(f'{instruction}: {count}')
-#     # print(instruction_count)
-#     # plot_instruction_count(instruction_count)
-
-
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    print('This file is a module and not intended to be run directly.')

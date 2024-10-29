@@ -1,3 +1,4 @@
+import argparse
 import os
 from enum import Enum
 
@@ -70,30 +71,63 @@ class RunStatus(Enum):
     SUCCESS = 1
     FAILED = 2
 
-def parse_args():
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--benchmark', type=str, help='Benchmark to run')
-    parser.add_argument('--hex_file', type=str, help='Path to the hex file')
-    parser.add_argument('--bin_dir', type=str, help='Directory containing firmware binaries')
-    parser.add_argument('--build_dir', type=str, help='Directory containing object files')
-    parser.add_argument('--hex_dir', type=str, help='Directory containing firmware hex files')
-    parser.add_argument('--dump_file', type=str, help='Dump file to analyze')
-    parser.add_argument('--dump_dir', type=str, help='Directory containing verilator dump')
-    parser.add_argument('--output_dir', type=str, help='Directory to store the output files')
-    parser.add_argument('--plot_file', type=str, help='File in which to store the plot')
-    parser.add_argument('--msp430', action='store_true', help='Parse for MSP430')
-    parser.add_argument('--arm', action='store_true', help='Parse for ARM')
-    parser.add_argument('--riscv', action='store_true', help='Parse for RISC-V')
 
-    return parser.parse_args()
+def get_parent_parser(input_reqd:bool = True, output_reqd:bool = False) -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(add_help=False)
+
+    parser.add_argument('-i', '--input', type=str, required=input_reqd, help='Path to the input file or directory')
+    parser.add_argument('-o', '--output', type=str, required=output_reqd, help='Path to the output file or directory')
+
+    return parser
+
+# def parse_args():
+#     import argparse
+#     parser = argparse.ArgumentParser()
+#     # parser.add_argument('--hex_file', type=str, help='Path to the hex file')
+#     # parser.add_argument('--bin_dir', type=str, help='Directory containing firmware binaries')
+#     # parser.add_argument('--hex_dir', type=str, help='Directory containing firmware hex files')
+#     # parser.add_argument('--dump_file', type=str, help='Dump file to analyze')
+#     # parser.add_argument('--dump_dir', type=str, help='Directory containing verilator dump')
+
+#     # parser.add_argument('--benchmark', type=str, help='Benchmark to run')
+#     parser.add_argument('--build_dir', type=str, help='Directory containing object files')
+#     parser.add_argument('-i', '--input', type=str, help='Path to the input file or directory')
+#     parser.add_argument('-o', '--output', type=str, help='Path to the output file or directory')
+#     # parser.add_argument('--input_file', type=str, help='Path to the input file')
+#     # parser.add_argument('--output_file', type=str, help='Path to the output file')
+#     # parser.add_argument('--input_dir', type=str, help='Directory with input files to parse or run')
+#     # parser.add_argument('--output_dir', type=str, help='Directory to store the output files')
+#     # parser.add_argument('--plot_file', type=str, help='File in which to store the plot')
+#     parser.add_argument('--msp430', action='store_true', help='Parse for MSP430')
+#     parser.add_argument('--arm', action='store_true', help='Parse for ARM')
+#     parser.add_argument('--riscv', action='store_true', help='Parse for RISC-V')
+
+#     return parser.parse_args()
 
 
 def check_dir_exists(dir_path:str, create:bool) -> bool:
-    if not os.path.exists(dir_path):
+    if os.path.isdir(dir_path):
+        return True
+    elif not os.path.exists(dir_path):
         if create:
+            print(f'Creating directory: {dir_path}')
             os.mkdir(dir_path)
+            return True
         else:
             print(f'{dir_path} does not exist')
             return False
-    return True
+    else:
+        print(f'{dir_path} is not a directory')
+        exit(1)
+
+
+def check_file_exists(file_path:str) -> bool:
+    if not os.path.isfile(file_path):
+        print(f'{file_path} does not exist')
+        return False
+    else:
+        return True
+
+
+if __name__ == '__main__':
+    print('This file is a module and not intended to be run directly.')

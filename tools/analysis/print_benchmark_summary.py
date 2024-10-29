@@ -61,22 +61,69 @@ def get_benchmark_summaries(mem_map:dict[str, dict[str, int]]) -> dict[str,Bench
     return summaries
 
 
-def print_summaries_latex(summaries:dict[str,BenchmarkSummary]) -> None:
+def get_summaries_latex(summaries:dict[str,BenchmarkSummary]) -> str:
+    output = ''
     for category in ALL_BENCHMARKS.keys():
-        print(' ' * 8 + f'\\multirow{{{len(ALL_BENCHMARKS[category])}}}{{*}}{{\\rotatebox[origin=c]{{90}}{{{category}}}}}')
+        output += ' ' * 8 + f'\\multirow{{{len(ALL_BENCHMARKS[category])}}}{{*}}{{\\rotatebox[origin=c]{{90}}{{{category}}}}}' + '\n'
         for benchmark in ALL_BENCHMARKS[category]:
             summary = summaries[benchmark]
             escaped_benchmark = benchmark.replace('_', '\_')
-            print(' ' * 8 + f'& {escaped_benchmark} & {summary.nvm} & {summary.ram} & {summary.device_class.name} \\\\')
-        print(' ' * 8 + '\hline')
+            output += ' ' * 8 + f'& {escaped_benchmark} & {summary.nvm} & {summary.ram} & {summary.device_class.name} \\\\' + '\n'
+        output += ' ' * 8 + '\hline' + '\n'
+
+    return output
+
+
+def get_summaries_csv(summaries:dict[str,BenchmarkSummary]) -> str:
+    output = 'Benchmark,NVM,RAM,Device Class\n'
+    for summary in summaries.values():
+        output += f'{summary.name},{summary.nvm},{summary.ram},{summary.device_class.name}\n'
+
+    return output
+
+
+def print_summaries_table(summaries:dict[str,BenchmarkSummary]) -> None:
+    print('Benchmark     | NVM (bytes) | RAM (bytes) | Device Class')
+    print('--------------|-------------|-------------|-------------')
+    for summary in summaries.values():
+        print(f'{summary.name:<13} | {summary.nvm:>11} | {summary.ram:>11} | {summary.device_class.name:^13}')
 
     return
 
 
+help_msg = '''
+This script prints a summary of all benchmarks including their name, NVM usage, RAM usage, and device class.
+The input file should be a CSV file with the following columns: Benchmark, .text, .rodata, .data, .bss, stack.
+If no output file is specified, the summaries will be printed to the console.
+If an output file is specified, it will be written in CSV format or LaTeX table format (body only) depending on the file extension.
+'''
+
+
 def main():
-    mem_map = get_mem_map(RISCV_CSV_FILE)
-    summaries = get_benchmark_summaries(mem_map)
-    print_summaries_latex(summaries)
+    parent_parser = get_parent_parser()
+    parser = argparse.ArgumentParser(parents=[parent_parser], description=help_msg)
+    args = parser.parse_args()
+    input_file = args.input
+    output_file = args.output
+
+    if check_file_exists(input_file):
+        mem_map = get_mem_map(input_file)
+        summaries = get_benchmark_summaries(mem_map)
+
+        if output_file is None:
+            print_summaries_table(summaries)
+        elif output_file.endswith('.csv'):
+            output = get_summaries_csv(summaries)
+        elif output_file.endswith('.tex'):
+            output = get_summaries_latex(summaries)
+        else:
+            print('Unsupported output format. Please use .csv or .tex.')
+            return
+
+        if output_file is not None:
+            with open(output_file, 'w') as f:
+                f.write(output)
+
     return
 
 

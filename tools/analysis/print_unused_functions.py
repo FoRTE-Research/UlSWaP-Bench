@@ -60,9 +60,20 @@ def print_unused_functions(unused_funcs:dict[str, list[str]]):
     return
 
 
+help_msg = '''
+This script reads the ELF files for each benchmark and finds functions that are compiled but not used in the final binary.
+The output is printed to the console.
+'''
+
+
 def main():
-    args = parse_args()
-    build_dir = args.build_dir
+    parent_parser = get_parent_parser(True, False)
+    parser = argparse.ArgumentParser(parents=[parent_parser], description=help_msg)
+    args = parser.parse_args()
+
+    build_dir = args.input
+    check_dir_exists(build_dir, create=False)
+
     unused_funcs = get_all_unused_functions(build_dir)
     print_unused_functions(unused_funcs)
 

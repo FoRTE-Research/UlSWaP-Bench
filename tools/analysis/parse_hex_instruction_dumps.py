@@ -29,7 +29,6 @@ class ParseRunResult:
 def parse_dump(dump_file:str, output_dir:str) -> ParseRunResult:
     print(f'Parsing {dump_file}')
     output_file = os.path.join(output_dir, dump_file.split('/')[-1])
-    print(f'Output file: {output_file}')
 
     start = time.time()
     with open(dump_file, 'r', buffering=MAX_BUF_SIZE) as fp_dump, open(output_file, 'a', buffering=MAX_BUF_SIZE) as fp_out:
@@ -64,7 +63,6 @@ def parse_all_dumps(dump_dir:str, output_dir:str):
     job_pool.join()
 
 
-
 def success_callback(result:ParseRunResult):
     if result.status == RunStatus.SUCCESS:
         print(f'{result.benchmark} parsed sucessfully in {result.time_taken:.3f} seconds')
@@ -79,16 +77,28 @@ def failure_callback(exception:BaseException):
     print('Process pool failure: ' + str(exception))
 
 
-def main():
-    args = parse_args()
-    check_dir_exists(args.output_dir, True)
+help_msg = '''
+This script reads hex instruction dumps for each benchmark and disassembles them into RISC-V instructions.
+If the input is a file, only that file is parsed.
+If the input is a directory, all files in that directory are processed in parallel.
+The parsed result(s) will be saved in the specified output directory.
+'''
 
-    if args.dump_file is not None:
-        res = parse_dump(args.dump_file, args.output_dir)
+
+def main():
+    parent_parser = get_parent_parser(True, True)
+    parser = argparse.ArgumentParser(parents=[parent_parser], description='Parse hex instruction dumps')
+    args = parser.parse_args()
+
+    check_dir_exists(args.output, True)
+
+    if os.path.isfile(args.input):
+        res = parse_dump(args.input, args.output)
         success_callback(res)
+    elif os.path.isdir(args.input):
+        parse_all_dumps(args.input, args.output)
     else:
-        check_dir_exists(args.dump_dir, False)
-        parse_all_dumps(args.dump_dir, args.output_dir)
+        print('Please provide a valid input file or directory')
 
 
 if __name__ == '__main__':

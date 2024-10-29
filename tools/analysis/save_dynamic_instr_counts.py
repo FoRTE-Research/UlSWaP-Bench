@@ -33,11 +33,20 @@ def get_instruction_count_maps(dump_dir:str, output_dir:str) -> dict[str, dict[s
     return benchmark_maps
 
 
+help_msg = '''
+This script reads instruction dumps for each benchmark and creates a CSV file for each one that maps each instruction to its count.
+The input directory should contain instruction dumps for each benchmark.
+'''
+
+
 def main():
-    args = parse_args()
-    check_dir_exists(args.dump_dir, create=False)
-    check_dir_exists(args.output_dir, create=True)
-    get_instruction_count_maps(args.dump_dir, args.output_dir)
+    parent_parser = get_parent_parser(True, True)
+    parser = argparse.ArgumentParser(parents=[parent_parser], description=help_msg)
+    args = parser.parse_args()
+
+    check_dir_exists(args.input, create=False)
+    check_dir_exists(args.output, create=True)
+    get_instruction_count_maps(args.input, args.output)
     return
 
 

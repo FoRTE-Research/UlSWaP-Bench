@@ -41,7 +41,7 @@ def get_ir_properties(benchmark:str, build_dir:str) -> tuple[int, int]:
             sp.run(cmd, shell=True, check=True, capture_output=True)
 
             cmd = f'opt-15 -load-pass-plugin {PLUGIN_LIB} -passes=print-basic-block-inst-counter -disable-output {temp_dir}/{fname}.ll'
-            proc = sp.run(cmd, shell=True, capture_output=True) #.decode()
+            proc = sp.run(cmd, shell=True, capture_output=True)
             output = proc.stderr.decode()
 
             for line in output.splitlines():
@@ -79,37 +79,87 @@ def get_benchmark_properties(benchmark:str, build_dir:str) -> BenchmarkPropertie
     return BenchmarkProperties(benchmark, c_loc, h_loc, num_basic_blocks, num_instructions)
 
 
-def print_properties_csv(all_benchmark_props:dict[str,BenchmarkProperties]) -> None:
-    print('Benchmark,C LOC,H LOC,Basic Blocks,Instructions')
-    for benchmark in all_benchmark_props:
-        print(f'{benchmark.name},{benchmark.c_loc},{benchmark.h_loc},{benchmark.num_basic_blocks},{benchmark.num_instructions}')
-    return
+def get_properties_csv(all_benchmark_props:dict[str,BenchmarkProperties]) -> str:
+    output = 'Benchmark,C LOC,H LOC,Basic Blocks,Instructions\n'
+    for benchmark in all_benchmark_props.values():
+        output += f'{benchmark.name},{benchmark.c_loc},{benchmark.h_loc},{benchmark.num_basic_blocks},{benchmark.num_instructions} \n'
+
+    return output
 
 
-def print_properties_latex(all_benchmark_props:dict[str,BenchmarkProperties]) -> None:
+def get_properties_latex(all_benchmark_props:dict[str,BenchmarkProperties]) -> str:
+    output = ''
     for category in ALL_BENCHMARKS.keys():
-        print(' ' * 8 + f'\\multirow{{{len(ALL_BENCHMARKS[category])}}}{{*}}{{\\rotatebox[origin=c]{{90}}{{{category}}}}}')
+        output += ' ' * 8 + f'\\multirow{{{len(ALL_BENCHMARKS[category])}}}{{*}}{{\\rotatebox[origin=c]{{90}}{{{category}}}}}' + '\n'
         for benchmark in ALL_BENCHMARKS[category]:
             benchmark_props = all_benchmark_props[benchmark]
             escaped_benchmark = benchmark.replace('_', '\_')
-            print(' ' * 8 + f'& {escaped_benchmark} & {benchmark_props.c_loc} & {benchmark_props.h_loc} & '
-                  f'{benchmark_props.num_basic_blocks} & {benchmark_props.num_instructions} \\\\')
-        print(' ' * 8 + '\hline')
+            output += ' ' * 8 + f'& {escaped_benchmark} & {benchmark_props.c_loc} & {benchmark_props.h_loc} & ' +\
+                  f'{benchmark_props.num_basic_blocks} & {benchmark_props.num_instructions} \\\\' + '\n'
+        output += ' ' * 8 + '\hline' + '\n'
 
+    return output
+
+
+def print_properties_table(benchmark_props:dict[str,BenchmarkProperties]) -> None:
+    print('Benchmark     | C LOC | H LOC | Basic Blocks | Instructions')
+    print('--------------|-------|-------|--------------|--------------')
+    for benchmark in benchmark_props.values():
+        print(f'{benchmark.name:<13} | {benchmark.c_loc:>5} | {benchmark.h_loc:>5} | {benchmark.num_basic_blocks:>12} | {benchmark.num_instructions:>12}')
+
+    return
+
+
+help_msg = '''
+This script retrieves and outputs the following program metrics for each benchmark: lines of code in C files and header files,
+number of LLVM-IR basic blocks, and number of LLVM-IR instructions.
+The input directory should be the CMake build directory containing the benchmark object files.
+If no output file is specified, the metrics will be printed to the console.
+If an output file is specified, it will be written in CSV format or LaTeX table format (body only) depending on the file extension.
+'''
 
 def main():
-    args = parse_args()
+    parent_parser = get_parent_parser()
+    parser = argparse.ArgumentParser(parents=[parent_parser], description=help_msg)
+    parser.add_argument('--benchmark', type=str, help='Individual benchmarks to analyze', choices=get_bench_names(), default=None)
+    args = parser.parse_args()
+    build_dir = args.input
+    output_file = args.output
+
+    if not check_file_exists(PLUGIN_LIB):
+        print('LLVM plugin library not found. Please build the plugin first.')
+        return
+
+    if not check_dir_exists(build_dir, False):
+        return
+
+    all_benchmark_props = {}
 
     if args.benchmark is not None:
-        benchmark_props = get_benchmark_properties(args.benchmark, args.build_dir)
-        print_properties_csv([benchmark_props])
+        if output_file is not None and output_file.endswith('.tex'):
+            print('LaTeX output is not supported for individual benchmarks.')
+            return
+
+        benchmark_props = get_benchmark_properties(args.benchmark, build_dir)
+        all_benchmark_props[benchmark_props.name] = benchmark_props
     else:
-        all_benchmark_props = {}
         for benchmark in get_bench_names():
-            benchmark_props = get_benchmark_properties(benchmark, args.build_dir)
+            benchmark_props = get_benchmark_properties(benchmark, build_dir)
             all_benchmark_props[benchmark] = benchmark_props
-        # print_properties_csv(all_benchmark_props)
-        print_properties_latex(all_benchmark_props)
+
+    if output_file is None:
+        print_properties_table(all_benchmark_props)
+    elif output_file.endswith('.csv'):
+        output = get_properties_csv(all_benchmark_props)
+    elif output_file.endswith('.tex'):
+        output = get_properties_latex(all_benchmark_props)
+    else:
+        print('Unsupported output format. Please use .csv or .tex.')
+        return
+
+    if output_file is not None:
+        with open(output_file, 'w') as f:
+            f.write(output)
 
     return
 

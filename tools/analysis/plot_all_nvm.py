@@ -54,9 +54,9 @@ def plot_grouped_stacked_nvm(output_file:str=None) -> None:
         msp_sizes = [msp_nvm[bench][mem_type] for bench in bench_names]
         arm_sizes = [arm_nvm[bench][mem_type] for bench in bench_names]
 
-        riscv_bar = ax.bar(positions, riscv_sizes, bar_width, hatch=ARCH_HATCHES[0], color=NVM_COLORS[i], edgecolor='black', bottom=riscv_bar_bottoms, linewidth=BAR_LINE_WIDTH)
-        msp430_bar = ax.bar(positions + bar_width, msp_sizes, bar_width, hatch=ARCH_HATCHES[1], color=NVM_COLORS[i], edgecolor='black', bottom=msp_bar_bottoms, linewidth=BAR_LINE_WIDTH)
-        arm_bar = ax.bar(positions + 2 * bar_width, arm_sizes, bar_width, hatch=ARCH_HATCHES[2], color=NVM_COLORS[i], edgecolor='black', bottom=arm_bar_bottoms, linewidth=BAR_LINE_WIDTH)
+        riscv_bar = ax.bar(positions, riscv_sizes, bar_width, hatch=ARCH_HATCHES[0], color=MEM_COLORS[i], edgecolor='black', bottom=riscv_bar_bottoms, linewidth=BAR_LINE_WIDTH)
+        msp430_bar = ax.bar(positions + bar_width, msp_sizes, bar_width, hatch=ARCH_HATCHES[1], color=MEM_COLORS[i], edgecolor='black', bottom=msp_bar_bottoms, linewidth=BAR_LINE_WIDTH)
+        arm_bar = ax.bar(positions + 2 * bar_width, arm_sizes, bar_width, hatch=ARCH_HATCHES[2], color=MEM_COLORS[i], edgecolor='black', bottom=arm_bar_bottoms, linewidth=BAR_LINE_WIDTH)
 
         riscv_bar_bottoms = [riscv_bar_bottoms[i] + riscv_sizes[i] for i in range(len(bench_names))]
         msp_bar_bottoms = [msp_bar_bottoms[i] + msp_sizes[i] for i in range(len(bench_names))]
@@ -64,7 +64,7 @@ def plot_grouped_stacked_nvm(output_file:str=None) -> None:
 
     # Legends
     arch_patches = [mpatches.Patch(facecolor='white', hatch=ARCH_HATCHES[i], edgecolor='black', label=ARCHITECTURES[i]) for i in range(len(ARCHITECTURES))]
-    mem_patches = [mpatches.Patch(facecolor=NVM_COLORS[i], edgecolor='black', label=NVM_MEM_TYPES[i]) for i in range(len(NVM_MEM_TYPES))]
+    mem_patches = [mpatches.Patch(facecolor=MEM_COLORS[i], edgecolor='black', label=NVM_MEM_TYPES[i]) for i in range(len(NVM_MEM_TYPES))]
 
     arch_legend = ax.legend(handles=arch_patches, title='Architecture', loc='upper right', fontsize=LEGEND_SIZE, title_fontsize=LEGEND_SIZE)
     ax.add_artist(arch_legend)
@@ -93,10 +93,11 @@ def plot_grouped_stacked_nvm(output_file:str=None) -> None:
     ax.set_ylabel('Size (KiB)', fontsize=YAXIS_LABEL_SIZE, labelpad=0)
     plt.yticks(np.arange(0, 132000, 16384), fontsize=YTICK_SIZE, labels=[str(int(i/1024)) for i in range(0, 132000, 16384)])
     ax.grid(axis='y')
+
+    # Tiny/small separating line
     ax.axhline(65536, color='black', linewidth=1, linestyle='--', label='64KB')
     ax.text(-0.3, 65536+1300, 'Small \u2191', fontsize=FONT_SIZE, va='bottom')
     ax.text(-0.3, 65536-2900, 'Tiny   \u2193', fontsize=FONT_SIZE, va='top')
-
 
     plt.tight_layout()
 
@@ -108,15 +109,29 @@ def plot_grouped_stacked_nvm(output_file:str=None) -> None:
     return
 
 
+help_msg = '''
+This script retrieves and plots the total non-volatile memory (NVM) usage for each benchmark for all 3 architectures
+as a stacked and grouped bar chart.
+The input files are CSV files with at least the following columns: Benchmark, .text, .rodata, .data.
+The three filenames are currently hardcoded as global variables in the script.
+If no output file is specified, the plot will be displayed.
+'''
+
+
 def main():
-    args = parse_args()
+    parent_parser = get_parent_parser(False, False)
+    parser = argparse.ArgumentParser(parents=[parent_parser], description=help_msg)
+    args = parser.parse_args()
+    output_file = args.output
+
     global riscv_nvm, msp_nvm, arm_nvm
 
     riscv_nvm = get_nvm_map(RISCV_CSV_FILE)
     msp_nvm = get_nvm_map(MSP430_CSV_FILE)
     arm_nvm = get_nvm_map(ARM_CSV_FILE)
 
-    plot_grouped_stacked_nvm(args.plot_file)
+    plot_grouped_stacked_nvm(output_file)
+
     return
 
 

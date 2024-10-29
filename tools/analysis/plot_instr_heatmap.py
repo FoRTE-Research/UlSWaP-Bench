@@ -28,7 +28,7 @@ def get_instruction_count_maps(dir_name:str) -> dict[str, dict[str, int]]:
     return benchmark_maps
 
 
-def get_hw_count_map(instr_count_maps:dict[str, dict[str, int]]) -> dict[str, dict[str, int]]:
+def get_hw_count_maps(instr_count_maps:dict[str, dict[str, int]]) -> dict[str, dict[str, int]]:
     hw_count_map = {}
     for benchmark, instr_count_map in instr_count_maps.items():
         hw_count_map[benchmark] = instr_count_map.copy()
@@ -70,12 +70,8 @@ def show_heatmap(instr_count_maps:dict[str, dict[str, float]], image_name:str|No
 
     fig, ax = plt.subplots()
 
-    if 'msp430' in image_name:
-        fig.set_figwidth(7.5)
-        fig.set_figheight(3.6)
-    else:
-        fig.set_figwidth(6.5)
-        fig.set_figheight(3.6)
+    fig.set_figwidth(7.5)   # was 6.5 for RISC-V
+    fig.set_figheight(3.6)
 
     im, cbar = heatmap.heatmap(heatmap_data, benchmark_names, instr_names, ax, cbarlabel='Relative Instruction Freqruency', cmap='gray_r')
     heatmap.annotate_heatmap(im, data=heatmap_data, valfmt='{x:.0f}', fontsize=5)
@@ -90,19 +86,31 @@ def show_heatmap(instr_count_maps:dict[str, dict[str, float]], image_name:str|No
     return
 
 
+help_msg = '''
+Generate heatmap of dynamic instruction frequencies for each benchmark.
+The input directory should contain CSV files mapping each instruction to its count.
+The '--hw' flag can be used to merge the counts for immediate and register instructions for RISC-V.
+If no output file is specified, the plot will be displayed.
+'''
+
 def main():
-    args = parse_args()
-    dump_dir = args.dump_dir
-    instr_count_maps = get_instruction_count_maps(dump_dir)
-    hw_count_map = get_hw_count_map(instr_count_maps)
-    normalized_maps = get_normalized_instruction_count_maps(hw_count_map)
-    # normalized_maps = get_normalized_instruction_count_maps(instr_count_maps)
-    show_heatmap(normalized_maps, args.plot_file)
+    parent_parser = get_parent_parser(True, False)
+    parser = argparse.ArgumentParser(parents=[parent_parser], description=help_msg)
+    parser.add_argument('--hw', action='store_true', help='Create hardware view heatmap (merge immediate and register instructions). RISC-V only.')
+
+    args = parser.parse_args()
+
+    check_dir_exists(args.input, create=False)
+
+    instr_count_maps = get_instruction_count_maps(args.input)
+    if args.hw:
+        instr_count_maps = get_hw_count_maps(instr_count_maps)
+
+    normalized_maps = get_normalized_instruction_count_maps(instr_count_maps)
+    show_heatmap(normalized_maps, args.output)
+
     return
 
 
 if __name__ == '__main__':
     main()
-
-# Usage:
-# python dynamic_count_heatmap.py --dump_dir=directory/with/csv/files [--plot_file=heatmap.pdf]
