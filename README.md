@@ -1,46 +1,88 @@
-# Benchmarks targeting ultra-low size, weight, and power embedded systems
+# UlSWaP Bench
+UlSWaP Bench (pronounced you'll swap bench) is a benchmark suite for ultra-low size, weight and power devices.
 
-[MiBench](http://vhosts.eecs.umich.edu/mibench/) ported for IoT devices, with performance, effectiveness, and usability enhancements that greatly improve upon the popular MiBench2 benchmarks.
+## Prerequisites
+You will need [CMake](https://cmake.org/download/) as well as the cross-compiler for your target platform.
 
-All benchmarks include [barebench.h](barebench.h).  This file contains the `main()` used in building every benchmark and determines the number of benchmark trials and what happens when a benchmark attempts to print to the screen.
+## Building
+    cmake . -B <build_directory> -DARCH=<arch> [-DNO_PRINT]
+    cmake --build <build_directory> -j`nproc`
 
-### Prerequisites
+`arch` must be a subdirectory within the hw/ directory.
+The -DNO_PRINT option will disable all printing via printf.
 
-You will need a cross-compiler for your target platform. The default target is the ARM-Cortex-M0+.  The easiest way to get a working cross-compiler for the Cortex-M0+ is to download the prebuilt binaries from [Launchpad.net](https://launchpad.net/gcc-arm-embedded).
+To build a subset of benchmarks:
 
-Whatever toolchain you go with, update the paths and commands in the global [make file](Makefile.mk).
+    cmake --build <build_directory> -j`nproc` --target "benchmark1;benchmark2"
 
-### Building
+The executable ELF files will be in <build_directory>/bin.
 
-`cd` to the appropriate benchmark directory.
+<!-- ### Other build options -->
 
-`make ARCH={riscv|arm|native}`
+## Currently supported hardware
+### Native
+The "native" hardware is intended primarily for cross-testing.
+It uses the host's default C compiler and libraries.
+So far, this has only been tested on an x64 Linux host.
+If `-DHOST_TEST=1` is provided, some of the signal processing benchmarks will output a file that can be used to verify the correctness of the benchmark's implementation.
 
+### RISC-V
+The "riscv" hardware targeted here is a custom core available at <>, and uses a custom compiler available at <>.
+[Picolibc](https://github.com/picolibc/picolibc) is used as the C library.
 
-Running `make` produces several useful files:
-   `main.elf` an ELF executable suitable for loading to a board or simulator using GDB
-   `main.bin` a raw binary suitable for loading directly in to the memory of a board or a simulator
-   `main.lst` assembly listing
+### Spike
+"spike" targets the [Spike](https://github.com/riscv-software-src/riscv-isa-sim) RISC-V simulator.
+It also uses a custom version of Clang and links against Picolibc.
 
+### MSP430
+Targets the MSP430FR5994 microcontroller.
+GCC is the compiler and Picolibc is the C library.
 
-Running `make clean` will remove all files produced during compilation.
+<!-- ### ARM
+Targets the TivaC ... -->
 
-To build all benchmarks and move the resulting elf files to the repo's top-level directory, run [buildAll.sh](buildAll.sh).
+## Adding a new hardware platform
+To support a new hardware platform, create a new subdirectory inside hw/, and add a file named config.cmake to it.
+This file sets the C compiler, libraries, compiler/linker flags, linker script, post-build commands, etc. for the given hardware.
+These variables need to be set with `PARENT_SCOPE` so they can be picked up by the parent CMakeLists.txt.
+Important variables that can be set include (not all are necessary):
+1. CMAKE_C_COMPILER - The C compiler.
+2. CMAKE_ASM_COMPILER - The assembly compiler.
+3. ARCH_LINK_DIRS - The location(s) of the C library and/or hardware-specific libraries to link against.
+4. ARCH_INC_DIRS - The locations(s) of C library and/or hardware-specific header files.
+5. ARCH_FLAGS - Hardware-specific compiler flags. This will probably include the location of the linker script.
+6. ARCH_LINK_FLAGS - Hardware-specific linker flags.
+7. ARCH_SOURCES - Hardware-specific source files. These will probably be a combination of C and assembly files with functions for printing, entry, etc.
+8. ARCH_OBJDUMP - The objdump executable for this hardware. If set, the object dump for each benchmark executable will be sent to <build_directory>/lst.
+9. ARCH_POST_COMMAND - A post-build command to run per benchmark.
 
-### Porting
+See riscv/config.cmake for an example that uses all of the above variables, and native/config.cmake that sets the minimum required variables.
+All other hardware-specific files should be located in the same directory.
 
-[memmap](memmap) contains the memory map used by the linker to place program sections.  Edit this file to change the size of memory or the location/size of individual program sections (e.g., stack and heap).
+## Testing
+To test your hardware platform, compile the benchmarks with printing enabled, and compare the output to the gold reference located at test/reference_output.
+The benchmarks are designed to print meaningful output that can be used for testing purposes.
+The reference outputs have been captured on an x64 Linux platform.
+The check_output.py script can be used for comparison, and the `-d` option can be used to set the maximum allowable difference for floating point numbers (default=0.0001).
 
-[vectors.s](vectors.s) contains the exception jump table and the execution entry point `_start` and exit point `exit`.  You may need to edit this file if you target a different instruction set than the ARMv6-M.
+## Analysis
+There are a number of analysis scripts in the tools/analysis directory.
+Run them with the `-h` argument to find out what they do and the arguments they expect.
 
-[putget.s](putget.s) contains low level functions written in assembly.  Edit the `putchar` function in this file to change the behavior of all C-level printing operations.
+## Directory layout
+The repository is organised as follows:
 
-[supportFuncs.c](supportFuncs.c) contains functions needed to port newlib to our target platform.
-
-### Statically Allocated
-
-Benchmark susan: Statically Allocated for this specific data set.
-
-Benchmark fft: Statically Allocated for this specific data set.
-
-
+    .
+    ├── hw/                     # Hardware-specific source and build files
+    |   ├── arm/
+    |   ├── msp430/
+    |   ├── native/
+    |   ├── riscv/
+    |   ├── spike/
+    ├── src/                    # Benchmark source code (one folder per benchmark)
+    ├── test/
+    |   ├── check_output.py
+    |   ├── reference_output/   # Gold reference output for each benchmark
+    ├── tools/
+    |   ├── analysis/           # Scripts to analyse the benchmarks
+    |   ├── input_gen/          # Scripts to generate input for various benchmarks
