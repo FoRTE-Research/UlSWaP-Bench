@@ -17,6 +17,11 @@
 #define ECB 1
 #endif
 
+#define ECB_MSG_SIZE 16
+#define ECB_ITERATIONS 65536 / ECB_MSG_SIZE
+#define CBC_MSG_SIZE 64
+#define CBC_ITERATIONS 65536 / CBC_MSG_SIZE
+
 #if defined(ECB) && ECB
 
 void AES128_ECB_encrypt(uint8_t *input, const uint8_t *key, uint8_t *output);
