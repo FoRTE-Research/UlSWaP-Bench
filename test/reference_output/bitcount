@@ -7,3 +7,4 @@ Recursive bit count by bytes          > Set bits: 1574600
 Non-recursive bit count by bytes (BW) > Set bits: 1863882
 Non-recursive bit count by bytes (AR) > Set bits: 1744944
 Shift and count bits                  > Set bits: 1626420
+Benchmark execution complete.

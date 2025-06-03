@@ -6,3 +6,4 @@ Total input samples = 15207
 Each 256 byte ADPCM block will contain 505 samples
 Output file size = 7772 bytes
 Checksum = 783495
+Benchmark execution complete.

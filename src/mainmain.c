@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 int benchmark_main(void);
 
 #ifndef RUNS
@@ -14,6 +16,8 @@ int main(void)
     {
         benchmark_main();
     }
+
+    printf("Benchmark execution complete.\r\n");
 
 #ifdef CUSTOM_ARCH_FINISH
     run_arch_finish();
