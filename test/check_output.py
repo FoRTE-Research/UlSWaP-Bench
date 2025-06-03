@@ -9,6 +9,12 @@ def compare_files(file1_name:str, file2_name:str, max_delta:float) -> bool:
             lines1 = file1.readlines()
             lines2 = file2.readlines()
 
+            # If either file ends with verilog finish message, remove last line
+            if lines1 and 'Verilog $finish' in lines1[-1].strip():
+                lines1.pop()
+            if lines2 and 'Verilog $finish' in lines2[-1].strip():
+                lines2.pop()
+
             try:
                 for line1, line2 in zip(lines1, lines2, strict=True):
                     lines_match = True
