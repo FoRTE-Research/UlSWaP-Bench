@@ -1,5 +1,6 @@
-# MiBench2
-[MiBench](http://vhosts.eecs.umich.edu/mibench/) ported for IoT devices.
+# Benchmarks targeting ultra-low size, weight, and power embedded systems
+
+[MiBench](http://vhosts.eecs.umich.edu/mibench/) ported for IoT devices, with performance, effectiveness, and usability enhancements that greatly improve upon the popular MiBench2 benchmarks.
 
 All benchmarks include [barebench.h](barebench.h).  This file contains the `main()` used in building every benchmark and determines the number of benchmark trials and what happens when a benchmark attempts to print to the screen.
 
