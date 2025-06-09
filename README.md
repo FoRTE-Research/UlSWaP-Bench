@@ -1,5 +1,11 @@
 # UlSWaP Bench
-UlSWaP Bench (pronounced you'll swap bench) is a benchmark suite for ultra-low size, weight and power devices.
+UlSWaP Bench (pronounced you'll swap bench) is a benchmark suite for ultra-low size, weight and power devices. UlSWaP Bench is the next iteration of benchmarks targeting ultra-low size, weight, and power emebedded systems. It takes the improvements of MiBench2 over MiBench, cleans everything up, simplifies the build environment, adjusts input sizes to work on memory-limited devices, adds self-check functionality to verify correct operation for each benchmark, and adds builds for RISC-V, ARM, and MSP430 architectures. UlSWaP-Bench has been verified both on real devices and on existing ISA simulators.
+
+If you want to use MiBench or MiBench2 or have used them in the past, we encourage you to explore UlSWaP Bench. If you do use UlSWaP-Bench or MiBench2 going forward, please cite the UlSWaP-Bench paper:
+
+UlSWaP Bench: A Benchmark Suite for Ultra-Low Size, Weight and Power Devices
+Daniel Chiba, Harrison Williams, and Matthew Hicks.
+
 
 ## Prerequisites
 You will need [CMake](https://cmake.org/download/) as well as the cross-compiler for your target platform.
