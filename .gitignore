@@ -50,5 +50,5 @@ __pycache__/
 *.pdf
 
 # Analysis output
-output/
+output*/
 plots/

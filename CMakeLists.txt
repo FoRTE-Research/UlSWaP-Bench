@@ -60,7 +60,7 @@ foreach(benchmark ${benchmarks})
     target_sources(${benchmark} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/mainmain.c ${ARCH_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/common.c)
     target_include_directories(${benchmark} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-    target_compile_options(${benchmark} PRIVATE -O3)
+    target_compile_options(${benchmark} PRIVATE -Os)
 
     if (NO_PRINT)
         target_compile_definitions(${benchmark} PRIVATE -DNO_PRINT=1)
@@ -90,7 +90,7 @@ foreach(benchmark ${benchmarks})
         add_custom_command(
             TARGET ${benchmark}
             POST_BUILD
-            DEPENDS ${benchmark}
+            # DEPENDS ${benchmark}
             COMMENT "Generating disassembly for ${benchmark}"
             COMMAND ${ARCH_OBJDUMP} -d ${PROJECT_BINARY_DIR}/bin/${benchmark}.elf > ${PROJECT_BINARY_DIR}/lst/${benchmark}.lst
         )
@@ -103,7 +103,7 @@ foreach(benchmark ${benchmarks})
         add_custom_command(
             TARGET ${benchmark}
             POST_BUILD
-            DEPENDS ${benchmark}
+            # DEPENDS ${benchmark}
             COMMENT "Generating hex file for ${benchmark}"
             COMMAND ${ARCH_POST_COMMAND}
             COMMAND_EXPAND_LISTS

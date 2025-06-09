@@ -2,8 +2,8 @@
 
 OUTPUT_ARCH("riscv")
 
-__bram_size = 0x7F000;
-__rom_size = 0x4F000;
+__bram_size = 0x60000;
+__rom_size = 0x40000;
 
 MEMORY
 {
