@@ -42,7 +42,7 @@ limitations under the License.
 #define TM_INLINE       __attribute__((always_inline)) static inline
 #define TM_WEAK         __attribute__((weak))
 
-#define tm_malloc(x)    malloc(x)
+// #define tm_malloc(x)    malloc(x)
 #define tm_free(x)      free(x)
 
 #define TM_PRINTF(...) printf(__VA_ARGS__)

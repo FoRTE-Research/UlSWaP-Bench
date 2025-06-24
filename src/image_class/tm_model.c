@@ -22,7 +22,8 @@ tm_err_t TM_WEAK tm_load  (tm_mdl_t* mdl, const uint8_t* bin, uint8_t*buf, tm_cb
     mdl->b          = mdl_bin;
     mdl->cb         = (void*)cb;
     if(buf == NULL) {
-        mdl->buf        = (uint8_t*)tm_malloc(mdl->b->buf_size);
+        printf("Error: need to statically allocate memory for buf\r\n");
+        // mdl->buf        = (uint8_t*)tm_malloc(mdl->b->buf_size);
         if(mdl->buf == NULL) return TM_ERR_OOM;
         mdl->main_alloc = 1;
 	} else {
@@ -30,7 +31,8 @@ tm_err_t TM_WEAK tm_load  (tm_mdl_t* mdl, const uint8_t* bin, uint8_t*buf, tm_cb
         mdl->main_alloc = 0;
     }
     if(mdl->b->sub_size > 0) {
-        mdl->subbuf = (uint8_t*)tm_malloc(mdl->b->sub_size);
+        printf("Error: need to statically allocate memory for sub_buf\r\n");
+        // mdl->subbuf = (uint8_t*)tm_malloc(mdl->b->sub_size);
         if(mdl->subbuf == NULL) return TM_ERR_OOM;
     } else mdl->subbuf = NULL;
     mdl->layer_i    = 0;
