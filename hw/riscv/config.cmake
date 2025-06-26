@@ -41,5 +41,7 @@ function(set_riscv_config)
     set(ARCH_OBJDUMP ${CC_PATH}/llvm-objdump PARENT_SCOPE)
 
     file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/hex)
-    set(ARCH_POST_COMMAND $ENV{HOME}/FrankenRV/tools/build/firmware_words ${PROJECT_BINARY_DIR}/bin/__BENCHMARK__.elf -ram 0x60000 -out ${PROJECT_BINARY_DIR}/hex/__BENCHMARK__.hex PARENT_SCOPE)
+    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/mem)
+    set(ARCH_POST_COMMAND $ENV{HOME}/FrankenRV/tools/build/firmware_words ${PROJECT_BINARY_DIR}/bin/__BENCHMARK__.elf -ram 0x60000
+        -hex ${PROJECT_BINARY_DIR}/hex/__BENCHMARK__.hex -mem ${PROJECT_BINARY_DIR}/mem/__BENCHMARK__.mem PARENT_SCOPE)
 endfunction()
