@@ -3,7 +3,6 @@
 #include "snipmath.h"
 #include "common.h"
 
-/* The printf's may be removed to isolate just the math calculations */
 
 int benchmark_main(void)
 {

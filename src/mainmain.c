@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "common.h"
 
 int benchmark_main(void);
 
