@@ -6,13 +6,17 @@
 #include <string.h>
 #include "common.h"
 
+#define INPUT_IMPLEMENTATION
+#include "text_input_1k.h"
+
 #define CHACHA20_IMPLEMENTATION
 #define CHACHA20_NO_UNDEF
 #include "ChaCha20.h"
 
-#define MSG_SIZE 114
-#define ITERATIONS ((65536 / MSG_SIZE) + 1)
-#define MAX_NUMS_PER_LINE 16
+#define TOTAL_ENCRYPTION_SIZE 65536
+#define ITERATIONS (TOTAL_ENCRYPTION_SIZE / INPUT_SIZE)
+#define BYTES_TO_PRINT 128
+#define BYTES_PER_LINE 32
 
 const key256_t key = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
@@ -26,114 +30,72 @@ const nonce96_t nonce = {
 
 const uint32_t count = 0x00000001;
 
-const uint8_t plaintext[MSG_SIZE] = {
-    0x4c, 0x61, 0x64, 0x69, 0x65, 0x73, 0x20, 0x61,
-    0x6e, 0x64, 0x20, 0x47, 0x65, 0x6e, 0x74, 0x6c,
-    0x65, 0x6d, 0x65, 0x6e, 0x20, 0x6f, 0x66, 0x20,
-    0x74, 0x68, 0x65, 0x20, 0x63, 0x6c, 0x61, 0x73,
-    0x73, 0x20, 0x6f, 0x66, 0x20, 0x27, 0x39, 0x39,
-    0x3a, 0x20, 0x49, 0x66, 0x20, 0x49, 0x20, 0x63,
-    0x6f, 0x75, 0x6c, 0x64, 0x20, 0x6f, 0x66, 0x66,
-    0x65, 0x72, 0x20, 0x79, 0x6f, 0x75, 0x20, 0x6f,
-    0x6e, 0x6c, 0x79, 0x20, 0x6f, 0x6e, 0x65, 0x20,
-    0x74, 0x69, 0x70, 0x20, 0x66, 0x6f, 0x72, 0x20,
-    0x74, 0x68, 0x65, 0x20, 0x66, 0x75, 0x74, 0x75,
-    0x72, 0x65, 0x2c, 0x20, 0x73, 0x75, 0x6e, 0x73,
-    0x63, 0x72, 0x65, 0x65, 0x6e, 0x20, 0x77, 0x6f,
-    0x75, 0x6c, 0x64, 0x20, 0x62, 0x65, 0x20, 0x69,
-    0x74, 0x2e};
-
-const uint8_t ciphertext[MSG_SIZE] = {
-    0x6e, 0x2e, 0x35, 0x9a, 0x25, 0x68, 0xf9, 0x80,
-    0x41, 0xba, 0x07, 0x28, 0xdd, 0x0d, 0x69, 0x81,
-    0xe9, 0x7e, 0x7a, 0xec, 0x1d, 0x43, 0x60, 0xc2,
-    0x0a, 0x27, 0xaf, 0xcc, 0xfd, 0x9f, 0xae, 0x0b,
-    0xf9, 0x1b, 0x65, 0xc5, 0x52, 0x47, 0x33, 0xab,
-    0x8f, 0x59, 0x3d, 0xab, 0xcd, 0x62, 0xb3, 0x57,
-    0x16, 0x39, 0xd6, 0x24, 0xe6, 0x51, 0x52, 0xab,
-    0x8f, 0x53, 0x0c, 0x35, 0x9f, 0x08, 0x61, 0xd8,
-    0x07, 0xca, 0x0d, 0xbf, 0x50, 0x0d, 0x6a, 0x61,
-    0x56, 0xa3, 0x8e, 0x08, 0x8a, 0x22, 0xb6, 0x5e,
-    0x52, 0xbc, 0x51, 0x4d, 0x16, 0xcc, 0xf8, 0x06,
-    0x81, 0x8c, 0xe9, 0x1a, 0xb7, 0x79, 0x37, 0x36,
-    0x5a, 0xf9, 0x0b, 0xbf, 0x74, 0xa3, 0x5b, 0xe6,
-    0xb4, 0x0b, 0x8e, 0xed, 0xf2, 0x78, 0x5e, 0x42,
-    0x87, 0x4d};
-
-static uint8_t output_buffer[MSG_SIZE] = {0};
+uint8_t enc_output[INPUT_SIZE];
+uint8_t dec_output[INPUT_SIZE];
 ChaCha20_Ctx ctx;
 
 
-void print_hex(const char* label, const uint8_t *data, const size_t size)
+static void print_char_array(const uint8_t *arr, uint32_t len, const char* label)
 {
-    if (label != NULL)
+    if (label)
     {
         printf("%s:\r\n", label);
     }
-    for (int i = 0, j = 0; i < size; i++)
+    for (int i = 0; i < len; i++)
     {
-        printf("%02x", data[i]);
-        if ((j == MAX_NUMS_PER_LINE - 1) || (i == size - 1))
+        printf("%02X ", arr[i]);
+        if (((i+1) < len) && ((i + 1) % BYTES_PER_LINE == 0))
         {
             printf("\r\n");
-            j = 0;
-        }
-        else
-        {
-            j++;
         }
     }
     printf("\r\n");
 }
 
 
-void chacha_encrypt()
-{
-    ChaCha20_init(&ctx, key, nonce, count);
-    ChaCha20_xor(&ctx, plaintext, output_buffer, MSG_SIZE);
-}
-
-
-void chacha_decrypt()
-{
-    ChaCha20_init(&ctx, key, nonce, count);
-    ChaCha20_xor(&ctx, ciphertext, output_buffer, MSG_SIZE);
-}
-
-
-int check_encrypt()
-{
-    return memcmp(ciphertext, output_buffer, sizeof(ciphertext));
-}
-
-
 int check_decrypt()
 {
-    return memcmp(plaintext, output_buffer, sizeof(plaintext));
+    return memcmp(test_data, dec_output, INPUT_SIZE);
 }
 
 
 int benchmark_main(void)
 {
-    print_hex("Key", key, sizeof(key));
-    print_hex("Nonce", nonce, sizeof(nonce));
-    print_hex("Plaintext", plaintext, sizeof(plaintext));
+    print_char_array(key, sizeof(key), "Key");
+    print_char_array(nonce, sizeof(nonce), "Nonce");
+    printf("\r\n");
 
-    printf("Encrypting %u bytes %u times (%u bytes total) \r\n", MSG_SIZE, ITERATIONS, MSG_SIZE * ITERATIONS);
-    for (int i = 0; i < ITERATIONS; i++)
+    printf("Encrypting %u bytes %u times (%u bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
+    printf("Plaintext (first %u bytes):\r\n", BYTES_TO_PRINT);
+    print_char_array(test_data, BYTES_TO_PRINT, NULL);
+    printf("Plaintext (final %u bytes):\r\n", BYTES_TO_PRINT);
+    print_char_array((test_data + INPUT_SIZE - BYTES_TO_PRINT), BYTES_TO_PRINT, NULL);
+
+    ChaCha20_init(&ctx, key, nonce, count);
+    memcpy(enc_output, test_data, INPUT_SIZE);
+    for (uint32_t i = 0; i < ITERATIONS; i++)
     {
-        chacha_encrypt();
+        ChaCha20_xor(&ctx, enc_output, enc_output, INPUT_SIZE);
     }
 
-    print_hex("Output ciphertext", output_buffer, sizeof(output_buffer));
+    printf("\r\nOutput ciphertext after %u iterations (first %u bytes):\r\n", ITERATIONS, BYTES_TO_PRINT);
+    print_char_array(enc_output, BYTES_TO_PRINT, NULL);
+    printf("Output ciphertext after %u iterations (final %u bytes):\r\n", ITERATIONS, BYTES_TO_PRINT);
+    print_char_array(enc_output + INPUT_SIZE - BYTES_TO_PRINT, BYTES_TO_PRINT, NULL);
 
-    printf("Decrypting %u bytes %u times (%u bytes total) \r\n", MSG_SIZE, ITERATIONS, MSG_SIZE * ITERATIONS);
-    for (int i = 0; i < ITERATIONS; i++)
+    printf("\r\nDecrypting %u bytes back %u times (%u bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
+    ChaCha20_init(&ctx, key, nonce, count);
+    memcpy(dec_output, enc_output, INPUT_SIZE);
+    for (uint32_t i = 0; i < ITERATIONS; i++)
     {
-        chacha_decrypt();
-    };
+        ChaCha20_xor(&ctx, dec_output, dec_output, INPUT_SIZE);
+    }
 
-    print_hex("Output plaintext", output_buffer, sizeof(output_buffer));
+    printf("Decrypted plaintext after %u iterations (first %u bytes):\r\n", ITERATIONS, BYTES_TO_PRINT);
+    print_char_array(dec_output, BYTES_TO_PRINT, NULL);
+    printf("Decrypted plaintext after %u iterations (final %u bytes):\r\n", ITERATIONS, BYTES_TO_PRINT);
+    print_char_array((dec_output + INPUT_SIZE - BYTES_TO_PRINT), BYTES_TO_PRINT, NULL);
+    printf("\r\n");
 
     return 0;
 }

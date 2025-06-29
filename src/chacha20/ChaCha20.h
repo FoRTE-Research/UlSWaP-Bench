@@ -86,9 +86,6 @@ void ChaCha20_init(ChaCha20_Ctx* ctx, const key256_t key, const nonce96_t nonce,
  */
 void ChaCha20_xor(ChaCha20_Ctx* ctx, const uint8_t* input_buffer, uint8_t* output_buffer, const size_t bufflen);
 
-#ifdef __cplusplus
-} // extern "C"
-#endif
 
 #ifdef CHACHA20_IMPLEMENTATION
 /******************************************************************************
@@ -105,9 +102,6 @@ void ChaCha20_xor(ChaCha20_Ctx* ctx, const uint8_t* input_buffer, uint8_t* outpu
 	a += b; d ^= a; d = CHACHA20_ROTL(d,  8); \
 	c += d; b ^= c; b = CHACHA20_ROTL(b,  7)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 static uint32_t pack4(const uint8_t* a)
 {
