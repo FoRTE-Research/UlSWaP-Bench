@@ -62,6 +62,14 @@ foreach(benchmark ${benchmarks})
 
     target_compile_options(${benchmark} PRIVATE -Os)
 
+    if (HASH_TEST)
+        target_sources(${benchmark} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/md5.c)
+        target_include_directories(${benchmark} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test)
+        target_compile_definitions(${benchmark} PRIVATE -DHASH_TEST=1)
+    else()
+        target_compile_definitions(${benchmark} PRIVATE -DHASH_TEST=0)
+    endif()
+
     if (NO_PRINT)
         target_compile_definitions(${benchmark} PRIVATE -DNO_PRINT=1)
     else()
