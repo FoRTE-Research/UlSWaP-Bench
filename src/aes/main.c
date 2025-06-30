@@ -45,11 +45,11 @@ uint32_t benchmark_main(void)
 {
     uint32_t ret = 0;
 
-#if HOST_TEST
-    char input_copy[INPUT_SIZE + 1];
-    memcpy(input_copy, test_data, INPUT_SIZE);
-    input_copy[INPUT_SIZE] = '\0';  // Null-terminate the string for printing
-#endif  // HOST_TEST
+#if HASH_TEST
+    hash_result_t hash;
+    hash_ctx_t ctx;
+    hash_init(&ctx);
+#endif  // HASH_TEST
 
     printf("Mode: CBC\r\n");
     print_char_array(g_key, 16, "Key");
@@ -57,13 +57,17 @@ uint32_t benchmark_main(void)
     printf("\r\n");
 
     cbc_encrypt();
+#if HASH_TEST
+    hash_update(&ctx, test_data, INPUT_SIZE);
+#endif
+
     printf("\r\n");
     cbc_decrypt();
-
-#if HOST_TEST
-    int success = memcmp(input_copy, test_data, INPUT_SIZE) == 0;
-    printf("\r\nDecryption %s\r\n", success ? "succeeded" : "failed");
-#endif  // HOST_TEST
+#if HASH_TEST
+    hash_update(&ctx, test_data, INPUT_SIZE);
+    hash_final(hash, &ctx);
+    ret = hash_get_lowest32bits(hash);
+#endif
 
     return ret;
 }
