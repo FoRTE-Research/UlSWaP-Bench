@@ -1,3 +1,3 @@
-Computing the CRC of a 16384 byte message
-63CF8222
+Computing the 32-bit CRC of a 65536 byte message
+CE16B3FD
 Benchmark execution complete.

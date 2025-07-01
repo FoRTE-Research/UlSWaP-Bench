@@ -15,9 +15,10 @@
 
 #include <stdio.h>
 #include <string.h>
-
 #include "common.h"
-#include "../text_input_16k.h"
+
+#define INPUT_IMPLEMENTATION
+#include "text_input_64k.h"
 #include "crc.h"
 
 void crc_test(void)
@@ -50,9 +51,10 @@ benchmark_hash_t benchmark_main(void)
 
     crcInit();
     volatile uint32_t noprint_output;
+    test_data[INPUT_SIZE - 1] = '\0'; // ensure null termination
 
-    printf("Computing the CRC of a %zu byte message\r\n", strlen((const char*)test_data));
-    uint32_t crc = crcFast(test_data, strlen((const char*)test_data));
+    printf("Computing the 32-bit CRC of a %u byte message\r\n", INPUT_SIZE);
+    uint32_t crc = crcFast(test_data, INPUT_SIZE);
     printf("%08X\r\n", crc);
     noprint_output = crc;
     (void)noprint_output;

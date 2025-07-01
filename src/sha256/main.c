@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "input.h"
+#define INPUT_IMPLEMENTATION
+#include "text_input_64k.h"
 #include "sha256.h"
 #include "common.h"
 
@@ -24,10 +25,11 @@ benchmark_hash_t benchmark_main(void)
     SHA256_CTX ctx;                 // SHA256 context
     uint8_t hash[DIGEST_BYTES];     // the output of SHA256 will be stored here
 
-    printf("Hashing %zu bytes of data\r\n", strlen((char*) data));
+    test_data[INPUT_SIZE - 1] = '\0'; // ensure null termination
+    printf("Computing the SHA256 hash of %u bytes of data\r\n", INPUT_SIZE);
 
     sha256_init(&ctx);
-    sha256_update(&ctx, data, strlen((char*) data));
+    sha256_update(&ctx, test_data, INPUT_SIZE);
     sha256_final(&ctx, hash);
 
     print_hash(hash);

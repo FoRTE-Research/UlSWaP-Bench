@@ -2,7 +2,9 @@
 #include <string.h>
 #include <stdint.h>
 #include "common.h"
-#include "../text_input_16k.h"
+
+#define INPUT_IMPLEMENTATION
+#include "text_input_64k.h"
 #include "poly1305.h"
 
 // Test vectors from RFC 7539 -> https://tools.ietf.org/html/rfc7539#section-2.5.2
@@ -31,11 +33,12 @@ benchmark_hash_t benchmark_main(void)
 {
     benchmark_hash_t benchmark_hash_ret = 0;
     uint8_t hash[16];
+    test_data[INPUT_SIZE - 1] = '\0'; // ensure null termination
 
-    printf("Hashing %zu bytes of data\r\n", strlen((char*) test_data));
+    printf("Computing the Poly1305 hash of %u bytes of data\r\n", INPUT_SIZE);
 
     Poly1305_Init(&ctx, key);
-    Poly1305_Update(&ctx, test_data, strlen((char*) test_data));
+    Poly1305_Update(&ctx, test_data, INPUT_SIZE);
     Poly1305_Final(&ctx, hash);
 
     print_hash(hash);
