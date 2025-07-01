@@ -30,6 +30,12 @@ benchmark_hash_t benchmark_main(void)
 {
     benchmark_hash_t benchmark_hash_ret = 0;
 
+#if HASH_TEST
+    hash_result_t benchmark_hash;
+    hash_ctx_t benchmark_hash_ctx;
+    hash_init(&benchmark_hash_ctx);
+#endif  // HASH_TEST
+
     lw_frame_t frame;
     lw_key_grp_t kgrp;
     int status;
@@ -55,6 +61,9 @@ benchmark_hash_t benchmark_main(void)
     for (uint32_t i = 0; i < ITERATIONS; i++)
     {
         status = lw_parse(&frame, g_input_ja_msg, g_input_ja_msg_len);
+#if HASH_TEST
+        hash_update(&benchmark_hash_ctx, &frame.pl, sizeof(frame.pl));
+#endif
     }
     if (status == LW_OK)
     {
@@ -88,6 +97,9 @@ benchmark_hash_t benchmark_main(void)
     for (uint32_t i = 0; i < ITERATIONS; i++)
     {
         status = lw_parse(&frame, g_input_ud_msg, g_input_ud_msg_len);
+#if HASH_TEST
+        hash_update(&benchmark_hash_ctx, &frame.pl, sizeof(frame.pl));
+#endif
     }
     if (status == LW_OK)
     {
@@ -106,6 +118,11 @@ benchmark_hash_t benchmark_main(void)
     {
         printf("DATA MESSAGE PARSE error (%d)", status);
     }
+
+#if HASH_TEST
+    hash_final(benchmark_hash, &benchmark_hash_ctx);
+    benchmark_hash_ret = hash_get_lowest32bits(benchmark_hash);
+#endif  // HASH_TEST
 
     return benchmark_hash_ret;
 }
