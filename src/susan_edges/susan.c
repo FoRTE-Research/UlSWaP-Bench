@@ -642,9 +642,9 @@ void susan_edges_small(uint8_t *in, int32_t *r, uint8_t *mid, uint8_t *bp, int32
             }
         }
 }
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
     uint8_t *in, *bp;
     int32_t bt = BRIGHTNESS_THRESHOLD;
@@ -678,5 +678,5 @@ uint32_t benchmark_main(void)
     put_image(in, x_size, y_size);
 #endif // HOST_TEST
 
-    return ret;
+    return benchmark_hash_ret;
 }

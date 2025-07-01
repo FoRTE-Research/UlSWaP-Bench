@@ -148,9 +148,9 @@ int32_t inet_aton(const char *cp, struct in_addr *addr)
     return (1);
 }
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
     struct ptree *phead;
     struct ptree *p, *pfind;
@@ -230,5 +230,5 @@ uint32_t benchmark_main(void)
         }
     }
 
-    return ret;
+    return benchmark_hash_ret;
 }

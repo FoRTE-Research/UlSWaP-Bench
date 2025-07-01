@@ -30,8 +30,10 @@ void verify_output(void *output_buffer, int32_t num_bytes, uint32_t *checksum)
     }
 }
 
-uint32_t benchmark_main()
+benchmark_hash_t benchmark_main(void)
 {
+    benchmark_hash_t benchmark_hash_ret = 0;
+
     shine_config_t config;
     int32_t bytes_written;
     uint8_t *output_data;
@@ -102,5 +104,5 @@ uint32_t benchmark_main()
     fclose(outfile);
 #endif // HOST_TEST
 
-    return 0;
+    return benchmark_hash_ret;
 }

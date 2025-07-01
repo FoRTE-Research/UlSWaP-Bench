@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include "common.h"
 
-uint32_t benchmark_main(void);
+benchmark_hash_t benchmark_main(void);
 extern void hexstring(uint32_t num);
 
 int main(void)

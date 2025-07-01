@@ -41,14 +41,14 @@ static void print_char_array(const uint8_t *arr, uint32_t len, const char* label
     printf("\r\n");
 }
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
 #if HASH_TEST
-    hash_result_t hash;
-    hash_ctx_t ctx;
-    hash_init(&ctx);
+    hash_result_t benchmark_hash;
+    hash_ctx_t benchmark_hash_ctx;
+    hash_init(&benchmark_hash_ctx);
 #endif  // HASH_TEST
 
     printf("Mode: CBC\r\n");
@@ -58,18 +58,18 @@ uint32_t benchmark_main(void)
 
     cbc_encrypt();
 #if HASH_TEST
-    hash_update(&ctx, test_data, INPUT_SIZE);
+    hash_update(&benchmark_hash_ctx, test_data, INPUT_SIZE);
 #endif
 
     printf("\r\n");
     cbc_decrypt();
 #if HASH_TEST
-    hash_update(&ctx, test_data, INPUT_SIZE);
-    hash_final(hash, &ctx);
-    ret = hash_get_lowest32bits(hash);
+    hash_update(&benchmark_hash_ctx, test_data, INPUT_SIZE);
+    hash_final(benchmark_hash, &benchmark_hash_ctx);
+    benchmark_hash_ret = hash_get_lowest32bits(benchmark_hash);
 #endif
 
-    return ret;
+    return benchmark_hash_ret;
 }
 
 void increment_iv(void)

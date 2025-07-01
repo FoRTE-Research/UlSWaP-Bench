@@ -10,9 +10,9 @@
 #define INPUT_IMAGE_WIDTH 176
 #define INPUT_IMAGE_HEIGHT 104
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
     uint16_t w = INPUT_IMAGE_WIDTH;
     uint16_t h = INPUT_IMAGE_HEIGHT;
@@ -43,5 +43,5 @@ uint32_t benchmark_main(void)
     printf("Output image written to %s\r\n", OUTPUT_IMAGE_NAME);
 #endif  // HOST_TEST
 
-    return ret;
+    return benchmark_hash_ret;
 }

@@ -8,9 +8,9 @@
 #define COMPRESSED_SIZE 5000
 uint8_t compressed_data[COMPRESSED_SIZE];
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
     uint32_t text_size = sizeof(test_data);
     uint32_t compressed_size = COMPRESSED_SIZE;
@@ -59,5 +59,5 @@ uint32_t benchmark_main(void)
     fclose(fp);
 #endif
 
-    return ret;
+    return benchmark_hash_ret;
 }

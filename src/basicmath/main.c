@@ -14,9 +14,9 @@ void round_doubles(double arr[], uint32_t len)
 }
 #endif  // HASH_TEST
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
     double a1 = 1.0, b1 = -10.5, c1 = 32.0, d1 = -30.0;
     double a2 = 1.0, b2 = -4.5,  c2 = 17.0, d2 = -30.0;
@@ -30,9 +30,9 @@ uint32_t benchmark_main(void)
     struct int_sqrt q;
 
 #if HASH_TEST
-    hash_result_t hash;
-    hash_ctx_t ctx;
-    hash_init(&ctx);
+    hash_result_t benchmark_hash;
+    hash_ctx_t benchmark_hash_ctx;
+    hash_init(&benchmark_hash_ctx);
 #endif  // HASH_TEST
 
     printf("********* CUBIC FUNCTIONS ***********\r\n");
@@ -54,7 +54,7 @@ uint32_t benchmark_main(void)
                     Cubic(a1, b1, c1, d1, &num_solutions, solutions);
 #if HASH_TEST
                     round_doubles(solutions, num_solutions);
-                    hash_update(&ctx, solutions, num_solutions * sizeof(double));
+                    hash_update(&benchmark_hash_ctx, solutions, num_solutions * sizeof(double));
 #endif  // HASH_TEST
                 }
             }
@@ -67,7 +67,7 @@ uint32_t benchmark_main(void)
         usqrt(i, &q);
         printf("sqrt(%3d) = %2d\r\n", i, q.sqrt);
 #if HASH_TEST
-        hash_update(&ctx, &q, sizeof(q));
+        hash_update(&benchmark_hash_ctx, &q, sizeof(q));
 #endif  // HASH_TEST
     }
 
@@ -78,7 +78,7 @@ uint32_t benchmark_main(void)
         printf("%3.0f degrees = %.12f radians\r\n", printf_float(input_angle), printf_float(output_angle));
 #if HASH_TEST
         round_doubles(&output_angle, 1);
-        hash_update(&ctx, &output_angle, sizeof(output_angle));
+        hash_update(&benchmark_hash_ctx, &output_angle, sizeof(output_angle));
 #endif  // HASH_TEST
     }
     printf("\r\n");
@@ -89,14 +89,14 @@ uint32_t benchmark_main(void)
         printf("%.12f radians = %3.0f degrees\r\n", printf_float(input_angle), printf_float(output_angle));
 #if HASH_TEST
         round_doubles(&output_angle, 1);
-        hash_update(&ctx, &output_angle, sizeof(output_angle));
+        hash_update(&benchmark_hash_ctx, &output_angle, sizeof(output_angle));
 #endif  // HASH_TEST
     }
 
 #if HASH_TEST
-    hash_final(hash, &ctx);
-    ret = hash_get_lowest32bits(hash);
+    hash_final(benchmark_hash, &benchmark_hash_ctx);
+    benchmark_hash_ret = hash_get_lowest32bits(benchmark_hash);
 #endif  // HASH_TEST
 
-    return ret;
+    return benchmark_hash_ret;
 }

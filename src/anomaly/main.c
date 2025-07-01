@@ -25,9 +25,9 @@ void featurize(double *rms, double *crest, const int16_t *series, size_t len)
     *crest = peak / *rms;
 }
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
     volatile double noprint_output;
     double features[6];
@@ -92,5 +92,5 @@ uint32_t benchmark_main(void)
     noprint_output = pred_featurized;
     (void)noprint_output;
 
-    return ret;
+    return benchmark_hash_ret;
 }

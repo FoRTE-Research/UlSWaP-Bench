@@ -27,9 +27,9 @@ void print_hash(uint8_t *hash)
     printf("\r\n");
 }
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
     uint8_t hash[16];
 
     printf("Hashing %zu bytes of data\r\n", strlen((char*) test_data));
@@ -40,5 +40,5 @@ uint32_t benchmark_main(void)
 
     print_hash(hash);
 
-    return ret;
+    return benchmark_hash_ret;
 }

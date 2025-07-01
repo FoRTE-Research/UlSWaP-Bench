@@ -23,9 +23,9 @@ void print_hex_array(const char *preamble, const uint8_t *array, const int len)
     printf("\r\n");
 }
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
     lw_frame_t frame;
     lw_key_grp_t kgrp;
@@ -104,5 +104,5 @@ uint32_t benchmark_main(void)
         printf("DATA MESSAGE PARSE error (%d)", status);
     }
 
-    return ret;
+    return benchmark_hash_ret;
 }

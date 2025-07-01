@@ -17,9 +17,9 @@ void print_hash(uint8_t *hash)
     printf("\r\n");
 }
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
     SHA256_CTX ctx;                 // SHA256 context
     uint8_t hash[DIGEST_BYTES];     // the output of SHA256 will be stored here
@@ -32,5 +32,5 @@ uint32_t benchmark_main(void)
 
     print_hash(hash);
 
-    return ret;
+    return benchmark_hash_ret;
 }

@@ -522,9 +522,9 @@ void susan_smoothing(int32_t three_by_three, uint8_t *in, float dt, int32_t x_si
     }
 }
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
     uint8_t *in, *bp;
     float dt = DISTANCE_THRESHOLD;
@@ -561,5 +561,5 @@ uint32_t benchmark_main(void)
     put_image(in, x_size, y_size);
 #endif // HOST_TEST
 
-    return ret;
+    return benchmark_hash_ret;
 }

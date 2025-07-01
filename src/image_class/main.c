@@ -133,9 +133,9 @@ static void parse_output(tm_mat_t* outs)
 
 static uint8_t mdl_buf[4800];
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
     printf("mnist demo\n");
     tm_mdl_t mdl;
@@ -167,5 +167,5 @@ uint32_t benchmark_main(void)
     if(res==TM_OK) parse_output(outs);  
     else printf("tm run error: %d\n", res);
     tm_unload(&mdl);                 
-    return ret;
+    return benchmark_hash_ret;
 }

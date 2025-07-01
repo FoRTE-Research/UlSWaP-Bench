@@ -375,9 +375,9 @@ static void init_accel()
 }
 #endif
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
     // "Globals" must be on the stack because Mementos doesn't handle real
     // globals correctly
@@ -416,5 +416,5 @@ uint32_t benchmark_main(void)
         }
     }
 
-    return ret;
+    return benchmark_hash_ret;
 }

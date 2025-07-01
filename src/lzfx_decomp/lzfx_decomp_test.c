@@ -9,9 +9,9 @@
 #define DECOMP_DATA_LEN 0x1800
 uint8_t decompressed_data[DECOMP_DATA_LEN];
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
     uint32_t compressed_size = sizeof(input_data);
     uint32_t decompressed_size = DECOMP_DATA_LEN;
@@ -47,5 +47,5 @@ uint32_t benchmark_main(void)
     fclose(fp);
 #endif  // HOST_TEST
 
-    return ret;
+    return benchmark_hash_ret;
 }

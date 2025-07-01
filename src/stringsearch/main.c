@@ -1694,9 +1694,9 @@ char *strsearch(const char *string)
     return NULL;
 }
 
-uint32_t benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
-    uint32_t ret = 0;
+    benchmark_hash_t benchmark_hash_ret = 0;
 
     char *here;
 
@@ -1712,5 +1712,5 @@ uint32_t benchmark_main(void)
         printf("\r\n");
     }
 
-    return ret;
+    return benchmark_hash_ret;
 }
