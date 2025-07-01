@@ -1,3 +1,3 @@
-Computing the Poly1305 hash of 65536 bytes of data
-f55c1c23b91033b2569f2eadef1a450a
+Hashing 16384 bytes of data
+b12fc00d3258c30ec3bf160fb5587119
 Benchmark execution complete.
