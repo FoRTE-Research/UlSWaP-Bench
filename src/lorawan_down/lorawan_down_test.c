@@ -15,10 +15,13 @@ void print_hex_array(const char *preamble, const uint8_t *array, const int len)
         printf("%s", preamble);
     }
 
-    printf("0x");
     for (int i = 0; i < len; i++)
     {
-        printf("%02X", array[i]);
+        printf("%02X ", array[i]);
+        if ((i + 1) % 32 == 0)
+        {
+            printf("\r\n");
+        }
     }
     printf("\r\n");
 }
