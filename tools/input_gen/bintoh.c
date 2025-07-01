@@ -32,12 +32,23 @@ int main(int argc, char *argv[])
 {
     if (argc < 3)
     {
-        printf("Usage: ./bintoh infile outfile\n");
+        printf("Usage: ./bintoh infile outfile array_size\n");
         return (1);
     }
 
+    uint32_t array_size = 0;
+    if (argc >= 4)
+    {
+        array_size = atoi(argv[3]);
+        if (array_size > sizeof(data))
+        {
+            printf("Size exceeds maximum of %zu bytes\n", sizeof(data));
+            return 1;
+        }
+    }
+
     int32_t constant = 0;
-    if (argc == 4 && strcmp(argv[3], "-c") == 0)
+    if (argc == 5 && strcmp(argv[4], "-c") == 0)
     {
         constant = 1;
     }
@@ -49,6 +60,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     size_t bytesRead = fread(data, 1, sizeof(data), pInfile);
+    array_size = array_size < bytesRead ? array_size : bytesRead;
     fclose(pInfile);
 
     FILE *pOutFile = fopen(argv[2], "wt");
@@ -64,6 +76,8 @@ int main(int argc, char *argv[])
     fprintf(pOutFile, "#define %s\n\n", macro);
 
     fprintf(pOutFile, "#include <stdint.h>\n\n");
+    fprintf(pOutFile, "#define INPUT_SIZE %u\n\n", array_size);
+    fprintf(pOutFile, "#ifdef INPUT_IMPLEMENTATION\n");
 
     if (constant)
     {
@@ -74,7 +88,8 @@ int main(int argc, char *argv[])
         fprintf(pOutFile, "uint8_t test_data[] =\n");
     }
     fprintf(pOutFile, "{\n    ");
-    for (uint32_t i = 0; i < bytesRead; i++)
+
+    for (uint32_t i = 0; i < array_size; i++)
     {
         fprintf(pOutFile, "0x%02X,%s", data[i], (i & 7) == 7 ? "\n    " : " ");
     }
@@ -90,8 +105,9 @@ int main(int argc, char *argv[])
         fprintf(pOutFile, "uint8_t* fakeFile = test_data;\n\n");
     }
 
+    fprintf(pOutFile, "#endif  // INPUT_IMPLEMENTATION\n");
     fprintf(pOutFile, "#endif  // %s\n", macro);
     fclose(pOutFile);
 
-    return 0;
+    return ret;
 }
