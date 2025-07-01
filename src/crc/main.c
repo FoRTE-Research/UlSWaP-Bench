@@ -49,6 +49,12 @@ benchmark_hash_t benchmark_main(void)
 {
     benchmark_hash_t benchmark_hash_ret = 0;
 
+#if HASH_TEST
+    hash_result_t benchmark_hash;
+    hash_ctx_t benchmark_hash_ctx;
+    hash_init(&benchmark_hash_ctx);
+#endif  // HASH_TEST
+
     crcInit();
     volatile uint32_t noprint_output;
     test_data[INPUT_SIZE - 1] = '\0'; // ensure null termination
@@ -58,6 +64,12 @@ benchmark_hash_t benchmark_main(void)
     printf("%08X\r\n", crc);
     noprint_output = crc;
     (void)noprint_output;
+
+#if HASH_TEST
+    hash_update(&benchmark_hash_ctx, &crc, sizeof(crc));
+    hash_final(benchmark_hash, &benchmark_hash_ctx);
+    benchmark_hash_ret = hash_get_lowest32bits(benchmark_hash);
+#endif  // HASH_TEST
 
     return benchmark_hash_ret;
 }
