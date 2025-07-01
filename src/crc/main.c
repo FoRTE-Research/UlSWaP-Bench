@@ -44,8 +44,10 @@ void crc_test(void)
 }
 
 
-int benchmark_main(void)
+uint32_t benchmark_main(void)
 {
+    uint32_t ret = 0;
+
     crcInit();
     volatile uint32_t noprint_output;
 
@@ -55,5 +57,5 @@ int benchmark_main(void)
     noprint_output = crc;
     (void)noprint_output;
 
-    return 0;
+    return ret;
 }

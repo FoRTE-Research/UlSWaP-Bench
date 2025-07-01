@@ -15,6 +15,10 @@
 #define HOST_TEST 0
 #endif
 
+#if HASH_TEST
+#include "hash.h"
+#endif  // HASH_TEST
+
 #define TRUE  1
 #define FALSE 0
 

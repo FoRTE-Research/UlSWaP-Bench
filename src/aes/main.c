@@ -41,8 +41,10 @@ static void print_char_array(const uint8_t *arr, uint32_t len, const char* label
     printf("\r\n");
 }
 
-int benchmark_main(void)
+uint32_t benchmark_main(void)
 {
+    uint32_t ret = 0;
+
 #if HOST_TEST
     char input_copy[INPUT_SIZE + 1];
     memcpy(input_copy, test_data, INPUT_SIZE);
@@ -63,7 +65,7 @@ int benchmark_main(void)
     printf("\r\nDecryption %s\r\n", success ? "succeeded" : "failed");
 #endif  // HOST_TEST
 
-    return 0;
+    return ret;
 }
 
 void increment_iv(void)

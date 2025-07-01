@@ -27,8 +27,9 @@ void print_hash(uint8_t *hash)
     printf("\r\n");
 }
 
-int benchmark_main(int argc, char *argv[])
+uint32_t benchmark_main(void)
 {
+    uint32_t ret = 0;
     uint8_t hash[16];
 
     printf("Hashing %zu bytes of data\r\n", strlen((char*) test_data));
@@ -39,5 +40,5 @@ int benchmark_main(int argc, char *argv[])
 
     print_hash(hash);
 
-    return 0;
+    return ret;
 }

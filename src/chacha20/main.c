@@ -59,8 +59,10 @@ int check_decrypt()
 }
 
 
-int benchmark_main(void)
+uint32_t benchmark_main(void)
 {
+    uint32_t ret = 0;
+
     print_char_array(key, sizeof(key), "Key");
     print_char_array(nonce, sizeof(nonce), "Nonce");
     printf("\r\n");
@@ -97,5 +99,5 @@ int benchmark_main(void)
     print_char_array((dec_output + INPUT_SIZE - BYTES_TO_PRINT), BYTES_TO_PRINT, NULL);
     printf("\r\n");
 
-    return 0;
+    return ret;
 }

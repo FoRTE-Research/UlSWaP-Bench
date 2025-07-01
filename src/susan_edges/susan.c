@@ -642,8 +642,10 @@ void susan_edges_small(uint8_t *in, int32_t *r, uint8_t *mid, uint8_t *bp, int32
             }
         }
 }
-int32_t benchmark_main()
+uint32_t benchmark_main(void)
 {
+    uint32_t ret = 0;
+
     uint8_t *in, *bp;
     int32_t bt = BRIGHTNESS_THRESHOLD;
     int32_t max_no_edges = 2650;
@@ -676,5 +678,5 @@ int32_t benchmark_main()
     put_image(in, x_size, y_size);
 #endif // HOST_TEST
 
-    return 0;
+    return ret;
 }

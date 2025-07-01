@@ -30,7 +30,7 @@ void verify_output(void *output_buffer, int32_t num_bytes, uint32_t *checksum)
     }
 }
 
-int32_t benchmark_main()
+uint32_t benchmark_main()
 {
     shine_config_t config;
     int32_t bytes_written;

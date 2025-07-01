@@ -39,8 +39,10 @@ void print_output_message_details(const lw_frame_t *frame, const uint8_t *msg, c
     print_hex_array("MIC: ", frame->mic.buf, 4);
 }
 
-int benchmark_main()
+uint32_t benchmark_main(void)
 {
+    uint32_t ret = 0;
+
     lw_node_t endnode;
     lw_frame_t frame;
     uint8_t msg[256];
@@ -116,5 +118,5 @@ int benchmark_main()
         print_output_message_details(&frame, msg, len);
     }
     printf("\r\n");
-    return 0;
+    return ret;
 }

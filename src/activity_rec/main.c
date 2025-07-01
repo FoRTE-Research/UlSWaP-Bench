@@ -375,8 +375,10 @@ static void init_accel()
 }
 #endif
 
-int benchmark_main(void)
+uint32_t benchmark_main(void)
 {
+    uint32_t ret = 0;
+
     // "Globals" must be on the stack because Mementos doesn't handle real
     // globals correctly
     uint8_t prev_pin_state = MODE_IDLE;
@@ -414,5 +416,5 @@ int benchmark_main(void)
         }
     }
 
-    return 0;
+    return ret;
 }
