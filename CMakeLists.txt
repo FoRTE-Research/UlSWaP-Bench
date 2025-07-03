@@ -62,6 +62,14 @@ foreach(benchmark ${benchmarks})
 
     target_compile_options(${benchmark} PRIVATE -Os)
 
+    if (CHECKSUM_TEST)
+        target_compile_definitions(${benchmark} PRIVATE -DCHECKSUM_TEST=1)
+        target_sources(${benchmark} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/checksum.c)
+        target_link_libraries(${benchmark} m c)
+    else()
+        target_compile_definitions(${benchmark} PRIVATE -DCHECKSUM_TEST=0)
+    endif()
+
     if (NO_PRINT)
         target_compile_definitions(${benchmark} PRIVATE -DNO_PRINT=1)
     else()
