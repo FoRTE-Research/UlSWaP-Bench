@@ -17,8 +17,16 @@ void print_hash(uint8_t *hash)
     printf("\r\n");
 }
 
-int benchmark_main(int argc, char *argv[])
+benchmark_hash_t benchmark_main(void)
 {
+    benchmark_hash_t benchmark_hash_ret = 0;
+
+#if HASH_TEST
+    hash_result_t benchmark_hash;
+    hash_ctx_t benchmark_hash_ctx;
+    hash_init(&benchmark_hash_ctx);
+#endif  // HASH_TEST
+
     SHA256_CTX ctx;                 // SHA256 context
     uint8_t hash[DIGEST_BYTES];     // the output of SHA256 will be stored here
 
@@ -30,5 +38,11 @@ int benchmark_main(int argc, char *argv[])
 
     print_hash(hash);
 
-    return 0;
+#if HASH_TEST
+    hash_update(&benchmark_hash_ctx, &hash, sizeof(hash));
+    hash_final(benchmark_hash, &benchmark_hash_ctx);
+    benchmark_hash_ret = hash_get_lowest32bits(benchmark_hash);
+#endif  // HASH_TEST
+
+    return benchmark_hash_ret;
 }

@@ -154,13 +154,15 @@ int check_result()
     return memcmp(sec_a, sec_b, ECC_PUB_SIZE);
 }
 
-int benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
+    benchmark_hash_t benchmark_hash_ret = 0;
+
     ecdh_shared_secret(prv_a, pub_b, sec_a);
     print_hex("Shared Secret A", sec_a, ECC_PUB_SIZE);
 
     ecdh_shared_secret(prv_b, pub_a, sec_b);
     print_hex("Shared Secret B", sec_b, ECC_PUB_SIZE);
 
-    return 0;
+    return benchmark_hash_ret;
 }

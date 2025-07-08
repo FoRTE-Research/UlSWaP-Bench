@@ -26,11 +26,19 @@ void print_hex_array(const char *preamble, const uint8_t *array, const int len)
     printf("\r\n");
 }
 
-int benchmark_main()
+benchmark_hash_t benchmark_main(void)
 {
+    benchmark_hash_t benchmark_hash_ret = 0;
+
+#if HASH_TEST
+    hash_result_t benchmark_hash;
+    hash_ctx_t benchmark_hash_ctx;
+    hash_init(&benchmark_hash_ctx);
+#endif  // HASH_TEST
+
     lw_frame_t frame;
     lw_key_grp_t kgrp;
-    int ret;
+    int status;
 
     lw_init(US915);
 
@@ -52,9 +60,12 @@ int benchmark_main()
 
     for (uint32_t i = 0; i < ITERATIONS; i++)
     {
-        ret = lw_parse(&frame, g_input_ja_msg, g_input_ja_msg_len);
+        status = lw_parse(&frame, g_input_ja_msg, g_input_ja_msg_len);
+#if HASH_TEST
+        hash_update(&benchmark_hash_ctx, &frame.pl, sizeof(frame.pl));
+#endif
     }
-    if (ret == LW_OK)
+    if (status == LW_OK)
     {
         printf("App nonce: 0x%06X\r\n", frame.pl.ja.appnonce.data);
         printf("Net ID: 0x%06X\r\n", frame.pl.ja.netid.data);
@@ -66,7 +77,7 @@ int benchmark_main()
     }
     else
     {
-        printf("JOIN ACCEPT PARSE error (%d)", ret);
+        printf("JOIN ACCEPT PARSE error (%d)", status);
     }
     printf("\r\n");
 
@@ -85,9 +96,12 @@ int benchmark_main()
 
     for (uint32_t i = 0; i < ITERATIONS; i++)
     {
-        ret = lw_parse(&frame, g_input_ud_msg, g_input_ud_msg_len);
+        status = lw_parse(&frame, g_input_ud_msg, g_input_ud_msg_len);
+#if HASH_TEST
+        hash_update(&benchmark_hash_ctx, &frame.pl, sizeof(frame.pl));
+#endif
     }
-    if (ret == LW_OK)
+    if (status == LW_OK)
     {
         printf("Dev Address: 0x%08X\r\n", frame.pl.mac.devaddr.data);
         printf("FCnt: %u\r\n", frame.pl.mac.fcnt);
@@ -102,8 +116,13 @@ int benchmark_main()
     }
     else
     {
-        printf("DATA MESSAGE PARSE error (%d)", ret);
+        printf("DATA MESSAGE PARSE error (%d)", status);
     }
 
-    return 0;
+#if HASH_TEST
+    hash_final(benchmark_hash, &benchmark_hash_ctx);
+    benchmark_hash_ret = hash_get_lowest32bits(benchmark_hash);
+#endif  // HASH_TEST
+
+    return benchmark_hash_ret;
 }

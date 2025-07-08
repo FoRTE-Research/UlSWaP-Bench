@@ -45,10 +45,12 @@ int check_decrypt()
     return memcmp((char*) plaintext, (char*) resultBuffer, strlen(plaintext));
 }
 
-int benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
+    benchmark_hash_t benchmark_hash_ret = 0;
+
     rsa1024_encrypt(public_key, public_exponent, plaintext, resultBuffer);
     rsa1024_decrypt(public_key, private_key, ciphertext, resultBuffer);
 
-    return 0;
+    return benchmark_hash_ret;
 }

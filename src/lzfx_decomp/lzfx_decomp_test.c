@@ -9,17 +9,19 @@
 #define DECOMP_DATA_LEN 0x1800
 uint8_t decompressed_data[DECOMP_DATA_LEN];
 
-int benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
+    benchmark_hash_t benchmark_hash_ret = 0;
+
     uint32_t compressed_size = sizeof(input_data);
     uint32_t decompressed_size = DECOMP_DATA_LEN;
 
     printf("Decompressing %u bytes of data...\r\n", compressed_size);
-    int32_t ret = lzfx_decompress_tiny(input_data, compressed_size, decompressed_data, &decompressed_size);
+    int32_t status = lzfx_decompress_tiny(input_data, compressed_size, decompressed_data, &decompressed_size);
 
-    if (ret < 0)
+    if (status < 0)
     {
-        printf("Compression failed with error code %d\r\n", ret);
+        printf("Compression failed with error code %d\r\n", status);
         return 1;
     }
 
@@ -45,5 +47,5 @@ int benchmark_main(void)
     fclose(fp);
 #endif  // HOST_TEST
 
-    return 0;
+    return benchmark_hash_ret;
 }

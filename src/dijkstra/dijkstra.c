@@ -150,8 +150,10 @@ uint16_t dijkstra(uint16_t chStart, uint16_t chEnd)
     return 0;
 }
 
-int benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
+    benchmark_hash_t benchmark_hash_ret = 0;
+
     uint16_t i, j;
     g_qCount = 0;
 
@@ -163,5 +165,5 @@ int benchmark_main(void)
         j = j % NUM_NODES;
         dijkstra(i, j);
     }
-    return 0;
+    return benchmark_hash_ret;
 }

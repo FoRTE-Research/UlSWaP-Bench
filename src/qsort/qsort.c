@@ -19,8 +19,10 @@ int32_t compare(const void *elem1, const void *elem2)
     return (distance1 > distance2) ? 1 : ((distance1 == distance2) ? 0 : -1);
 }
 
-int benchmark_main(void)
+benchmark_hash_t benchmark_main(void)
 {
+    benchmark_hash_t benchmark_hash_ret = 0;
+
     uint16_t i;
 
     for (i = 0; i < ARRAY_SIZE; ++i)
@@ -37,5 +39,5 @@ int benchmark_main(void)
     {
         printf("%7d  %7d  %7d  =>  %8.2f\r\n", vertices[i].x, vertices[i].y, vertices[i].z, printf_float(vertices[i].distance));
     }
-    return 0;
+    return benchmark_hash_ret;
 }

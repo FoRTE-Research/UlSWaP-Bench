@@ -36,13 +36,15 @@ static int32_t lookahead = 3;
 static int32_t blocksize_pow2 = 0;
 static double static_shaping_weight = 0.0;
 
-int32_t benchmark_main()
+benchmark_hash_t benchmark_main(void)
 {
+    benchmark_hash_t benchmark_hash_ret = 0;
+
     flags &= ~ADPCM_FLAG_NOISE_SHAPING;
     static_shaping_weight = 0.0;
     adpcm_converter();
 
-    return 0;
+    return benchmark_hash_ret;
 }
 
 typedef struct

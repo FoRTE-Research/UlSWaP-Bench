@@ -62,12 +62,21 @@ foreach(benchmark ${benchmarks})
 
     target_compile_options(${benchmark} PRIVATE -Os)
 
+<<<<<<< HEAD
     if (CHECKSUM_TEST)
         target_compile_definitions(${benchmark} PRIVATE -DCHECKSUM_TEST=1)
         target_sources(${benchmark} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/checksum.c)
         target_link_libraries(${benchmark} m c)
     else()
         target_compile_definitions(${benchmark} PRIVATE -DCHECKSUM_TEST=0)
+=======
+    if (HASH_TEST)
+        target_sources(${benchmark} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test/md5.c)
+        target_include_directories(${benchmark} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test)
+        target_compile_definitions(${benchmark} PRIVATE -DHASH_TEST=1)
+    else()
+        target_compile_definitions(${benchmark} PRIVATE -DHASH_TEST=0)
+>>>>>>> 0f048bfb4cc4e859c5425f907fe38ac7c0ba165f
     endif()
 
     if (NO_PRINT)
