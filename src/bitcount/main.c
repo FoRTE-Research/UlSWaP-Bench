@@ -20,10 +20,8 @@ uint32_t my_rand(void);
 
 static uint32_t bit_shifter(uint32_t x);
 
-benchmark_hash_t benchmark_main(void)
+int benchmark_main(void)
 {
-    benchmark_hash_t benchmark_hash_ret = 0;
-
     volatile uint32_t noprint_output;
     uint32_t i, j, num;
     uint32_t set_bits;
@@ -65,7 +63,7 @@ benchmark_hash_t benchmark_main(void)
     noprint_output = set_bits;
     (void)noprint_output;
 
-    return benchmark_hash_ret;
+    return 0;
 }
 
 static uint32_t bit_shifter(uint32_t x)

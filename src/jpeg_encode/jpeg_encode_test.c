@@ -10,10 +10,8 @@
 #define INPUT_IMAGE_WIDTH 176
 #define INPUT_IMAGE_HEIGHT 104
 
-benchmark_hash_t benchmark_main(void)
+int32_t benchmark_main()
 {
-    benchmark_hash_t benchmark_hash_ret = 0;
-
     uint16_t w = INPUT_IMAGE_WIDTH;
     uint16_t h = INPUT_IMAGE_HEIGHT;
     jpec_enc_t *e = jpec_enc_new2(test_data, w, h, OUTPUT_IMAGE_QUALITY);
@@ -43,5 +41,5 @@ benchmark_hash_t benchmark_main(void)
     printf("Output image written to %s\r\n", OUTPUT_IMAGE_NAME);
 #endif  // HOST_TEST
 
-    return benchmark_hash_ret;
+    return 0;
 }

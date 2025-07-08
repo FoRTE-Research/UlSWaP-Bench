@@ -7,6 +7,9 @@
 #include <math.h>
 #include "snipmath.h"
 
+#undef rad2deg /* These are macros defined in PI.H */
+#undef deg2rad
+
 double rad2deg(double rad)
 {
     return (180.0 * rad / (PI));

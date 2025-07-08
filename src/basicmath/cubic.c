@@ -43,8 +43,9 @@ void SolveCubic(double a,
     }
 }
 
-void PrintCubic(double a, double b, double c, double d, uint32_t *solutions, double *x)
+void Cubic(double a, double b, double c, double d, uint32_t *solutions, double *x)
 {
+    SolveCubic(a, b, c, d, solutions, x);
     printf("Coefficients: a = %+05.1f, b = %+05.1f, c = %+05.1f, d = %+05.1f    ",
            printf_float(a), printf_float(b), printf_float(c), printf_float(d));
     printf("Solutions:");
@@ -53,12 +54,6 @@ void PrintCubic(double a, double b, double c, double d, uint32_t *solutions, dou
         printf("  %+08.6f", printf_float(x[i]));
     }
     printf("\r\n");
-}
-
-void Cubic(double a, double b, double c, double d, uint32_t *solutions, double *x)
-{
-    SolveCubic(a, b, c, d, solutions, x);
-    PrintCubic(a, b, c, d, solutions, x);
 }
 
 #ifdef TEST

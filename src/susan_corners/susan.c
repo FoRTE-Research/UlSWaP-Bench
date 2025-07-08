@@ -607,10 +607,8 @@ void susan_corners_quick(uint8_t *in, int32_t *r, uint8_t *bp, int32_t max_no, C
     corner_list[n].info = 7;
 }
 
-benchmark_hash_t benchmark_main(void)
+int32_t benchmark_main()
 {
-    benchmark_hash_t benchmark_hash_ret = 0;
-
     uint8_t *in, *bp;
     int32_t bt = BRIGHTNESS_THRESHOLD;
     int32_t drawing_mode = 0;
@@ -642,5 +640,5 @@ benchmark_hash_t benchmark_main(void)
     put_image(in, x_size, y_size);
 #endif // HOST_TEST
 
-    return benchmark_hash_ret;
+    return 0;
 }

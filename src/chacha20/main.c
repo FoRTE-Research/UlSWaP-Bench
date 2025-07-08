@@ -59,10 +59,8 @@ int check_decrypt()
 }
 
 
-benchmark_hash_t benchmark_main(void)
+int benchmark_main(void)
 {
-    benchmark_hash_t benchmark_hash_ret = 0;
-
     print_char_array(key, sizeof(key), "Key");
     print_char_array(nonce, sizeof(nonce), "Nonce");
     printf("\r\n");
@@ -99,5 +97,5 @@ benchmark_hash_t benchmark_main(void)
     print_char_array((dec_output + INPUT_SIZE - BYTES_TO_PRINT), BYTES_TO_PRINT, NULL);
     printf("\r\n");
 
-    return benchmark_hash_ret;
+    return 0;
 }

@@ -1,9 +1,11 @@
 #include <stdio.h>
-#include <stdint.h>
 #include "common.h"
 
-benchmark_hash_t benchmark_main(void);
-extern void hexstring(uint32_t num);
+int benchmark_main(void);
+
+#ifndef RUNS
+#define RUNS 1
+#endif  // RUNS
 
 int main(void)
 {
@@ -11,14 +13,12 @@ int main(void)
     run_arch_startup();
 #endif  // CUSTOM_ARCH_STARTUP
 
-    uint32_t hash = benchmark_main();
-    printf("Benchmark execution complete.\r\n");
+    for (int run = 0; run < RUNS; ++run)
+    {
+        benchmark_main();
+    }
 
-#if HASH_TEST
-    hexstring(hash);
-#else  // HASH_TEST
-    (void)hash;  // Avoid unused variable warning
-#endif  // HASH_TEST
+    printf("Benchmark execution complete.\r\n");
 
 #ifdef CUSTOM_ARCH_FINISH
     run_arch_finish();

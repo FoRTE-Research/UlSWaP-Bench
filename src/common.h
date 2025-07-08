@@ -15,13 +15,6 @@
 #define HOST_TEST 0
 #endif
 
-#if HASH_TEST
-#include "hash.h"
-#endif  // HASH_TEST
-
-typedef uint32_t benchmark_hash_t;
-
-
 #define TRUE  1
 #define FALSE 0
 
