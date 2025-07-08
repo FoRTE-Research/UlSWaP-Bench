@@ -13,21 +13,12 @@
 #define HOST_TEST 0
 #endif
 
-<<<<<<< HEAD
 #if NO_PRINT
 #define printf(...)
 #elif CHECKSUM_TEST
 void printf_checksum(const char *fmt, ...);
 #define printf(fmt, ...) printf_checksum(fmt, ##__VA_ARGS__)
 #endif  // NO_PRINT
-=======
-#if HASH_TEST
-#include "hash.h"
-#endif  // HASH_TEST
-
-typedef uint32_t benchmark_hash_t;
-
->>>>>>> 0f048bfb4cc4e859c5425f907fe38ac7c0ba165f
 
 #define TRUE  1
 #define FALSE 0

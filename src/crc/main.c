@@ -44,16 +44,8 @@ void crc_test(void)
 }
 
 
-benchmark_hash_t benchmark_main(void)
+int benchmark_main(void)
 {
-    benchmark_hash_t benchmark_hash_ret = 0;
-
-#if HASH_TEST
-    hash_result_t benchmark_hash;
-    hash_ctx_t benchmark_hash_ctx;
-    hash_init(&benchmark_hash_ctx);
-#endif  // HASH_TEST
-
     crcInit();
     volatile uint32_t noprint_output;
 
@@ -63,11 +55,5 @@ benchmark_hash_t benchmark_main(void)
     noprint_output = crc;
     (void)noprint_output;
 
-#if HASH_TEST
-    hash_update(&benchmark_hash_ctx, &crc, sizeof(crc));
-    hash_final(benchmark_hash, &benchmark_hash_ctx);
-    benchmark_hash_ret = hash_get_lowest32bits(benchmark_hash);
-#endif  // HASH_TEST
-
-    return benchmark_hash_ret;
+    return 0;
 }

@@ -8,19 +8,17 @@
 #define COMPRESSED_SIZE 5000
 uint8_t compressed_data[COMPRESSED_SIZE];
 
-benchmark_hash_t benchmark_main(void)
+int32_t benchmark_main(void)
 {
-    benchmark_hash_t benchmark_hash_ret = 0;
-
     uint32_t text_size = sizeof(test_data);
     uint32_t compressed_size = COMPRESSED_SIZE;
 
     printf("Compressing %u bytes of data...\r\n", text_size);
-    int32_t status = lzfx_compress(test_data, text_size, compressed_data, &compressed_size);
+    int32_t ret = lzfx_compress(test_data, text_size, compressed_data, &compressed_size);
 
-    if (status < 0)
+    if (ret < 0)
     {
-        printf("Compression failed with error code %d\r\n", status);
+        printf("Compression failed with error code %d\r\n", ret);
         return 1;
     }
 
@@ -59,5 +57,5 @@ benchmark_hash_t benchmark_main(void)
     fclose(fp);
 #endif
 
-    return benchmark_hash_ret;
+    return 0;
 }

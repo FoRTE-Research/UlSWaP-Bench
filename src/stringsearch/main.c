@@ -1694,10 +1694,8 @@ char *strsearch(const char *string)
     return NULL;
 }
 
-benchmark_hash_t benchmark_main(void)
+int benchmark_main()
 {
-    benchmark_hash_t benchmark_hash_ret = 0;
-
     char *here;
 
     for (int i = 0; find_strings[i]; i++)
@@ -1712,5 +1710,5 @@ benchmark_hash_t benchmark_main(void)
         printf("\r\n");
     }
 
-    return benchmark_hash_ret;
+    return 0;
 }

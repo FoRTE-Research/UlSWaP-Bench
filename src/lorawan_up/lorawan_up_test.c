@@ -25,6 +25,15 @@ void print_hex_array(const char* preamble, const uint8_t *array, const int len)
     printf("\r\n");
 }
 
+int32_t create_message(lw_frame_t *frame, uint8_t *msg, int32_t *len, uint32_t iterations)
+{
+    int32_t ret = 0;
+    for (uint32_t i = 0; i < iterations; i++)
+    {
+        ret = lw_pack(frame, msg, len);
+    }
+    return ret;
+}
 
 void print_output_message_details(const lw_frame_t *frame, const uint8_t *msg, const int32_t len)
 {
@@ -33,16 +42,8 @@ void print_output_message_details(const lw_frame_t *frame, const uint8_t *msg, c
     print_hex_array("MIC: ", frame->mic.buf, 4);
 }
 
-benchmark_hash_t benchmark_main(void)
+int benchmark_main()
 {
-    benchmark_hash_t benchmark_hash_ret = 0;
-
-#if HASH_TEST
-    hash_result_t benchmark_hash;
-    hash_ctx_t benchmark_hash_ctx;
-    hash_init(&benchmark_hash_ctx);
-#endif  // HASH_TEST
-
     lw_node_t endnode;
     lw_frame_t frame;
     uint8_t msg[256];
@@ -92,20 +93,14 @@ benchmark_hash_t benchmark_main(void)
 
     frame.mhdr.bits.mtype = LW_MTYPE_JOIN_REQUEST;
     printf("Creating join request message %u times with DevNonce value 0x%08X\r\n\r\n", ITERATIONS, g_devnonce);
-
-    for (uint32_t i = 0; i < ITERATIONS; i++)
+    if (create_message(&frame, msg, &len, ITERATIONS) < 0)
     {
-        lw_pack(&frame, msg, &len);
-        if (len < 0)
-        {
-            printf("Error creating join request message\r\n");
-            return -1;
-        }
-#if HASH_TEST
-        hash_update(&benchmark_hash_ctx, &frame.pl.jr, sizeof(frame.pl.jr));
-#endif  // HASH_TEST
+        printf("Error creating join request message\r\n");
     }
-    print_output_message_details(&frame, msg, len);
+    else
+    {
+        print_output_message_details(&frame, msg, len);
+    }
     printf("\r\n");
 
     frame.mhdr.bits.mtype = LW_MTYPE_MSG_UP;
@@ -115,25 +110,14 @@ benchmark_hash_t benchmark_main(void)
     print_hex_array(NULL, g_input_data, g_input_data_len);
     printf("\r\n");
 
-    for (uint32_t i = 0; i < ITERATIONS; i++)
+    if (create_message(&frame, msg, &len, ITERATIONS) < 0)
     {
-        lw_pack(&frame, msg, &len);
-        if (len < 0)
-        {
-            printf("Error creating join request message\r\n");
-            return -1;
-        }
-#if HASH_TEST
-        hash_update(&benchmark_hash_ctx, &frame.pl, sizeof(frame.pl));
-#endif  // HASH_TEST
+        printf("Error creating unconfirmed data up message\r\n");
     }
-    print_output_message_details(&frame, msg, len);
+    else
+    {
+        print_output_message_details(&frame, msg, len);
+    }
     printf("\r\n");
-
-#if HASH_TEST
-    hash_final(benchmark_hash, &benchmark_hash_ctx);
-    benchmark_hash_ret = hash_get_lowest32bits(benchmark_hash);
-#endif  // HASH_TEST
-
-    return benchmark_hash_ret;
+    return 0;
 }

@@ -37,10 +37,8 @@ void printf_float_array(const char* name, float *array, uint32_t size)
     printf("\r\n");
 }
 
-benchmark_hash_t benchmark_main(void)
+int benchmark_main(void)
 {
-    benchmark_hash_t benchmark_hash_ret = 0;
-
     uint32_t i, j;
     float    *RealIn;
     float    *ImagIn;
@@ -98,5 +96,5 @@ benchmark_hash_t benchmark_main(void)
     printf_float_array("RealOut", RealOut, MAXSIZE);
     printf_float_array("ImagOut", ImagOut, MAXSIZE);
 
-    return benchmark_hash_ret;
+    return 0;
 }
