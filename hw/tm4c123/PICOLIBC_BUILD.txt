@@ -1,0 +1,47 @@
+To build picolibc for ARM M4:
+
+git clone https://github.com/picolibc/picolibc.git
+cd picolibc
+
+Make a file cross-arm-none-eabi.txt:
+
+# cross-arm-none-eabi.txt start
+
+[binaries]
+c       = '/path/to/gcc_arm_none_eabi_9_2_1/bin/arm-none-eabi-gcc-9.2.1'
+ar      = '/path/to/gcc_arm_none_eabi_9_2_1/bin/arm-none-eabi-ar'
+nm      = '/path/to/gcc_arm_none_eabi_9_2_1/bin/arm-none-eabi-nm'
+strip   = '/path/to/gcc_arm_none_eabi_9_2_1/bin/arm-none-eabi-strip'
+objdump = '/path/to/gcc_arm_none_eabi_9_2_1/bin/arm-none-eabi-objdump'
+ranlib  = '/path/to/gcc_arm_none_eabi_9_2_1/bin/arm-none-eabi-ranlib'
+
+[host_machine]
+system     = 'none'
+cpu_family = 'arm'
+cpu        = 'cortex-m4'
+endian     = 'little'
+
+[built-in options]
+c_args      = ['-ffreestanding']
+c_link_args = []
+
+[properties]
+skip_sanity_check = true
+
+# cross-arm-none-eabi.txt end
+
+mkdir gcc-arm
+
+meson setup \
+--cross-file ./cross-arm-none-eabi.txt \
+-Dprefix="/path/to/picolibc/gcc-arm" \
+-Dspecsdir="specs" \
+-Dsysroot-install=false \
+-Dsystem-libc=false \
+-Dfreestanding=true \
+-Dsemihost=false \
+gcc-arm
+
+cd gcc-arm
+ninja
+ninja install
