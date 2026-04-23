@@ -1,0 +1,73 @@
+To build picolibc for MSP430:
+
+git clone https://github.com/picolibc/picolibc.git
+cd picolibc
+
+Make a file cross-msp430-gcc.txt:
+
+# cross-msp430-gcc.txt start
+
+[binaries]
+c       = '/path/to/msp430-gcc/bin/msp430-elf-gcc'
+ar      = '/path/to/msp430-gcc/bin/msp430-elf-ar'
+nm      = '/path/to/msp430-gcc/bin/msp430-elf-nm'
+strip   = '/path/to/msp430-gcc/bin/msp430-elf-strip'
+objdump = '/path/to/msp430-gcc/bin/msp430-elf-objdump'
+ranlib  = '/path/to/msp430-gcc/bin/msp430-elf-ranlib'
+
+[host_machine]
+system     = 'none'
+cpu_family = 'msp430'
+cpu        = 'msp430fr5994'
+endian     = 'little'
+
+[built-in options]
+c_args = [
+  '-ffreestanding',
+  '-fno-builtin',
+  '-mlarge',
+  '-mdata-region=upper',
+  '-mmcu=msp430fr5994',
+  '-mcpu=msp430x'
+  '-mhwmult=none'] 
+
+c_link_args = [
+  '-mlarge',
+  '-mdata-region=upper',
+  '-mmcu=msp430fr5994',
+  '-mhwmult=none']
+
+[properties]
+skip_sanity_check = true
+target_c_args = [
+  '-ffreestanding',
+  '-fno-builtin',
+  '-mlarge',
+  '-mdata-region=upper',
+  '-mcpu=msp430x'
+  '-mmcu=msp430fr5994',
+  '-mhwmult=none']
+target_link_args = [
+  '-mlarge',
+  '-mdata-region=upper',
+  '-mmcu=msp430fr5994',
+  '-mhwmult=none']
+
+# cross-msp430-gcc.txt end
+
+mkdir gcc-msp430
+
+meson setup \
+--cross-file ./cross-msp430-gcc.txt \
+-Dprefix="/path/to/picolibc/gcc-msp430" \
+-Dspecsdir="specs" \
+-Dsysroot-install=false \
+-Dsystem-libc=false \
+-Dfreestanding=true \
+-Dsemihost=false \
+-Dmultilib=false \
+gcc-msp430
+
+cd gcc-msp430
+ninja
+ninja install
