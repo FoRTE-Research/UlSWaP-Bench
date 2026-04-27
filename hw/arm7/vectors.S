@@ -103,7 +103,6 @@ hang17:   b .
 .thumb_func
 .global _start
 _start:
-    bl restore
     bl main
     bl exit
     
