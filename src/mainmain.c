@@ -4,6 +4,10 @@
 int benchmark_main(void);
 extern void hexstring(uint32_t num);
 
+#ifdef CUSTOM_ARCH_STARTUP
+extern void run_arch_startup();
+#endif
+
 #ifndef RUNS
 #define RUNS 1
 #endif  // RUNS

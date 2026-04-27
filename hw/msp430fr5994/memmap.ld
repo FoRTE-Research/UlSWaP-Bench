@@ -490,5 +490,5 @@ SECTIONS
 /* Include peripherals memory map                                           */
 /****************************************************************************/
 
-INCLUDE /home/sprakhar/ti/msp430-gcc/include/msp430fr5994_symbols.ld
+INCLUDE /opt/msp430-gcc/include/msp430fr5994_symbols.ld
 
