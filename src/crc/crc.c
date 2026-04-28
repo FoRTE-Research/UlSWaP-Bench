@@ -21,7 +21,7 @@
  * Derive parameters from the standard-specific parameters in crc.h.
  */
 #define WIDTH (8 * sizeof(crc))
-#define TOPBIT (1 << (WIDTH - 1))
+#define TOPBIT (1UL << (WIDTH - 1))
 
 #if (REFLECT_DATA == TRUE)
 #undef REFLECT_DATA
@@ -67,7 +67,7 @@ reflect(uint32_t data, uint8_t nBits)
          */
         if (data & 0x01)
         {
-            reflection |= (1 << ((nBits - 1) - bit));
+            reflection |= ((uint32_t)1 << ((nBits - 1) - bit));
         }
 
         data = (data >> 1);
@@ -102,7 +102,7 @@ crc crcSlow(uint8_t const message[], uint32_t nBytes)
         /*
          * Bring the next byte into the remainder.
          */
-        remainder ^= (REFLECT_DATA(message[byte]) << (WIDTH - 8));
+        remainder ^= ((uint32_t)REFLECT_DATA(message[byte]) << (WIDTH - 8));
 
         /*
          * Perform modulo-2 division, a bit at a time.

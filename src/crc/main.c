@@ -51,7 +51,7 @@ int benchmark_main(void)
 
     printf("Computing the CRC of a %zu byte message\r\n", strlen((const char*)test_data));
     uint32_t crc = crcFast(test_data, strlen((const char*)test_data));
-    printf("%08X\r\n", crc);
+    printf("%08lX\r\n", crc);
     noprint_output = crc;
     (void)noprint_output;
 

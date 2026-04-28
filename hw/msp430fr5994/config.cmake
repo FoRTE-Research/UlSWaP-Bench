@@ -9,8 +9,8 @@ function (set_msp430fr5994_config)
     set(CMAKE_C_COMPILER ${CC_PATH}/msp430-elf-gcc PARENT_SCOPE)
     set(CMAKE_ASM_COMPILER ${CC_PATH}/msp430-elf-gcc PARENT_SCOPE)
 
-    #set(EXTRA_FLAGS "-Wpedantic;-Wshadow;-Wconversion;-Wpedantic;")
-    set(EXTRA_FLAGS "")
+    set(EXTRA_FLAGS "-Wpedantic;-Wshadow;-Wconversion;-Wpedantic;")
+    #set(EXTRA_FLAGS "")
     set(GENERAL_FLAGS "${EXTRA_FLAGS};-fno-builtin;-ffreestanding;-fno-optimize-sibling-calls;-fno-builtin-fma;-ffp-contract=off;-ffunction-sections")
     set(MSP430_FLAGS "-mlarge;-mdata-region=upper;-mmcu=msp430fr5994;-mhwmult=none;-specs=${PICOLIBC_ROOT}/picolibc.specs;-T${ARCH_DIR}/memmap.ld;-DCUSTOM_ARCH_STARTUP;-Wl,--gc-sections")
 
