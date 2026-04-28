@@ -52,7 +52,7 @@ int benchmark_main()
     lw_init(US915);
 
     // Print input data parameters
-    printf("Device Address: %#08X\r\n", g_dev_address);
+    printf("Device Address: %#08lX\r\n", g_dev_address);
     print_hex_array("App EUI: ", g_app_eui, 8);
     print_hex_array("Device EUI: ", g_dev_eui, 8);
     print_hex_array("App Key: ", g_app_key, 16);
