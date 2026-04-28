@@ -30,7 +30,7 @@ int32_t benchmark_main()
         checksum += jpeg[i];
     }
     printf("Output image size: %d\r\n", len);
-    printf("Output image checksum: %u\r\n", checksum);
+    printf("Output image checksum: %lu\r\n", checksum);
     noprint_output = checksum;
     (void)noprint_output;
 
