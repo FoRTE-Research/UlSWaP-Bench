@@ -551,7 +551,7 @@ int32_t benchmark_main()
         checksum += in[i];
     }
 
-    printf("Output image checksum = %d\r\n", checksum);
+    printf("Output image checksum = %ld\r\n", checksum);
     noprint_output = checksum;
     (void)noprint_output;
 
