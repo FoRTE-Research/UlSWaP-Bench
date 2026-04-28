@@ -65,7 +65,7 @@ int benchmark_main(void)
     print_char_array(nonce, sizeof(nonce), "Nonce");
     printf("\r\n");
 
-    printf("Encrypting %u bytes %u times (%u bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
+    printf("Encrypting %u bytes %lu times (%lu bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
     printf("Plaintext (first %u bytes):\r\n", BYTES_TO_PRINT);
     print_char_array(test_data, BYTES_TO_PRINT, NULL);
     printf("Plaintext (final %u bytes):\r\n", BYTES_TO_PRINT);
@@ -78,12 +78,12 @@ int benchmark_main(void)
         ChaCha20_xor(&ctx, enc_output, enc_output, INPUT_SIZE);
     }
 
-    printf("\r\nOutput ciphertext after %u iterations (first %u bytes):\r\n", ITERATIONS, BYTES_TO_PRINT);
+    printf("\r\nOutput ciphertext after %lu iterations (first %lu bytes):\r\n", ITERATIONS, BYTES_TO_PRINT);
     print_char_array(enc_output, BYTES_TO_PRINT, NULL);
-    printf("Output ciphertext after %u iterations (final %u bytes):\r\n", ITERATIONS, BYTES_TO_PRINT);
+    printf("Output ciphertext after %lu iterations (final %lu bytes):\r\n", ITERATIONS, BYTES_TO_PRINT);
     print_char_array(enc_output + INPUT_SIZE - BYTES_TO_PRINT, BYTES_TO_PRINT, NULL);
 
-    printf("\r\nDecrypting %u bytes back %u times (%u bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
+    printf("\r\nDecrypting %u bytes back %lu times (%lu bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
     ChaCha20_init(&ctx, key, nonce, count);
     memcpy(dec_output, enc_output, INPUT_SIZE);
     for (uint32_t i = 0; i < ITERATIONS; i++)
@@ -91,9 +91,9 @@ int benchmark_main(void)
         ChaCha20_xor(&ctx, dec_output, dec_output, INPUT_SIZE);
     }
 
-    printf("Decrypted plaintext after %u iterations (first %u bytes):\r\n", ITERATIONS, BYTES_TO_PRINT);
+    printf("Decrypted plaintext after %lu iterations (first %lu bytes):\r\n", ITERATIONS, BYTES_TO_PRINT);
     print_char_array(dec_output, BYTES_TO_PRINT, NULL);
-    printf("Decrypted plaintext after %u iterations (final %u bytes):\r\n", ITERATIONS, BYTES_TO_PRINT);
+    printf("Decrypted plaintext after %lu iterations (final %lu bytes):\r\n", ITERATIONS, BYTES_TO_PRINT);
     print_char_array((dec_output + INPUT_SIZE - BYTES_TO_PRINT), BYTES_TO_PRINT, NULL);
     printf("\r\n");
 
