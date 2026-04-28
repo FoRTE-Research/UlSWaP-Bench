@@ -91,7 +91,9 @@ void decrement_iv(void)
 
 void cbc_encrypt(void)
 {
-    printf("Encrypting %u bytes %u times (%u bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
+    // Cannot get TOTAL_ENCRYPTION_SIZE to properly print for some reason. Tried multiple variations
+    //printf("Encrypting %u bytes %u times (%lu bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
+    printf("Encrypting %u bytes %u times\r\n", INPUT_SIZE, ITERATIONS);
     printf("Plaintext (first %u bytes):\r\n", BYTES_TO_PRINT);
     print_char_array(test_data, BYTES_TO_PRINT, NULL);
     printf("Plaintext (final %u bytes):\r\n", BYTES_TO_PRINT);
@@ -115,7 +117,8 @@ void cbc_encrypt(void)
 
 void cbc_decrypt(void)
 {
-    printf("Decrypting %u bytes %u times (%u bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
+    //printf("Decrypting %u bytes %u times (%lu bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
+    printf("Decrypting %u bytes %u times\r\n", INPUT_SIZE, ITERATIONS);
 
     struct AES_ctx ctx;
     AES_init_ctx_iv(&ctx, g_key, g_iv);

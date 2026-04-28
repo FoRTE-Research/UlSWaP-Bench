@@ -42,7 +42,7 @@ int benchmark_main(void)
     for (i = 0; i < 1001; ++i)
     {
         usqrt(i, &q);
-        printf("sqrt(%3d) = %2d\r\n", i, q.sqrt);
+        printf("sqrt(%3ld) = %2ld\r\n", i, q.sqrt);
     }
 
     printf("\r\n********* ANGLE CONVERSION ***********\r\n");
