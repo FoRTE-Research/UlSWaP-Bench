@@ -103,6 +103,9 @@ hang17:   b .
 .thumb_func
 .global _start
 _start:
+#ifdef INC_RESTORE
+    bl restore
+#endif
     bl main
     bl exit
     
