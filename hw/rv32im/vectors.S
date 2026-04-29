@@ -7,6 +7,10 @@
 _start:
     # Setup the stack
     la sp, __stack_top
+    
+#ifdef INC_RESTORE
+    call restore
+#endif
 
     # Zero out BSS
     la t0, __bss_start
