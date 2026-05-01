@@ -31,7 +31,7 @@ int32_t benchmark_main(void)
     {
         checksum += compressed_data[i];
     }
-    printf("Compressed data checksum: 0x%08X\r\n", checksum);
+    printf("Compressed data checksum: 0x%08lX\r\n", checksum);
     noprint_output = checksum;
     (void)noprint_output;
 

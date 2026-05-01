@@ -32,7 +32,7 @@ int benchmark_main(void)
     {
         checksum += decompressed_data[i];
     }
-    printf("Decompressed data checksum: 0x%08X\r\n", checksum);
+    printf("Decompressed data checksum: 0x%08lX\r\n", checksum);
     noprint_output = checksum;
     (void)noprint_output;
 

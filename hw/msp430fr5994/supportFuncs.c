@@ -2,8 +2,17 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <string.h>
 
 static int sendByte(char byte, FILE *file);
+
+extern char __high_datastart;
+extern char __rom_highdatastart;
+extern unsigned int __rom_highdatacopysize;
+
+void __copy_upper_data() {
+    memcpy(&__high_datastart, &__rom_highdatastart, (size_t)&__rom_highdatacopysize);
+}
 
 // Basic clock startup for 8MHz (max freq without FRAM wait states)
 void initClocks(void){
@@ -73,6 +82,8 @@ void run_arch_startup(){
 
   // Enable interrupts
   __bis_SR_register(GIE);
+  
+  __copy_upper_data();
 }
 
 void print_hexstring(uint32_t num){

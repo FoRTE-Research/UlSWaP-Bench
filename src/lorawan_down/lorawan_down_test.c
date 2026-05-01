@@ -56,9 +56,9 @@ int benchmark_main()
     }
     if (ret == LW_OK)
     {
-        printf("App nonce: 0x%06X\r\n", frame.pl.ja.appnonce.data);
-        printf("Net ID: 0x%06X\r\n", frame.pl.ja.netid.data);
-        printf("Dev Address: 0x%08X\r\n", frame.pl.ja.devaddr.data);
+        printf("App nonce: 0x%06lX\r\n", frame.pl.ja.appnonce.data);
+        printf("Net ID: 0x%06lX\r\n", frame.pl.ja.netid.data);
+        printf("Dev Address: 0x%08lX\r\n", frame.pl.ja.devaddr.data);
         printf("RX2DataRate: %u\r\n", frame.pl.ja.dlsettings.bits.rx2dr);
         printf("RX1DRoffset: %u\r\n", frame.pl.ja.dlsettings.bits.rx1droft);
         print_hex_array("App Session Key: ", frame.pl.ja.appskey, 16);
@@ -89,7 +89,7 @@ int benchmark_main()
     }
     if (ret == LW_OK)
     {
-        printf("Dev Address: 0x%08X\r\n", frame.pl.mac.devaddr.data);
+        printf("Dev Address: 0x%08lX\r\n", frame.pl.mac.devaddr.data);
         printf("FCnt: %u\r\n", frame.pl.mac.fcnt);
         printf("Port: %u\r\n", frame.pl.mac.fport);
         printf("ACK: %u\r\n", frame.pl.mac.fctrl.ul.ack);

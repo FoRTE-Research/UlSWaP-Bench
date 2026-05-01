@@ -313,7 +313,7 @@ static uint32_t adpcm_converter()
 
         samples_per_block = (block_size - num_channels * 4) * (num_channels ^ 3) + 1;
 
-        printf("Each %d byte ADPCM block will contain %d samples\r\n",
+        printf("Each %ld byte ADPCM block will contain %ld samples\r\n",
                block_size, samples_per_block);
 
         bytes_written += write_adpcm_wav_header(num_channels, num_samples, sample_rate, samples_per_block, &checksum);
@@ -321,7 +321,7 @@ static uint32_t adpcm_converter()
     }
 
     printf("Output file size = %u bytes\r\n", bytes_written);
-    printf("Checksum = %u\r\n", checksum);
+    printf("Checksum = %lu\r\n", checksum);
     noprint_output = bytes_written;
     noprint_output = checksum;
     (void)noprint_output;
