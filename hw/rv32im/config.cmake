@@ -19,7 +19,7 @@ function (set_rv32im_config)
         set(LINKER_SCRIPT "-T${CUSTOM_MEMMAP}")
     endif()
     
-    set(GENERAL_FLAGS "-nostartfiles;-nostdlib;-ffreestanding;-march=rv32im;-mabi=ilp32;-O2;${LINKER_SCRIPT}")
+    set(GENERAL_FLAGS "-nostartfiles;-nostdlib;-ffreestanding;-march=rv32imzicsr;-mabi=ilp32;-O2;${LINKER_SCRIPT}")
     
     separate_arguments(OPT_FLAGS NATIVE_COMMAND "${OPT_FLAGS}")
     separate_arguments(LINK_DIRS NATIVE_COMMAND "${LINK_DIRS}")
