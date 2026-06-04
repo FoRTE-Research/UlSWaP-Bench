@@ -46,7 +46,9 @@ static FILE __stdio = FDEV_SETUP_STREAM(riscv_putchar_spike,
                                         NULL,
                                         NULL,
                                         _FDEV_SETUP_WRITE);
-FILE *const stdout = &__stdio; __strong_reference(stdout, stdin); __strong_reference(stdin, stderr);
+FILE *const stdout = &__stdio;
+__strong_reference(stdout, stdin);
+__strong_reference(stdin, stderr);
 
 
 void hexstring (uint32_t d)
