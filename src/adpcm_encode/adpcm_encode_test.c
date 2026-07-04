@@ -9,8 +9,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #include <ctype.h>
 #include <math.h>
+#include <alloca.h>
 
 #include "common.h"
 #include "adpcm-lib.h"
@@ -179,9 +181,9 @@ static uint32_t adpcm_converter()
                 return -1;
             }
 
-            printf("Input channels = %u\r\n", pWaveHeader->NumChannels);
-            printf("Input bits per sample = %u\r\n", pWaveHeader->BitsPerSample);
-            printf("Input sample rate = %u\r\n", pWaveHeader->SampleRate);
+            printf("Input channels = %" PRIu32 "\r\n", pWaveHeader->NumChannels);
+            printf("Input bits per sample = %" PRIu32 "\r\n", pWaveHeader->BitsPerSample);
+            printf("Input sample rate = %" PRIu32 "\r\n", pWaveHeader->SampleRate);
         }
         else if (!strncmp(chunk_header->ckID, "fact", 4))
         {
@@ -254,12 +256,12 @@ static uint32_t adpcm_converter()
                 {
                     if (fact_samples < num_samples && fact_samples > num_samples - samples_last_block)
                     {
-                        printf("total samples reduced %u by FACT chunk\r\n", (num_samples - fact_samples));
+                        printf("total samples reduced %" PRIu32 " by FACT chunk\r\n", (num_samples - fact_samples));
                         num_samples = fact_samples;
                     }
                     else if (pWaveHeader->NumChannels == 2 && (fact_samples >>= 1) < num_samples && fact_samples > num_samples - samples_last_block)
                     {
-                        printf("num samples reduced %u by [incorrect] FACT chunk\r\n", (num_samples - fact_samples));
+                        printf("num samples reduced %" PRIu32 " by [incorrect] FACT chunk\r\n", (num_samples - fact_samples));
                         num_samples = fact_samples;
                     }
                 }
@@ -271,7 +273,7 @@ static uint32_t adpcm_converter()
                 return -1;
             }
 
-            printf("Total input samples = %u\r\n", num_samples);
+            printf("Total input samples = %" PRIu32 "\r\n", num_samples);
 
             num_channels = pWaveHeader->NumChannels;
             sample_rate = pWaveHeader->SampleRate;
@@ -282,7 +284,7 @@ static uint32_t adpcm_converter()
             // just ignore unknown chunks
             int32_t bytes_to_eat = (chunk_header->ckSize + 1) & ~1L;
 
-            printf("extra unknown chunk \"%c%c%c%c\" of %d bytes\r\n",
+            printf("extra unknown chunk \"%c%c%c%c\" of %u bytes\r\n",
                    chunk_header->ckID[0], chunk_header->ckID[1], chunk_header->ckID[2],
                    chunk_header->ckID[3], chunk_header->ckSize);
 
@@ -313,15 +315,15 @@ static uint32_t adpcm_converter()
 
         samples_per_block = (block_size - num_channels * 4) * (num_channels ^ 3) + 1;
 
-        printf("Each %d byte ADPCM block will contain %d samples\r\n",
+        printf("Each %" PRIi32 " byte ADPCM block will contain %" PRIi32 " samples\r\n",
                block_size, samples_per_block);
 
         bytes_written += write_adpcm_wav_header(num_channels, num_samples, sample_rate, samples_per_block, &checksum);
         bytes_written += adpcm_encode_data(input_file_buf, num_channels, num_samples, samples_per_block, sample_rate, &checksum);
     }
 
-    printf("Output file size = %u bytes\r\n", bytes_written);
-    printf("Checksum = %u\r\n", checksum);
+    printf("Output file size = %" PRIu32 " bytes\r\n", bytes_written);
+    printf("Checksum = %" PRIu32 "\r\n", checksum);
     noprint_output = bytes_written;
     noprint_output = checksum;
     (void)noprint_output;

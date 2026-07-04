@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <inttypes.h>
 #include "shine_mp3.h"
 #include "input.h"
 #include "common.h"
@@ -93,7 +94,7 @@ int32_t benchmark_main()
 
     printf("Output bitrate: %u kbps\r\n", g_output_bitrate);
     printf("Output file size: %u bytes\r\n", output_size);
-    printf("Checksum = %u\r\n", checksum);
+    printf("Checksum = %" PRIu32 "\r\n", checksum);
     noprint_output = output_size;
     (void)noprint_output;
 

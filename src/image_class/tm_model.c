@@ -55,7 +55,7 @@ tm_err_t TM_WEAK tm_preprocess(tm_mdl_t* mdl, tm_pp_t pp_type, tm_mat_t* in, tm_
     tml_head_t* l0h = (tml_head_t*)mdl->b->layers_body;
     sctype_t in_s = l0h->in_s;
     zptype_t in_zp= l0h->in_zp;
-    int in_size = in->h*in->w*in->c;
+    int32_t in_size = (int32_t)in->h*in->w*in->c;
     switch(pp_type){
 #if (TM_MDL_TYPE == TM_MDL_INT8)||(TM_MDL_TYPE == TM_MDL_INT16)
     case TMPP_FP2INT:
@@ -147,7 +147,7 @@ tm_err_t TM_WEAK tm_run(tm_mdl_t* mdl, tm_mat_t* in, tm_mat_t* out)
             if(mdl->b->out_deq == 0 || TM_MDL_TYPE == TM_MDL_FP32) //fp32 do not need deq
                 out[out_idx].data = (mtype_t*)(TML_GET_OUTPUT(mdl, h));
             else {
-                int out_size = h->out_dims[1]*h->out_dims[2]*h->out_dims[3];
+                int32_t out_size = (int32_t)h->out_dims[1]*h->out_dims[2]*h->out_dims[3];
                 float* outf = (float*)(TM_ALIGN(TML_GET_OUTPUT(mdl, h) + out_size));
                 for(int i=0; i<out_size; i++) //do dequant
                     outf[i] = TML_DEQUANT(h, (TML_GET_OUTPUT(mdl, h))[i]);

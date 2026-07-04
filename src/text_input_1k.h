@@ -2,8 +2,9 @@
 #define TEXT_INPUT_1K_H
 
 #include <stdint.h>
+#include <inttypes.h>
 
-#define INPUT_SIZE 1024
+#define INPUT_SIZE UINT32_C(1024)
 
 #ifdef INPUT_IMPLEMENTATION
 uint8_t test_data[] =

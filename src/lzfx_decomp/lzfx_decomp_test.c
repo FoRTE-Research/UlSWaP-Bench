@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdio.h>
 
 #include "common.h"
@@ -6,24 +7,24 @@
 #include "input.h"
 
 #define OUTPUT_FILENAME "lzfx_decompressed_data.txt"
-#define DECOMP_DATA_LEN 0x1800
+#define DECOMP_DATA_LEN UINT32_C(0x1800)
 uint8_t decompressed_data[DECOMP_DATA_LEN];
 
 int benchmark_main(void)
 {
-    uint32_t compressed_size = sizeof(input_data);
+    uint32_t compressed_size = (uint32_t)sizeof(input_data);
     uint32_t decompressed_size = DECOMP_DATA_LEN;
 
-    printf("Decompressing %u bytes of data...\r\n", compressed_size);
+    printf("Decompressing %" PRIu32 " bytes of data...\r\n", compressed_size);
     int32_t ret = lzfx_decompress_tiny(input_data, compressed_size, decompressed_data, &decompressed_size);
 
     if (ret < 0)
     {
-        printf("Compression failed with error code %d\r\n", ret);
+        printf("Decompression failed with error code %d\r\n", ret);
         return 1;
     }
 
-    printf("Decompressed size: %u bytes\r\n", decompressed_size);
+    printf("Decompressed size: %" PRIu32 " bytes\r\n", decompressed_size);
 
     // compute checksum on decompressed data
     uint32_t checksum = 0;
@@ -32,7 +33,7 @@ int benchmark_main(void)
     {
         checksum += decompressed_data[i];
     }
-    printf("Decompressed data checksum: 0x%08X\r\n", checksum);
+    printf("Decompressed data checksum: 0x%08" PRIX32 "\r\n", checksum);
     noprint_output = checksum;
     (void)noprint_output;
 

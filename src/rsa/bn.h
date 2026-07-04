@@ -23,7 +23,7 @@ Taken from https://github.com/kokke/tiny-bignum-c with monor modifications.
 
 #include <stdint.h>
 #include <assert.h>
-
+#include <inttypes.h>
 
 /* This macro defines the word size in bytes of the array that constitues the big-number data structure. */
 #ifndef WORD_SIZE
@@ -61,8 +61,8 @@ Taken from https://github.com/kokke/tiny-bignum-c with monor modifications.
   #define DTYPE                    uint32_t
   #define DTYPE_TMP                uint64_t
   #define DTYPE_MSB                ((DTYPE_TMP)(0x80000000))
-  #define SPRINTF_FORMAT_STR       "%.08x"
-  #define SSCANF_FORMAT_STR        "%8x"
+  #define SPRINTF_FORMAT_STR       "%.08" PRIx32
+  #define SSCANF_FORMAT_STR        "%8" SCNx32
   #define MAX_VAL                  ((DTYPE_TMP)0xFFFFFFFF)
 #endif
 #ifndef DTYPE
@@ -90,7 +90,7 @@ enum { SMALLER = -1, EQUAL = 0, LARGER = 1 };
 /* Initialization functions: */
 void bignum_init(struct bn* n);
 void bignum_from_int(struct bn* n, DTYPE_TMP i);
-int  bignum_to_int(struct bn* n);
+int32_t  bignum_to_int(struct bn* n);
 void bignum_from_string(struct bn* n, const char* str, int nbytes);
 void bignum_to_string(struct bn* n, char* str, int maxsize);
 

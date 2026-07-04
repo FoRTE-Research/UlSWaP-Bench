@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdarg.h>
 
 #if (!defined(PICOLIBC_FLOAT_PRINTF_SCANF) || (CHECKSUM_TEST))

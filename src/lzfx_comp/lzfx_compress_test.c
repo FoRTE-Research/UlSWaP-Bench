@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include "input.h"
 #include "lzfx.h"
 #include "common.h"
@@ -13,7 +14,7 @@ int32_t benchmark_main(void)
     uint32_t text_size = sizeof(test_data);
     uint32_t compressed_size = COMPRESSED_SIZE;
 
-    printf("Compressing %u bytes of data...\r\n", text_size);
+    printf("Compressing %" PRIu32 " bytes of data...\r\n", text_size);
     int32_t ret = lzfx_compress(test_data, text_size, compressed_data, &compressed_size);
 
     if (ret < 0)
@@ -22,7 +23,7 @@ int32_t benchmark_main(void)
         return 1;
     }
 
-    printf("Compressed size: %u bytes\r\n", compressed_size);
+    printf("Compressed size: %" PRIu32 " bytes\r\n", compressed_size);
 
     // compute checksum on compressed data
     uint32_t checksum = 0;
@@ -31,7 +32,7 @@ int32_t benchmark_main(void)
     {
         checksum += compressed_data[i];
     }
-    printf("Compressed data checksum: 0x%08X\r\n", checksum);
+    printf("Compressed data checksum: 0x%08" PRIX32 "\r\n", checksum);
     noprint_output = checksum;
     (void)noprint_output;
 

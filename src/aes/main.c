@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 // Enable both ECB and CBC mode. Note this can be done before including aes.h or at compile-time.
 // E.g. with GCC by using the -D flag: gcc -c aes.c -DCBC=0 -DECB=1
@@ -13,8 +14,8 @@
 #include "common.h"
 #include "aes.h"
 
-#define TOTAL_ENCRYPTION_SIZE 65536 // 64 KiB
-#define ITERATIONS (TOTAL_ENCRYPTION_SIZE / INPUT_SIZE)
+#define TOTAL_ENCRYPTION_SIZE UINT32_C(65536) // 64 KiB
+#define ITERATIONS ((TOTAL_ENCRYPTION_SIZE) / (INPUT_SIZE))
 #define BYTES_TO_PRINT 128
 #define BYTES_PER_LINE 32
 
@@ -91,10 +92,10 @@ void decrement_iv(void)
 
 void cbc_encrypt(void)
 {
-    printf("Encrypting %u bytes %u times (%u bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
-    printf("Plaintext (first %u bytes):\r\n", BYTES_TO_PRINT);
+    printf("Encrypting %" PRIu32 " bytes %" PRIu32 " times (%" PRIu32 " bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
+    printf("Plaintext (first %" PRIu32 " bytes):\r\n", BYTES_TO_PRINT);
     print_char_array(test_data, BYTES_TO_PRINT, NULL);
-    printf("Plaintext (final %u bytes):\r\n", BYTES_TO_PRINT);
+    printf("Plaintext (final %" PRIu32 " bytes):\r\n", BYTES_TO_PRINT);
     print_char_array((test_data + INPUT_SIZE - BYTES_TO_PRINT), BYTES_TO_PRINT, NULL);
 
     struct AES_ctx ctx;
@@ -106,16 +107,16 @@ void cbc_encrypt(void)
         AES_ctx_set_iv(&ctx, g_iv);
     }
 
-    printf("Output ciphertext (first %u bytes):\r\n", BYTES_TO_PRINT);
+    printf("Output ciphertext (first %" PRIu32 " bytes):\r\n", BYTES_TO_PRINT);
     print_char_array(test_data, BYTES_TO_PRINT, NULL);
-    printf("Output ciphertext (final %u bytes):\r\n", BYTES_TO_PRINT);
+    printf("Output ciphertext (final %" PRIu32 " bytes):\r\n", BYTES_TO_PRINT);
     print_char_array(test_data + INPUT_SIZE - BYTES_TO_PRINT, BYTES_TO_PRINT, NULL);
 }
 
 
 void cbc_decrypt(void)
 {
-    printf("Decrypting %u bytes %u times (%u bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
+    printf("Decrypting %" PRIu32 " bytes %" PRIu32 " times (%" PRIu32 " bytes total)\r\n", INPUT_SIZE, ITERATIONS, TOTAL_ENCRYPTION_SIZE);
 
     struct AES_ctx ctx;
     AES_init_ctx_iv(&ctx, g_key, g_iv);
@@ -126,8 +127,8 @@ void cbc_decrypt(void)
         AES_CBC_decrypt_buffer(&ctx, test_data, INPUT_SIZE);
     }
 
-    printf("Decrypted plaintext (first %u bytes):\r\n", BYTES_TO_PRINT);
+    printf("Decrypted plaintext (first %" PRIu32 " bytes):\r\n", BYTES_TO_PRINT);
     print_char_array(test_data, BYTES_TO_PRINT, NULL);
-    printf("Decrypted plaintext (final %u bytes):\r\n", BYTES_TO_PRINT);
+    printf("Decrypted plaintext (final %" PRIu32 " bytes):\r\n", BYTES_TO_PRINT);
     print_char_array((test_data + INPUT_SIZE - BYTES_TO_PRINT), BYTES_TO_PRINT, NULL);
 }

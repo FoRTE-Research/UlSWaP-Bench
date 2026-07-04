@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <inttypes.h>
 
 #include "patricia.h"
 #include "common.h"
@@ -210,7 +211,7 @@ int32_t benchmark_main()
         pfind = pat_search(addr.s_addr, phead);
         if (pfind->p_key == addr.s_addr)
         {
-            printf("%08x: Found\r\n", addr.s_addr);
+            printf("%08" PRIx32 ": Found\r\n", addr.s_addr);
         }
         else
         {
@@ -219,7 +220,7 @@ int32_t benchmark_main()
              * Returns the node it inserted on success, 0 on failure.
              */
             p = pat_insert(p, phead);
-            printf("%08x: Inserted\r\n", addr.s_addr);
+            printf("%08" PRIx32 ": Inserted\r\n", addr.s_addr);
         }
         if (!p)
         {

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <inttypes.h>
 #include "snipmath.h"
 #include "common.h"
 
@@ -42,7 +43,7 @@ int benchmark_main(void)
     for (i = 0; i < 1001; ++i)
     {
         usqrt(i, &q);
-        printf("sqrt(%3d) = %2d\r\n", i, q.sqrt);
+        printf("sqrt(%3" PRIi32 ") = %2" PRIi32 "\r\n", i, q.sqrt);
     }
 
     printf("\r\n********* ANGLE CONVERSION ***********\r\n");

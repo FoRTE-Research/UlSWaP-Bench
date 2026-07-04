@@ -55,7 +55,7 @@ tm_err_t tm_stat(tm_mdlbin_t* b)
     uint16_t* odim = b->out_dims;
     printf("output %ddims: (%d, %d, %d)\n", odim[0],odim[1],odim[2],odim[3]);
     TM_DBG("model param bin addr: 0x%x\n", (uint32_t)(b->layers_body));
-    printf("main buf size %d; sub buf size %d\n", \
+    printf("main buf size %" PRIu32 "; sub buf size %" PRIu32 "\n", \
         b->buf_size,b->sub_size);
 
     printf("Idx\tLayer\t         outshape\tinoft\toutoft\tPARAM\tMEMOUT  OPS\n");
@@ -63,8 +63,8 @@ tm_err_t tm_stat(tm_mdlbin_t* b)
         idim[1],idim[2],idim[3], (idim[1]*idim[2]*idim[3]*sizeof(mtype_t)));
     //      000  Input    -     224,224,3  0x40001234 0x40004000 100000 500000 200000
     TM_DBG("000  Input    -     %3d,%3d,%d  0x%08x   0x%08x     %6d %6d %6d\n",) 
-    int sum_param = 0;
-    int sum_ops   = 0;
+    int32_t sum_param = 0;
+    int32_t sum_ops   = 0;
     uint8_t*layer_body  = (uint8_t*)b->layers_body;
     int layer_i;
     for(layer_i = 0; layer_i < b->layer_cnt; layer_i++){
@@ -76,9 +76,9 @@ tm_err_t tm_stat(tm_mdlbin_t* b)
                 h->out_dims[0],h->out_dims[1],h->out_dims[2],h->out_dims[3],\
                 printf_float(h->in_s),(int32_t)(h->in_zp),printf_float(h->out_s),(int32_t)(h->out_zp));
         if(h->type < TML_MAXCNT) {
-            int memout = h->out_dims[1]*h->out_dims[2]*h->out_dims[3];
+            int32_t memout = (int32_t)h->out_dims[1]*h->out_dims[2]*h->out_dims[3];
             sum_param += (h->size - tml_headsize_tbl[h->type]);
-            int ops = 0;
+            int32_t ops = 0;
             switch(h->type){
             case TML_CONV2D: {
                 tml_conv2d_dw_t* l = (tml_conv2d_dw_t*)(layer_body);
@@ -114,11 +114,11 @@ tm_err_t tm_stat(tm_mdlbin_t* b)
                 break;
             }
             sum_ops += ops;
-            printf("%03d\t%-8s      \t%3d,%3d,%3d\t%d\t%d\t%d\t%zu\t", layer_i, tml_str_tbl[h->type], \
+            printf("%03d\t%-8s      \t%3d,%3d,%3d\t%" PRIu32 "\t%" PRIu32 "\t%" PRIu32 "\t%zu\t", layer_i, tml_str_tbl[h->type], \
                 h->out_dims[1], h->out_dims[2], h->out_dims[3], \
-                h->in_oft, h->out_oft, h->size - tml_headsize_tbl[h->type], \
-                (memout*sizeof(mtype_t)));
-            printf("%d\r\n", ops);
+                h->in_oft, h->out_oft, (uint32_t)(h->size - tml_headsize_tbl[h->type]), \
+                (size_t)(memout*sizeof(mtype_t)));
+            printf("%" PRId32 "\r\n", ops);
         } else {
             return TM_ERR_LAYERTYPE;
         }

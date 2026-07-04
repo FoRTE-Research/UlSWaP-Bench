@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <inttypes.h>
 
 #include "common.h"
 #include "jpec.h"
@@ -29,8 +30,8 @@ int32_t benchmark_main()
     {
         checksum += jpeg[i];
     }
-    printf("Output image size: %d\r\n", len);
-    printf("Output image checksum: %u\r\n", checksum);
+    printf("Output image size: %" PRIi32 "\r\n", len);
+    printf("Output image checksum: %" PRIu32 "\r\n", checksum);
     noprint_output = checksum;
     (void)noprint_output;
 

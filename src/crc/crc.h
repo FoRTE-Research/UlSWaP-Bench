@@ -17,6 +17,7 @@
 #define _crc_h
 
 #include <stdint.h>
+#include <inttypes.h>
 
 /*
  * Select the CRC standard from the list that follows.
@@ -52,13 +53,13 @@ typedef uint16_t  crc;
 
 typedef uint32_t  crc;
 
-#define CRC_NAME			"CRC-32"
-#define POLYNOMIAL			0x04C11DB7
-#define INITIAL_REMAINDER	0xFFFFFFFF
-#define FINAL_XOR_VALUE		0xFFFFFFFF
-#define REFLECT_DATA		TRUE
-#define REFLECT_REMAINDER	TRUE
-#define CHECK_VALUE			0xCBF43926
+#define CRC_NAME            "CRC-32"
+#define POLYNOMIAL          UINT32_C(0x04C11DB7)
+#define INITIAL_REMAINDER   UINT32_C(0xFFFFFFFF)
+#define FINAL_XOR_VALUE     UINT32_C(0xFFFFFFFF)
+#define REFLECT_DATA        TRUE
+#define REFLECT_REMAINDER   TRUE
+#define CHECK_VALUE         UINT32_C(0xCBF43926)
 
 #else
 

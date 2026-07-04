@@ -3,8 +3,6 @@
 
 #include <stdint.h>
 
-#define ARRAY_SIZE 640
-
 typedef struct {
     int16_t x, y, z;
     float distance;

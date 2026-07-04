@@ -32,7 +32,7 @@
  */
 static __inline uint32_t bit(int32_t i, uint32_t key)
 {
-    return key & (1 << (31 - i));
+    return key & ((uint32_t)1 << (31 - i));
 }
 
 /*

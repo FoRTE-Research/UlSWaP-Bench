@@ -1,11 +1,13 @@
 #include <stdint.h>
+#include <inttypes.h>
 #include <string.h>
 #include <stdio.h>
 
 #include "common.h"
 #include "lw.h"
 #include "inputs.h"
-#define ITERATIONS 50
+
+#define ITERATIONS UINT32_C(50)
 
 void print_hex_array(const char* preamble, const uint8_t *array, const int len)
 {
@@ -38,7 +40,7 @@ int32_t create_message(lw_frame_t *frame, uint8_t *msg, int32_t *len, uint32_t i
 void print_output_message_details(const lw_frame_t *frame, const uint8_t *msg, const int32_t len)
 {
     print_hex_array("LoRaWAN Message:\r\n", msg, len);
-    printf("LoRaWAN message length: %d\r\n", len);
+    printf("LoRaWAN message length: %" PRIi32 "\r\n", len);
     print_hex_array("MIC: ", frame->mic.buf, 4);
 }
 
@@ -52,14 +54,14 @@ int benchmark_main()
     lw_init(US915);
 
     // Print input data parameters
-    printf("Device Address: %#08X\r\n", g_dev_address);
+    printf("Device Address: %#08" PRIX32 "\r\n", g_dev_address);
     print_hex_array("App EUI: ", g_app_eui, 8);
     print_hex_array("Device EUI: ", g_dev_eui, 8);
     print_hex_array("App Key: ", g_app_key, 16);
     print_hex_array("App Session Key: ", g_app_skey, 16);
     print_hex_array("Network Session Key: ", g_nwk_skey, 16);
-    printf("Port: %u\r\n", g_port);
-    printf("Frame Counter: %u\r\n", g_fcnt);
+    printf("Port: %" PRIu32 "\r\n", g_port);
+    printf("Frame Counter: %" PRIu32 "\r\n", g_fcnt);
     printf("\r\n");
 
     // End node
@@ -92,7 +94,7 @@ int benchmark_main()
     memcpy(frame.pl.mac.fpl, g_input_data, g_input_data_len);
 
     frame.mhdr.bits.mtype = LW_MTYPE_JOIN_REQUEST;
-    printf("Creating join request message %u times with DevNonce value 0x%08X\r\n\r\n", ITERATIONS, g_devnonce);
+    printf("Creating join request message %" PRIu32 " times with DevNonce value 0x%08" PRIX32 "\r\n\r\n", ITERATIONS, g_devnonce);
     if (create_message(&frame, msg, &len, ITERATIONS) < 0)
     {
         printf("Error creating join request message\r\n");
@@ -104,7 +106,7 @@ int benchmark_main()
     printf("\r\n");
 
     frame.mhdr.bits.mtype = LW_MTYPE_MSG_UP;
-    printf("Creating unconfirmed data up message %u times with the following %u byte input data:\r\n",
+    printf("Creating unconfirmed data up message %" PRIu32 " times with the following %" PRIu32 " byte input data:\r\n",
            ITERATIONS,
            g_input_data_len);
     print_hex_array(NULL, g_input_data, g_input_data_len);

@@ -175,6 +175,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include "common.h"
 #include "input.h"
 
@@ -535,9 +536,9 @@ int32_t benchmark_main()
     printf("Susan smoothing\r\n");
     setup_brightness_lut(&bp, bt, 2);
 
-    printf("Image width = %d\r\n", x_size);
-    printf("Image height = %d\r\n", y_size);
-    printf("Brightness threshold = %d\r\n", bt);
+    printf("Image width = %" PRIi32 "\r\n", x_size);
+    printf("Image height = %" PRIi32 "\r\n", y_size);
+    printf("Brightness threshold = %" PRIi32 "\r\n", bt);
     printf("Distance threshold = %f\r\n", printf_float(dt));
     printf("Mask size = %d\r\n", MASK_SIZE);
 
@@ -551,7 +552,7 @@ int32_t benchmark_main()
         checksum += in[i];
     }
 
-    printf("Output image checksum = %d\r\n", checksum);
+    printf("Output image checksum = %" PRIi32 "\r\n", checksum);
     noprint_output = checksum;
     (void)noprint_output;
 

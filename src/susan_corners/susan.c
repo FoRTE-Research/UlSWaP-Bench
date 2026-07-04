@@ -182,6 +182,7 @@
 #include <string.h>
 #include <math.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include "common.h"
 #include "input.h"
 
@@ -619,8 +620,8 @@ int32_t benchmark_main()
     get_image(&in, &x_size, &y_size);
 
     printf("Susan corners\r\n");
-    printf("Image width = %d\r\n", x_size);
-    printf("Image height = %d\r\n", y_size);
+    printf("Image width = %" PRIi32 "\r\n", x_size);
+    printf("Image height = %" PRIi32 "\r\n", y_size);
 
     setup_brightness_lut(&bp, bt, 2);
     susan_corners_quick(in, g_r, bp, max_no_corners, corner_list, x_size, y_size);
@@ -632,7 +633,7 @@ int32_t benchmark_main()
     {
         checksum += in[i];
     }
-    printf("Output image checksum = %d\r\n", checksum);
+    printf("Output image checksum = %" PRIi32 "\r\n", checksum);
     noprint_output = checksum;
     (void)noprint_output;
 

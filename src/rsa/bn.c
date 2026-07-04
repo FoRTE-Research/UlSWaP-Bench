@@ -21,6 +21,7 @@ Taken from https://github.com/kokke/tiny-bignum-c with monor modifications.
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <inttypes.h>
 #include <assert.h>
 #include "bn.h"
 #include "common.h"
@@ -70,11 +71,11 @@ void bignum_from_int(struct bn *n, DTYPE_TMP i)
 #endif
 }
 
-int bignum_to_int(struct bn *n)
+int32_t bignum_to_int(struct bn *n)
 {
     require(n, "n is null");
 
-    int ret = 0;
+    int32_t ret = 0;
 
     /* Endianness issue if machine is not little-endian? */
 #if (WORD_SIZE == 1)
@@ -644,7 +645,7 @@ void bignum_dump(struct bn *n, uint32_t nwords)
     int i, wpl = 0;
     for (i = nwords - 1; i >= 0; --i)
     {
-        printf("%08x ", n->array[i]);
+        printf("%08" PRIx32 " ", n->array[i]);
         wpl += 1;
         if (wpl == MAX_WORDS_PER_LINE)
         {

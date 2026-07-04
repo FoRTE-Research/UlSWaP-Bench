@@ -10,6 +10,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 // It is default O0 implement
+#include <inttypes.h>
 #include "tinymaix.h"
 #include "float.h"
 #include "math.h"
@@ -120,7 +121,7 @@ tm_err_t TM_WEAK tml_conv2d_dwconv2d(tm_mat_t* in, tm_mat_t* out, wtype_t* w, bt
     }
 
     if(dmul) {TM_PERF_START(t_dwconv);} else {TM_PERF_START(t_conv);};
-    int oft = 0;
+    int32_t oft = 0;
     int idx = 0;
     for(int y=0; y<kh; y++){    //gen k_oft table
         for(int x=0; x<kw; x++){
@@ -288,8 +289,8 @@ tm_err_t TM_WEAK tml_add(tm_mat_t* in0, tm_mat_t* in1, tm_mat_t* out, \
     mtype_t* d0 = in0->data;
     mtype_t* d1 = in1->data;
     mtype_t* res = out->data; 
-    int size = in0->h*in0->w*in0->c;
-    printf("s0=%.3f,zp0=%d; s1=%.3f,zp1=%d\r\n", printf_float(in_s0), in_zp0, printf_float(in_s1), in_zp1);
+    int32_t size = (int32_t)in0->h*in0->w*in0->c;
+    printf("s0=%.3f,zp0=%" PRId32 "; s1=%.3f,zp1=%" PRId32 "\r\n", printf_float(in_s0), (int32_t)in_zp0, printf_float(in_s1), (int32_t)in_zp1);
 #if TM_MDL_TYPE == TM_MDL_FP16 || TM_MDL_TYPE == TM_MDL_FP32 || TM_MDL_TYPE == TM_MDL_INT8
     int i;
     for(i=0; i+4<=size; ){

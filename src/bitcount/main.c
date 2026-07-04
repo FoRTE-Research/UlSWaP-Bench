@@ -8,12 +8,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #include "bitops.h"
 #include "common.h"
 
 #define NUM_FUNCS  8
-#define RNG_SEED   0x0C728394
-#define ITERATIONS 100000
+#define RNG_SEED   UINT32_C(0x0C728394)
+#define ITERATIONS UINT32_C(100000)
 
 void my_srand(uint32_t new_seed);
 uint32_t my_rand(void);
@@ -48,7 +49,7 @@ int benchmark_main(void)
         "Shift and count bits"};
     (void)func_names;
 
-    printf("Counting total number of 1's in %u random numbers\r\n", ITERATIONS);
+    printf("Counting total number of 1's in %" PRIu32 " random numbers\r\n", ITERATIONS);
 
     for (i = 0; i < NUM_FUNCS; i++)
     {
@@ -57,7 +58,7 @@ int benchmark_main(void)
             set_bits += pBitCntFunc[i](num);
         }
 
-        printf("%-38s> Set bits: %u\r\n", func_names[i], set_bits);
+        printf("%-38s> Set bits: %" PRIu32 "\r\n", func_names[i], set_bits);
     }
 
     noprint_output = set_bits;

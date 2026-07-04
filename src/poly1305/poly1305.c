@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-
+#include <inttypes.h>
 #include "poly1305.h"
 
 size_t Poly1305_ctx_size(void)
@@ -84,7 +84,7 @@ static uint32_t U8TOuint32_t(const uint8_t *p)
  *      handled locally.
  */
 static void
-poly1305_blocks(void *ctx, const uint8_t *inp, size_t len, uint32_t padbit);
+poly1305_blocks(void *ctx, const uint8_t *inp, uint32_t len, uint32_t padbit);
 
 /*
  * Type-agnostic "rip-off" from constant_time.h
@@ -127,7 +127,7 @@ static void poly1305_init(void *ctx, const uint8_t key[16])
 }
 
 static void
-poly1305_blocks(void *ctx, const uint8_t *inp, size_t len, uint32_t padbit)
+poly1305_blocks(void *ctx, const uint8_t *inp, uint32_t len, uint32_t padbit)
 {
     poly1305_internal *st = (poly1305_internal *)ctx;
     uint32_t r0, r1, r2, r3;
@@ -189,7 +189,7 @@ poly1305_blocks(void *ctx, const uint8_t *inp, size_t len, uint32_t padbit)
         h3 = (uint32_t)(d3 += d2 >> 32);
         h4 += (uint32_t)(d3 >> 32);
         /* b) (h4:h0 += (h4:h0>>130) * 5) %= 2^130 */
-        c = (h4 >> 2) + (h4 & ~3U);
+        c = (h4 >> 2) + (h4 & ~UINT32_C(3));
         h4 &= 3;
         h0 += c;
         h1 += (c = CONSTANT_TIME_CARRY(h0, c));
@@ -289,9 +289,9 @@ void Poly1305_Init(POLY1305 *ctx, const uint8_t key[32])
     ctx->num = 0;
 }
 
-void Poly1305_Update(POLY1305 *ctx, const uint8_t *inp, size_t len)
+void Poly1305_Update(POLY1305 *ctx, const uint8_t *inp, uint32_t len)
 {
-    size_t rem, num;
+    uint32_t rem, num;
 
     if ((num = ctx->num))
     {
@@ -329,7 +329,7 @@ void Poly1305_Update(POLY1305 *ctx, const uint8_t *inp, size_t len)
 
 void Poly1305_Final(POLY1305 *ctx, uint8_t mac[16])
 {
-    size_t num;
+    uint32_t num;
 
     if ((num = ctx->num))
     {

@@ -35,7 +35,7 @@ limitations under the License.
 #define TM_MDL_MAGIC 0x5849414D // mdl magic sign 'XIAM' in little-endian
 #define TM_ALIGN_SIZE   (8)     //8 byte align
 #define TM_ALIGN(addr)  ((((size_t)(addr))+(TM_ALIGN_SIZE-1))/TM_ALIGN_SIZE*TM_ALIGN_SIZE)
-#define TM_MATP(mat,y,x,ch) ((mat)->data + ((y)*(mat)->w + (x))*(mat)->c + (ch))
+#define TM_MATP(mat,y,x,ch) ((mat)->data + ((int32_t)(y)*(mat)->w + (x))*(mat)->c + (ch))
                                 //HWC
 #if   TM_MDL_TYPE == TM_MDL_INT8
     typedef int8_t  mtype_t;    //mat data type
