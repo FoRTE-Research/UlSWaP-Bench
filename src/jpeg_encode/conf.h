@@ -35,6 +35,8 @@
 #include <string.h>
 #include <stdint.h>
 
+#include "common.h"
+
 /** Standard JPEG quantizing table */
 extern const uint8_t jpec_qzr[64];
 

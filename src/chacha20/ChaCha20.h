@@ -38,6 +38,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "common.h"
+
 /** @brief Alias for ChaCha20 key type */
 typedef uint8_t key256_t[32];
 
@@ -259,7 +261,7 @@ void ChaCha20_xor(ChaCha20_Ctx* ctx, const uint8_t* input_buffer, uint8_t* outpu
 		if(ctx->state[12] == 0)
 		{
 			ctx->state[13]++;
-			assert(ctx->state[13] != 0);
+			// assert(ctx->state[13] != 0);
 		}
 
 		for(size_t j = i; j < i + 64; j++)

@@ -39,6 +39,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "ecdh.h"
+#include "common.h"
 
 
 /* margin for overhead needed in intermediate calculations */

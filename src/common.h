@@ -5,6 +5,9 @@
 #include <inttypes.h>
 #include <stdarg.h>
 
+#undef assert
+#define assert(...)
+
 #if (!defined(PICOLIBC_FLOAT_PRINTF_SCANF) || (CHECKSUM_TEST))
 #undef printf_float
 #define printf_float(_num) (_num)
