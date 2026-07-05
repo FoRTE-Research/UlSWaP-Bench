@@ -44,10 +44,16 @@ foreach(benchmark ${benchmarks})
     endif()
 endforeach()
 
-file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/lst)
+if (PRINT AND CHECKSUM_TEST)
+    message(FATAL_ERROR "Cannot enable both printf and checksum tests simultaneously")
+endif()
 
-if (NO_PRINT)
-    message(STATUS "Disabling printf")
+if (PRINT)
+    message(STATUS "Enabling printf")
+endif()
+
+if (CHECKSUM_TEST)
+    message(STATUS "Enabling checksum tests")
 endif()
 
 message(STATUS "Benchmarks to build: ${benchmarks}")
@@ -56,7 +62,7 @@ foreach(benchmark ${benchmarks})
     add_executable(${benchmark})
     add_subdirectory(src/${benchmark})
     set_target_properties(${benchmark} PROPERTIES OUTPUT_NAME ${benchmark}.elf)
-    set_target_properties(${benchmark} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+    set_target_properties(${benchmark} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/elf)
     target_sources(${benchmark} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/mainmain.c ${ARCH_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/src/common.c)
     target_include_directories(${benchmark} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
@@ -95,15 +101,29 @@ foreach(benchmark ${benchmarks})
     endif()
 
     if (DEFINED ARCH_OBJDUMP)
+        file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/lst)
         add_custom_command(
             TARGET ${benchmark}
             POST_BUILD
             # DEPENDS ${benchmark}
             COMMENT "Generating disassembly for ${benchmark}"
-            COMMAND ${ARCH_OBJDUMP} -d ${PROJECT_BINARY_DIR}/bin/${benchmark}.elf > ${PROJECT_BINARY_DIR}/lst/${benchmark}.lst
+            COMMAND ${ARCH_OBJDUMP} -d ${PROJECT_BINARY_DIR}/elf/${benchmark}.elf > ${PROJECT_BINARY_DIR}/lst/${benchmark}.lst
         )
 
         set_target_properties(${benchmark} PROPERTIES ADDITIONAL_CLEAN_FILES ${PROJECT_BINARY_DIR}/lst/${benchmark}.lst)
+    endif()
+
+    if (DEFINED ARCH_OBJCOPY)
+        file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+        add_custom_command(
+            TARGET ${benchmark}
+            POST_BUILD
+            # DEPENDS ${benchmark}
+            COMMENT "Generating binary for ${benchmark}"
+            COMMAND ${ARCH_OBJCOPY} -O binary ${PROJECT_BINARY_DIR}/elf/${benchmark}.elf ${PROJECT_BINARY_DIR}/bin/${benchmark}.bin
+        )
+
+        set_target_properties(${benchmark} PROPERTIES ADDITIONAL_CLEAN_FILES ${PROJECT_BINARY_DIR}/bin/${benchmark}.bin)
     endif()
 
     if (DEFINED ARCH_POST_COMMAND)
@@ -111,8 +131,6 @@ foreach(benchmark ${benchmarks})
         add_custom_command(
             TARGET ${benchmark}
             POST_BUILD
-            # DEPENDS ${benchmark}
-            COMMENT "Generating hex file for ${benchmark}"
             COMMAND ${ARCH_POST_COMMAND}
             COMMAND_EXPAND_LISTS
         )
