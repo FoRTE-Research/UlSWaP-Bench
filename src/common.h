@@ -8,21 +8,23 @@
 #undef assert
 #define assert(...)
 
-#if (!defined(PICOLIBC_FLOAT_PRINTF_SCANF) || (CHECKSUM_TEST))
+#if (!defined(__PICOLIBC__) || (CHECKSUM_TEST == 1))
 #undef printf_float
 #define printf_float(_num) (_num)
-#endif  // PICOLIBC_FLOAT_PRINTF_SCANF
+#endif  // __PICOLIBC__
 
 #ifndef HOST_TEST
 #define HOST_TEST 0
 #endif
 
-#if NO_PRINT
+#if ((PRINT == 0) && (CHECKSUM_TEST == 0))
 #define printf(...)
-#elif CHECKSUM_TEST
+#endif  // PRINT
+
+#if (CHECKSUM_TEST == 1)
 void printf_checksum(const char *fmt, ...);
 #define printf(fmt, ...) printf_checksum(fmt, ##__VA_ARGS__)
-#endif  // NO_PRINT
+#endif  // CHECKSUM_TEST
 
 #define TRUE  1
 #define FALSE 0
