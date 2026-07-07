@@ -355,7 +355,7 @@ static inline float _exp(float x) {
     }
     #define tm_exp _exp   //maybe some arch have exp acceleration, use macro in arch_xxx.h to reload it
 #else
-    #define tm_exp exp
+    #define tm_exp expf
 #endif
 
 #endif 

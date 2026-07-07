@@ -355,7 +355,7 @@ void setup_brightness_lut(uint8_t **bp, int32_t thresh, int32_t form)
         temp = temp * temp;
         if (form == 6)
             temp = temp * temp * temp;
-        temp = 100.0 * exp(-temp);
+        temp = 100.0f * expf(-temp);
         *(*bp + k) = (uint8_t)temp;
     }
 }
@@ -516,8 +516,8 @@ void susan_edges_small(uint8_t *in, int32_t *r, uint8_t *mid, uint8_t *bp, int32
                     x += c;
                     y += c;
 
-                    z = sqrt((float)((x * x) + (y * y)));
-                    if (z > (0.4 * (float)n)) /* 0.6 */
+                    z = sqrtf((float)((x * x) + (y * y)));
+                    if (z > (0.4f * (float)n)) /* 0.6 */
                     {
                         do_symmetry = 0;
                         if (x == 0)
@@ -531,14 +531,14 @@ void susan_edges_small(uint8_t *in, int32_t *r, uint8_t *mid, uint8_t *bp, int32
                         }
                         else
                             w = 1;
-                        if (z < 0.5)
+                        if (z < 0.5f)
                         { /* vert_edge */
                             a = 0;
                             b = 1;
                         }
                         else
                         {
-                            if (z > 2.0)
+                            if (z > 2.0f)
                             { /* hor_edge */
                                 a = 1;
                                 b = 0;
@@ -611,14 +611,14 @@ void susan_edges_small(uint8_t *in, int32_t *r, uint8_t *mid, uint8_t *bp, int32
                         z = 1000000.0;
                     else
                         z = ((float)x) / ((float)y);
-                    if (z < 0.5)
+                    if (z < 0.5f)
                     { /* vertical */
                         a = 0;
                         b = 1;
                     }
                     else
                     {
-                        if (z > 2.0)
+                        if (z > 2.0f)
                         { /* horizontal */
                             a = 1;
                             b = 0;

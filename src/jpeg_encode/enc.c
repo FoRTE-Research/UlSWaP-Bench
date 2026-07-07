@@ -90,7 +90,7 @@ static void jpec_enc_init_dqt(jpec_enc_t *e)
     float scale = (e->qual < 50) ? (50 / qualf) : (2 - qualf / 50);
     for (int32_t i = 0; i < 64; i++)
     {
-        int32_t a = (int32_t)((float)jpec_qzr[i] * scale + 0.5);
+        int32_t a = (int32_t)((float)jpec_qzr[i] * scale + 0.5f);
         a = (a < 1) ? 1 : ((a > 255) ? 255 : a);
         e->dqt[i] = a;
     }

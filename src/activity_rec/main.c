@@ -133,6 +133,23 @@ void transform(accelWindow window)
     }
 }
 
+uint32_t isqrt(uint32_t n)
+{
+    if (n == 0)
+    {
+        return 0;
+    }
+    uint32_t x = n;
+    uint32_t y = (x + 1) / 2;
+    while (y < x)
+    {
+        x = y;
+        y = (x + n / x) / 2;
+    }
+    return x;
+}
+
+
 void featurize(features_t *features, accelWindow aWin)
 {
     accelReading mean;
@@ -169,7 +186,7 @@ void featurize(features_t *features, accelWindow aWin)
        stddev.x = stddev.x / (ACCEL_WINDOW_SIZE - 1);
        stddev.y = stddev.y / (ACCEL_WINDOW_SIZE - 1);
        stddev.z = stddev.z / (ACCEL_WINDOW_SIZE - 1);
-       */
+    */
     stddev.x >>= 2;
     stddev.y >>= 2;
     stddev.z >>= 2;
@@ -177,8 +194,8 @@ void featurize(features_t *features, accelWindow aWin)
     uint16_t meanmag = mean.x * mean.x + mean.y * mean.y + mean.z * mean.z;
     uint16_t stddevmag = stddev.x * stddev.x + stddev.y * stddev.y + stddev.z * stddev.z;
 
-    features->meanmag = sqrt(meanmag);
-    features->stddevmag = sqrt(stddevmag);
+    features->meanmag = isqrt(meanmag);
+    features->stddevmag = isqrt(stddevmag);
 
     printf("featurize: mean %u sd %u\r\n", features->meanmag, features->stddevmag);
 }

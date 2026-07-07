@@ -21,11 +21,14 @@ int compare(const void *elem1, const void *elem2)
 int benchmark_main(void)
 {
     uint16_t i;
-    uint32_t array_size = sizeof(vertices) / sizeof(vertices[0]);
+    uint16_t array_size = sizeof(vertices) / sizeof(vertices[0]);
 
     for (i = 0; i < array_size; ++i)
     {
-        vertices[i].distance = sqrt(pow(vertices[i].x, 2) + pow(vertices[i].y, 2) + pow(vertices[i].z, 2));
+        float x2 = (int32_t)vertices[i].x * (int32_t)vertices[i].x;
+        float y2 = (int32_t)vertices[i].y * (int32_t)vertices[i].y;
+        float z2 = (int32_t)vertices[i].z * (int32_t)vertices[i].z;
+        vertices[i].distance = sqrtf(x2 + y2 + z2);
     }
     printf("Sorting %" PRIu32 " vectors based on distance from the origin.\r\n\r\n", array_size);
     qsort(vertices, array_size, sizeof(Vertex), compare);

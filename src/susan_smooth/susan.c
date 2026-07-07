@@ -314,7 +314,7 @@ void setup_brightness_lut(uint8_t **bp, int32_t thresh, int32_t form)
         temp = temp * temp;
         if (form == 6)
             temp = temp * temp * temp;
-        temp = 100.0 * exp(-temp);
+        temp = 100.0f * expf(-temp);
         *(*bp + k) = (uint8_t)temp;
     }
 }
@@ -388,7 +388,7 @@ void susan_smoothing(int32_t three_by_three, uint8_t *in, float dt, int32_t x_si
     /* {{{ setup larger image and border sizes */
 
     if (three_by_three == 0)
-        mask_size = ((int32_t)(1.5 * dt)) + 1;
+        mask_size = ((int32_t)(1.5f * dt)) + 1;
     else
         mask_size = 1;
 
@@ -421,7 +421,7 @@ void susan_smoothing(int32_t three_by_three, uint8_t *in, float dt, int32_t x_si
         {
             for (j = -mask_size; j <= mask_size; j++)
             {
-                x = (int32_t)(100.0 * exp(((float)((i * i) + (j * j))) / temp));
+                x = (int32_t)(100.0f * expf(((float)((i * i) + (j * j))) / temp));
                 *dpt++ = (uint8_t)x;
             }
         }

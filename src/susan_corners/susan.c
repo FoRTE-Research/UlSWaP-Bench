@@ -321,7 +321,7 @@ void setup_brightness_lut(uint8_t **bp, int32_t thresh, int32_t form)
         temp = temp * temp;
         if (form == 6)
             temp = temp * temp * temp;
-        temp = 100.0 * exp(-temp);
+        temp = 100.0f * expf(-temp);
         *(*bp + k) = (uint8_t)temp;
     }
 }
