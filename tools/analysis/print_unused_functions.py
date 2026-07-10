@@ -29,7 +29,7 @@ def get_unused_functions(benchmark:str, build_dir:str) -> list[str]:
             elf_file = f'{benchmark_obj_dir}/{file}'
             obj_funcs += get_functions_from_elf_file(elf_file)
 
-    benchmark_elf_file = f'{build_dir}/bin/{benchmark}.elf'
+    benchmark_elf_file = f'{build_dir}/elf/{benchmark}.elf'
     elf_funcs = get_functions_from_elf_file(benchmark_elf_file)
 
     for func in obj_funcs:
@@ -41,7 +41,7 @@ def get_unused_functions(benchmark:str, build_dir:str) -> list[str]:
 
 def get_all_unused_functions(build_dir:str) -> dict[str, list[str]]:
     unused_funcs = {}
-    for entry in os.listdir(f'{build_dir}/bin'):
+    for entry in os.listdir(f'{build_dir}/elf'):
         if entry.endswith('.elf'):
             benchmark = entry.split('.')[0]
             unused_funcs[benchmark] = get_unused_functions(benchmark, build_dir)
@@ -62,6 +62,7 @@ def print_unused_functions(unused_funcs:dict[str, list[str]]):
 
 help_msg = '''
 This script reads the ELF files for each benchmark and finds functions that are compiled but not used in the final binary.
+The input directory should be the top-level CMake build directory.
 The output is printed to the console.
 '''
 

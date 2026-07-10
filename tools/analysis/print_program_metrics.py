@@ -1,22 +1,35 @@
 import os
 import sys
+import json
 import tempfile as tf
 import subprocess as sp
 from utils import *
-from unused_functions import get_unused_functions
+from print_unused_functions import get_unused_functions
 
 BENCHMARK_TOP_DIR = f'{os.path.dirname(os.path.abspath(__file__))}/../..'
 BENCHMARK_SRC_DIR = f'{BENCHMARK_TOP_DIR}/src'
 PLUGIN_LIB = f'{BENCHMARK_TOP_DIR}/tools/analysis/IR/build/lib/libBasicBlockInstCounter.so'
 
+INPUT_HEADER_NAMES = ['input.h', 'data.h', 'mnist_resnet_q.h', 'inputs.c', 'inputs.h']
+INPUT_HEADERS_REGEX = '|'.join([f'{header}' for header in INPUT_HEADER_NAMES])
+
 
 class BenchmarkProperties:
-    def __init__(self, name:str, c_loc:int, h_loc:int, num_basic_blocks:int, num_instructions:int):
+    def __init__(self, name:str, c_loc:int, h_loc:int, num_basic_blocks:int, num_instructions:int, muldiv_usage:str):
         self.name = name
         self.c_loc = c_loc
         self.h_loc = h_loc
         self.num_basic_blocks = num_basic_blocks
         self.num_instructions = num_instructions
+
+        if muldiv_usage == 'none':
+            self.muldiv_usage = '-'
+        elif muldiv_usage == 'double':
+            self.muldiv_usage = 'D'
+        elif muldiv_usage == 'float':
+            self.muldiv_usage = 'F'
+        elif muldiv_usage == 'int':
+            self.muldiv_usage = 'I'
         return
 
 
@@ -56,8 +69,7 @@ def get_ir_properties(benchmark:str, build_dir:str) -> tuple[int, int]:
 def get_benchmark_loc(benchmark:str) -> tuple[int, int]:
     benchmark_path = os.path.join(BENCHMARK_SRC_DIR, benchmark)
 
-    cmd = f'cloc {benchmark_path} --include-lang="C,C/C++ Header" -not-match-f=input.h --hide-rate --quiet'
-
+    cmd = f'cloc {benchmark_path} --include-lang="C,C/C++ Header" --not-match-f="{INPUT_HEADERS_REGEX}" --hide-rate --quiet --json'
     proc = sp.run(cmd, shell=True, capture_output=True)
     if proc.returncode != 0:
         print(f'Failed to run cloc for {benchmark}')
@@ -65,9 +77,16 @@ def get_benchmark_loc(benchmark:str) -> tuple[int, int]:
         sys.exit(1)
 
     output = proc.stdout.decode()
-    cloc_lines = output.splitlines()
-    c_loc = cloc_lines[5].split()[-1]
-    h_loc = cloc_lines[6].split()[-1] if 'Header' in cloc_lines[6] else 0
+    cloc_data = json.loads(output)
+
+    # Make sure the only languages in the cloc output are C and C/C++ Header
+    for lang in cloc_data.keys():
+        if lang not in ['C', 'C/C++ Header', 'header', 'SUM']:
+            print(f'Unexpected language in cloc output for {benchmark}: {lang}')
+            sys.exit(1)
+
+    c_loc = cloc_data.get('C').get('code')
+    h_loc = cloc_data.get('C/C++ Header', {}).get('code', 0)
 
     return c_loc, h_loc
 
@@ -75,14 +94,15 @@ def get_benchmark_loc(benchmark:str) -> tuple[int, int]:
 def get_benchmark_properties(benchmark:str, build_dir:str) -> BenchmarkProperties:
     c_loc, h_loc = get_benchmark_loc(benchmark)
     num_basic_blocks, num_instructions = get_ir_properties(benchmark, build_dir)
+    muldiv_usage = MULDIV_USAGE[benchmark]
 
-    return BenchmarkProperties(benchmark, c_loc, h_loc, num_basic_blocks, num_instructions)
+    return BenchmarkProperties(benchmark, c_loc, h_loc, num_basic_blocks, num_instructions, muldiv_usage)
 
 
 def get_properties_csv(all_benchmark_props:dict[str,BenchmarkProperties]) -> str:
-    output = 'Benchmark,C LOC,H LOC,Basic Blocks,Instructions\n'
+    output = 'Benchmark,C LOC,H LOC,Basic Blocks,Instructions,MulDiv Usage\n'
     for benchmark in all_benchmark_props.values():
-        output += f'{benchmark.name},{benchmark.c_loc},{benchmark.h_loc},{benchmark.num_basic_blocks},{benchmark.num_instructions} \n'
+        output += f'{benchmark.name},{benchmark.c_loc},{benchmark.h_loc},{benchmark.num_basic_blocks},{benchmark.num_instructions},{benchmark.muldiv_usage} \n'
 
     return output
 
@@ -93,19 +113,19 @@ def get_properties_latex(all_benchmark_props:dict[str,BenchmarkProperties]) -> s
         output += ' ' * 8 + f'\\multirow{{{len(ALL_BENCHMARKS[category])}}}{{*}}{{\\rotatebox[origin=c]{{90}}{{{category}}}}}' + '\n'
         for benchmark in ALL_BENCHMARKS[category]:
             benchmark_props = all_benchmark_props[benchmark]
-            escaped_benchmark = benchmark.replace('_', '\_')
+            escaped_benchmark = benchmark.replace('_', '\\_')
             output += ' ' * 8 + f'& {escaped_benchmark} & {benchmark_props.c_loc} & {benchmark_props.h_loc} & ' +\
-                  f'{benchmark_props.num_basic_blocks} & {benchmark_props.num_instructions} \\\\' + '\n'
-        output += ' ' * 8 + '\hline' + '\n'
+                  f'{benchmark_props.num_basic_blocks} & {benchmark_props.num_instructions} & {benchmark_props.muldiv_usage} \\\\' + '\n'
+        output += ' ' * 8 + '\\hline' + '\n'
 
     return output
 
 
 def print_properties_table(benchmark_props:dict[str,BenchmarkProperties]) -> None:
-    print('Benchmark     | C LOC | H LOC | Basic Blocks | Instructions')
-    print('--------------|-------|-------|--------------|--------------')
+    print('Benchmark     | C LOC | H LOC | Basic Blocks | Instructions | MulDiv Usage')
+    print('--------------|-------|-------|--------------|--------------|-------------')
     for benchmark in benchmark_props.values():
-        print(f'{benchmark.name:<13} | {benchmark.c_loc:>5} | {benchmark.h_loc:>5} | {benchmark.num_basic_blocks:>12} | {benchmark.num_instructions:>12}')
+        print(f'{benchmark.name:<13} | {benchmark.c_loc:>5} | {benchmark.h_loc:>5} | {benchmark.num_basic_blocks:>12} | {benchmark.num_instructions:>12} | {benchmark.muldiv_usage:>11}')
 
     return
 
@@ -113,7 +133,7 @@ def print_properties_table(benchmark_props:dict[str,BenchmarkProperties]) -> Non
 help_msg = '''
 This script retrieves and outputs the following program metrics for each benchmark: lines of code in C files and header files,
 number of LLVM-IR basic blocks, and number of LLVM-IR instructions.
-The input directory should be the CMake build directory containing the benchmark object files.
+The input directory should be the top-level CMake build directory.
 If no output file is specified, the metrics will be printed to the console.
 If an output file is specified, it will be written in CSV format or LaTeX table format (body only) depending on the file extension.
 '''
@@ -134,6 +154,7 @@ def main():
         return
 
     all_benchmark_props = {}
+    output = ''
 
     if args.benchmark is not None:
         if output_file is not None and output_file.endswith('.tex'):
