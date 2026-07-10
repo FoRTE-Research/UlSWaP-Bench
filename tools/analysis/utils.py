@@ -1,8 +1,12 @@
 import argparse
 import os
 from enum import Enum
+import shutil
+import sys
 
-VSOC_EXEC = '/home/danchiba/FrankenRV/hdl/sim/obj_dir/VSOC'
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+BENCH_TOP_DIR = os.path.join(SCRIPT_DIR, '../..')
+VSOC_EXEC = '/home/danchiba/FrankenRV/hdl/sim/obj_dir/Vsoc'
 
 ALL_BENCHMARKS = {
     'Security': ['aes', 'chacha20', 'poly1305', 'rsa', 'ecc', 'sha256'],
@@ -12,13 +16,8 @@ ALL_BENCHMARKS = {
     'General': ['basicmath', 'bitcount', 'qsort', 'stringsearch']
 }
 
-MEM_TYPES = ['.text', '.rodata', '.data', '.bss', 'stack']
-NVM_MEM_TYPES = ['.text', '.rodata', '.data']
-RAM_MEM_TYPES = ['.data', '.bss', 'stack']
-ARCHITECTURES = ['RISC-V', 'MSP430', 'ARM']
-ARCH_COLORS = ['tab:purple', 'tab:orange', 'yellow']
-MEM_COLORS = ['tab:purple', 'tab:orange', 'yellow']
-ARCH_HATCHES = ['////', '......', '\\\\\\\\']
+ARCHITECTURES = ['riscv', 'msp430', 'arm']
+
 
 def get_bench_names() -> list[str]:
     bench_names = []
@@ -28,43 +27,64 @@ def get_bench_names() -> list[str]:
     return bench_names
 
 
-def get_label_xtick_positions() -> list[float]:
-    positions = []
-    bench_idx = 0
-    for i, bench_group in enumerate(ALL_BENCHMARKS.keys()):
-        positions.append(bench_idx + (len(ALL_BENCHMARKS[bench_group]) - 0.5) / 2)
-        bench_idx += len(ALL_BENCHMARKS[bench_group])
+MULDIV_USAGE = {
+    'fft': 'double',
+    'mp3_encode': 'double',
+    'anomaly': 'double',
+    'basicmath': 'double',
 
-    return positions
+    'jpeg_encode': 'float',
+    'susan_edges': 'float',
+    'susan_corners': 'float',
+    'susan_smooth': 'float',
+    'image_class': 'float',
+    'sensor_fusion': 'float',
+    'qsort': 'float',
+
+    'poly1305': 'int',
+    'rsa': 'int',
+    'patricia': 'int',
+    'lorawan_down': 'int',
+    'lorawan_up': 'int',
+    'adpcm_encode': 'int',
+    'activity_rec': 'int',
+
+    'aes': 'none',
+    'chacha20': 'none',
+    'ecc': 'none',
+    'sha256': 'none',
+    'crc': 'none',
+    'dijkstra': 'none',
+    'lzfx_comp': 'none',
+    'lzfx_decomp': 'none',
+    'bitcount': 'none',
+    'stringsearch': 'none',
+}
 
 
-def get_line_xticks() -> list[float]:
-    positions = [-0.25]
-    bench_idx = 0
-    for bench_group in ALL_BENCHMARKS.values():
-        positions.append(bench_idx + len(bench_group) - 0.25)
-        bench_idx += len(bench_group)
+def color(text:str, color:str, emph:str|None=None) -> str:
+    match color:
+        case 'red': color_num = 31
+        case 'green': color_num = 32
+        case 'yellow': color_num = 33
+        case 'blue': color_num = 34
+        case 'magenta': color_num = 35
+        case 'cyan': color_num = 36
+        case 'white': color_num = 37
+        case _: return text
 
-    return positions
-
-
-def get_compact_num(num:int) -> str:
-    if num < 1000:
-        return str(num)
-    elif num < 10000:
-        return f'{round(num / 1000, 1)}K'
-    elif num < 10**6:
-        return f'{round(num / 1000)}K'
-    elif num < 10**7:
-        return f'{round(num / 10**6, 1)}M'
-    elif num < 10**9:
-        return f'{round(num / 10**6)}M'
-    elif num < 10**10:
-        return f'{round(num / 10**9, 1)}G'
-    elif num < 10**11:
-        return f'{round(num / 10**9)}G'
+    if emph is not None:
+        match emph:
+            case 'b': emph_num = 1
+            case 'd': emph_num = 2
+            case 'u': emph_num = 4
+            case _: return text
+        color_prefix = f'\N{esc}[{color_num};{emph_num}m'
     else:
-        return 'uh-oh'
+        color_prefix = f'\N{esc}[{color_num}m'
+
+    return color_prefix + text + '\N{esc}[0m'
+
 
 
 class RunStatus(Enum):
@@ -80,29 +100,11 @@ def get_parent_parser(input_reqd:bool = True, output_reqd:bool = False) -> argpa
 
     return parser
 
-# def parse_args():
-#     import argparse
-#     parser = argparse.ArgumentParser()
-#     # parser.add_argument('--hex_file', type=str, help='Path to the hex file')
-#     # parser.add_argument('--bin_dir', type=str, help='Directory containing firmware binaries')
-#     # parser.add_argument('--hex_dir', type=str, help='Directory containing firmware hex files')
-#     # parser.add_argument('--dump_file', type=str, help='Dump file to analyze')
-#     # parser.add_argument('--dump_dir', type=str, help='Directory containing verilator dump')
 
-#     # parser.add_argument('--benchmark', type=str, help='Benchmark to run')
-#     parser.add_argument('--build_dir', type=str, help='Directory containing object files')
-#     parser.add_argument('-i', '--input', type=str, help='Path to the input file or directory')
-#     parser.add_argument('-o', '--output', type=str, help='Path to the output file or directory')
-#     # parser.add_argument('--input_file', type=str, help='Path to the input file')
-#     # parser.add_argument('--output_file', type=str, help='Path to the output file')
-#     # parser.add_argument('--input_dir', type=str, help='Directory with input files to parse or run')
-#     # parser.add_argument('--output_dir', type=str, help='Directory to store the output files')
-#     # parser.add_argument('--plot_file', type=str, help='File in which to store the plot')
-#     parser.add_argument('--msp430', action='store_true', help='Parse for MSP430')
-#     parser.add_argument('--arm', action='store_true', help='Parse for ARM')
-#     parser.add_argument('--riscv', action='store_true', help='Parse for RISC-V')
-
-#     return parser.parse_args()
+def check_tool_exists(tool:str) -> None:
+    if shutil.which(tool) is None:
+        print(color(f'{tool} not found.', 'red', 'b'))
+        sys.exit(1)
 
 
 def check_dir_exists(dir_path:str, create:bool) -> bool:
@@ -123,7 +125,6 @@ def check_dir_exists(dir_path:str, create:bool) -> bool:
 
 def check_file_exists(file_path:str) -> bool:
     if not os.path.isfile(file_path):
-        print(f'{file_path} does not exist')
         return False
     else:
         return True
