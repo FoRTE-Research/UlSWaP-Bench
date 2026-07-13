@@ -1,4 +1,10 @@
 import os
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import matplotlib.colors as mcolors
+import matplotlib.patches as mpatches
+import numpy as np
+
 from utils import ALL_BENCHMARKS
 
 
@@ -7,14 +13,19 @@ COLUMNWIDTH = 3.34
 
 NVM_MEM_TYPES = ['.text', '.rodata', '.data']
 RAM_MEM_TYPES = ['.data', '.bss', 'stack']
-ARCH_COLORS = ['tab:purple', 'tab:orange', 'yellow']
-MEM_COLORS = ['tab:purple', 'tab:orange', 'yellow']
+ARCH_COLORS = ['purple', 'tab:orange', 'yellow']
+MEM_COLORS  = ['purple', 'tab:orange', 'yellow']
 ARCH_HATCHES = ['///', '....', '\\\\\\']
 ARCH_LABELS = {
     'riscv': 'RISC-V',
     'msp430': 'MSP430',
     'arm': 'ARM'
 }
+
+def get_luminescence(named_color:str) -> float:
+    r, g, b = mcolors.to_rgb(named_color)
+    lum = 0.2126*r + 0.7152*g + 0.0722*b
+    return round(lum, 3)
 
 
 def get_label_xtick_positions() -> list[float]:

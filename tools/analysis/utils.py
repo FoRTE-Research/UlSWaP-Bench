@@ -6,7 +6,6 @@ import sys
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 BENCH_TOP_DIR = os.path.join(SCRIPT_DIR, '../..')
-VSOC_EXEC = '/home/danchiba/FrankenRV/hdl/sim/obj_dir/Vsoc'
 
 ALL_BENCHMARKS = {
     'Security': ['aes', 'chacha20', 'poly1305', 'rsa', 'ecc', 'sha256'],
@@ -101,10 +100,14 @@ def get_parent_parser(input_reqd:bool = True, output_reqd:bool = False) -> argpa
     return parser
 
 
-def check_tool_exists(tool:str) -> None:
+def check_tool_exists(tool:str, exit:bool=True) -> bool:
     if shutil.which(tool) is None:
         print(color(f'{tool} not found.', 'red', 'b'))
-        sys.exit(1)
+        if exit:
+            sys.exit(1)
+
+        return False
+    return True
 
 
 def check_dir_exists(dir_path:str, create:bool) -> bool:

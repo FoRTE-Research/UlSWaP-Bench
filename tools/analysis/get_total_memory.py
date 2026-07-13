@@ -1,63 +1,107 @@
 import csv
+import subprocess as sp
 from utils import *
-from static_memory import get_all_binary_sizes
-from runtime_memory import get_runtime_memory_map
+
+MEM_TYPES = ['.text', '.rodata', '.data', '.bss', 'stack']
+
+READELF_EXECS = {
+    'riscv': 'riscv64-unknown-elf-readelf',
+    'msp430': '/opt/msp430-gcc/bin/msp430-elf-readelf',
+    'arm': 'arm-none-eabi-readelf'
+}
+
+
+def get_runtime_memory(file_path:str) -> int:
+    with open(file_path, 'r') as f:
+        lines = f.readlines()
+
+    if 'sp<=' not in lines[0]:
+        raise ValueError(f"Cannot determine top of stack for {file_path}")
+    stack_top = int(lines[0].split('<=')[1].strip(), 16)
+
+    low_watermark = stack_top
+    for line in lines:
+        if 'sp<=' not in line:
+            continue
+        count = int(line.split('<=')[1].strip(), 16)
+        if count < low_watermark:
+            low_watermark = count
+
+    return stack_top - low_watermark
+
+
+def get_runtime_memory_map(directory:str) -> dict:
+    runtime_memory = {}
+    for file in os.listdir(directory):
+        bench_name = file
+        file_path = os.path.join(directory, file)
+        count = get_runtime_memory(file_path)
+        runtime_memory[bench_name] = count
+
+    return runtime_memory
 
 
 """
-Plots a stacked bar chart with all memory types for each benchmark. (Function no longer used)
+Retrieves the output of the 'readelf -S' command for a given file.
 
 Args:
-    bench_total_mem (dict): A dictionary containing the sizes of binary files for each benchmark.
-    output_file (str, optional): The path to the output file. Defaults to None.
+    file_path (str): The full path to the file.
+
+Returns:
+    str: The output of the 'readelf -S' command.
 """
-def plot_total_memory(bench_total_mem:dict[str, dict[str, int]], output_file:str=None):
-    import matplotlib.pyplot as plt
+def get_readelf_sections_output(file_path:str, arch:str) -> str:
+    cmd = f'{READELF_EXECS[arch]} -S {file_path}'
+    return sp.check_output(cmd, shell=True).decode()
 
-    # Create a stacked bar chart of binary sizes for each benchmark
-    fig, ax = plt.subplots()
-    fig.set_size_inches(20, 10)
-    bar_width = 0.5
-    bench_names = get_bench_names()
-    bar_bottom = [0] * len(bench_names)
-    for mem_type in MEM_TYPES:
-        sizes = [bench_total_mem[bench][mem_type] for bench in bench_names]
-        ax.bar(bench_names, sizes, bar_width, label=mem_type, bottom=bar_bottom)
-        bar_bottom = [bar_bottom[i] + sizes[i] for i in range(len(bench_names))]
 
-    # ax.set_xlabel('Benchmarks')
-    ax.set_ylabel('Size (bytes)')
-    # ax.set_title('Binary Size')
+"""
+Parses the section output and extracts the sizes of different sections.
 
-    # ax.set_ylim(0, 110000)
+Args:
+    section_output (str): The output of the 'readelf -S' command.
+    file_path (str): The full path to the file.
 
-    # Benchmark category labels
-    sec = ax.secondary_xaxis(location=0)
-    sec.set_xticks(get_label_xtick_positions(), labels=list('\n\n\n\n\n\n\n\n\n' + group for group in ALL_BENCHMARKS.keys()), weight='bold')
+Returns:
+    dict: A dictionary mapping section names to their sizes.
+"""
+def get_section_sizes(section_output:str) -> dict[str, int]:
+    section_sizes = dict.fromkeys(MEM_TYPES, 0)
+    section_lines = section_output.split('\n')
 
-    sec.tick_params('x', length=0)
+    for i, line in enumerate(section_lines[4:]):
+        if '.text' in line or '.vectors' in line:
+            section_sizes['.text'] += int(line.split()[-6], 16)
+        elif '.rodata' in line:
+            section_sizes['.rodata'] += int(line.split()[-6], 16)
+        elif '.data' in line or '.sdata' in line:
+            section_sizes['.data'] += int(line.split()[-6], 16)
+        elif '.bss' in line or '.sbss' in line:
+            section_sizes['.bss'] += int(line.split()[-6], 16)
 
-    # Lines between the categories:
-    sec2 = ax.secondary_xaxis(location=0)
-    sec2.set_xticks(get_line_xticks(), labels=[])
-    sec2.tick_params('x', length=120, width=1.5)
-    ax.set_xlim(-0.5, len(bench_names) - 0.5)
+    return section_sizes
 
-    # print total size on top of each bar
-    for i, v in enumerate(bar_bottom):
-        ax.text(i, v, str(v), ha='center', va='bottom')
 
-    # rotate x-axis labels
-    # plt.xticks(rotation=45, ha='right')
-    plt.xticks(rotation=90, ha='center')
-    ax.legend()
-    ax.grid(axis='y')
-    plt.tight_layout()
+"""
+Retrieves the relevant section sizes of all binary files in a directory.
 
-    if output_file:
-        fig.savefig(output_file)
-    else:
-        plt.show()
+Args:
+    directory (str): The path to the directory.
+
+Returns:
+    dict: A dictionary mapping benchmark names to a dictionary of their section sizes.
+"""
+def get_all_binary_sizes(directory:str, arch:str) -> dict[str, dict[str, int]]:
+    binary_sizes = {}
+    for file in os.listdir(directory):
+        if file.endswith('.elf'):
+            bench_name = file.split('.')[0]
+            file_path = os.path.join(directory, file)
+            sections_output = get_readelf_sections_output(file_path, arch)
+            section_sizes = get_section_sizes(sections_output)
+            binary_sizes[bench_name] = section_sizes
+
+    return binary_sizes
 
 
 def print_mem_table(bench_total_mem:dict[str, dict[str, int]]) -> None:
@@ -70,7 +114,7 @@ def print_mem_table(bench_total_mem:dict[str, dict[str, int]]) -> None:
     return
 
 
-def print_mem_csv(bench_total_mem:dict[str, dict[str, int]], output_file:str) -> None:
+def write_mem_csv(bench_total_mem:dict[str, dict[str, int]], output_file:str) -> None:
     with open(output_file, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(['Benchmark', '.text', '.rodata', '.data', '.bss', 'stack'])
@@ -91,16 +135,23 @@ If an output file is specified, the memory usage will be written to it in CSV fo
 
 
 def main():
-    parent_parser = get_parent_parser(True, False)
+    parent_parser = get_parent_parser(False, False)
     parser = argparse.ArgumentParser(parents=[parent_parser], description=help_msg, conflict_handler='resolve')
     parser.add_argument('-i', '--input', type=str, required=True, nargs=2, help='Binary directory followed by runtime memory dump directory')
+    parser.add_argument('--arch', type=str, required=True, choices=ARCHITECTURES, help='Target architecture')
     args = parser.parse_args()
 
-    bin_dir = args.input[0]
+    elf_dir = args.input[0]
     dump_dir = args.input[1]
     output_file = args.output
+    arch = args.arch
 
-    if not check_dir_exists(bin_dir, False):
+    for tool in READELF_EXECS.values():
+        if not (check_tool_exists(tool, False)):
+            print('Please edit the READELF_EXECS dictionary in current script to set the correct path for the tool.')
+            return
+
+    if not check_dir_exists(elf_dir, False):
         print('Binary directory does not exist')
         return
 
@@ -108,7 +159,7 @@ def main():
         print('Runtime memory dump directory does not exist')
         return
 
-    binary_size_dict = get_all_binary_sizes(bin_dir)
+    binary_size_dict = get_all_binary_sizes(elf_dir, arch)
     runtime_memory_map = get_runtime_memory_map(dump_dir)
 
     total_memory_dict = binary_size_dict.copy()
@@ -118,7 +169,7 @@ def main():
     if output_file is None:
         print_mem_table(total_memory_dict)
     else:
-        print_mem_csv(total_memory_dict, output_file)
+        write_mem_csv(total_memory_dict, output_file)
 
     return
 
