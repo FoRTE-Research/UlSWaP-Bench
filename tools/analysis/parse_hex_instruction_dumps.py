@@ -13,13 +13,8 @@ MAX_BUF_SIZE = 1024 * 1024 * 1024
 CHUNK_LINES = 1024 * 1024 * 1024
 
 
-class RunStatus(Enum):
-    SUCCESS = 1
-    FAILED = 2
-
-
 class ParseRunResult:
-    def __init__(self, status:RunStatus, benchmark:str, time_taken:float, message:str=None):
+    def __init__(self, status:RunStatus, benchmark:str, time_taken:float, message:str|None=None):
         self.status = status
         self.benchmark = benchmark
         self.time_taken = time_taken
@@ -36,9 +31,6 @@ def parse_dump(dump_file:str, output_dir:str) -> ParseRunResult:
             hex_instruction = line.strip()
             if (hex_instruction == '00100073'):     # ebreak
                 break
-            # bin_instruction = line.strip()
-            # if (bin_instruction == '00000000000100000000000001110011'):
-            #     break
 
             instruction = disassemble_riscv_op(hex_instruction)
             fp_out.write(f'{instruction}\n')
@@ -83,7 +75,6 @@ If the input is a file, only that file is parsed.
 If the input is a directory, all files in that directory are processed in parallel.
 The parsed result(s) will be saved in the specified output directory.
 '''
-
 
 def main():
     parent_parser = get_parent_parser(True, True)

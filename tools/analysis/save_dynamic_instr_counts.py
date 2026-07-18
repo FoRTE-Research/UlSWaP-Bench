@@ -35,7 +35,7 @@ def get_instruction_count_maps(dump_dir:str, output_dir:str) -> dict[str, dict[s
 
 help_msg = '''
 This script reads instruction dumps for each benchmark and creates a CSV file for each one that maps each instruction to its count.
-The input directory should contain instruction dumps for each benchmark.
+The input directory should contain parsed instruction dumps for each benchmark.
 '''
 
 
