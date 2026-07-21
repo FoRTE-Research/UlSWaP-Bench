@@ -1,4 +1,4 @@
-function (set_native_config)
+function (set_hw_config)
     message(STATUS "Setting native configuration")
 
     set(CMAKE_C_COMPILER "cc" PARENT_SCOPE)
@@ -10,8 +10,10 @@ function (set_native_config)
         list(APPEND OPTIONAL_FLAGS "-DHOST_TEST=0")
     endif()
 
-    set(GENERAL_FLAGS "-static;-Wall;-g;-Og")
+    set(GENERAL_FLAGS "-static;-Wall")
     set(ARCH_FLAGS "${GENERAL_FLAGS};${OPTIONAL_FLAGS}" PARENT_SCOPE)
 
-    set(ARCH_SOURCES "${ARCH_DIR}/supportFuncs.c" PARENT_SCOPE)
+    set(ARCH_SOURCES "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/supportFuncs.c" PARENT_SCOPE)
+
+    set(ARCH_OBJDUMP objdump PARENT_SCOPE)
 endfunction()

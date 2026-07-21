@@ -1,4 +1,4 @@
-function(set_spike_config)
+function(set_hw_config)
     message(STATUS "Setting spike configuration")
 
     set(CMAKE_SYSTEM_NAME Generic)
@@ -21,7 +21,7 @@ function(set_spike_config)
     set(CMAKE_C_COMPILER ${TOOLCHAIN_PATH}/clang-15 PARENT_SCOPE)
     set(CMAKE_ASM_COMPILER ${TOOLCHAIN_PATH}/clang-15 PARENT_SCOPE)
 
-    set(GENERAL_FLAGS "-Wall;-fno-builtin;-ffreestanding;-fno-optimize-sibling-calls;-fno-builtin-fma;-ffp-contract=off;-ffunction-sections;-Os")
+    set(GENERAL_FLAGS "-Wall;-fno-builtin;-ffreestanding;-fno-optimize-sibling-calls;-fno-builtin-fma;-ffp-contract=off")
     set(RISCV_FLAGS "--target=riscv32-unknown-elf;-mno-relax;-march=${SUBARCH};-mabi=${ABI};-DPICOLIBC_FLOAT_PRINTF_SCANF")
 
     set(ARCH_LINK_DIRS "${LIB_PATH};${RT_LIB_DIR}" PARENT_SCOPE)
@@ -30,9 +30,9 @@ function(set_spike_config)
 
     # Concatenate all flags into a single list
     set(ARCH_FLAGS "${GENERAL_FLAGS};${RISCV_FLAGS};${PICOLIBC_FLAGS}" PARENT_SCOPE)
-    set(ARCH_SOURCES "${ARCH_DIR}/vectors.S;${ARCH_DIR}/supportFuncs.c" PARENT_SCOPE)
+    set(ARCH_SOURCES "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/vectors.S;${CMAKE_CURRENT_FUNCTION_LIST_DIR}/supportFuncs.c" PARENT_SCOPE)
 
-    set(ARCH_LINK_FLAGS "-fuse-ld=lld;--target=riscv32-unknown-elf;-T${ARCH_DIR}/memmap.ld;-Wl,--gc-sections;-nostdlib;-nodefaultlibs" PARENT_SCOPE)
+    set(ARCH_LINK_FLAGS "-fuse-ld=lld;--target=riscv32-unknown-elf;-T${CMAKE_CURRENT_FUNCTION_LIST_DIR}/memmap.ld;-nostdlib;-nodefaultlibs" PARENT_SCOPE)
 
     set(ARCH_OBJDUMP ${TOOLCHAIN_PATH}/llvm-objdump-15 PARENT_SCOPE)
 endfunction()

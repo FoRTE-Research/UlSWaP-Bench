@@ -2,51 +2,21 @@ cmake_minimum_required(VERSION 3.20)
 
 project(Benchmarks C ASM)
 
-# Create a list of available architectures
-file(GLOB available_architectures RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/hw ${CMAKE_CURRENT_SOURCE_DIR}/hw/*)
-
-# Make sure the user has specified an architecture
-if(NOT ARCH)
-    message(FATAL_ERROR "Please specify a hardware platform to build the benchmarks for")
-    message("Available platforms: ${available_architectures}")
+# Make sure the user has specified a hardware configuration file
+if(NOT CONFIG)
+    message(FATAL_ERROR "Please provide a CMake configuration file for your target platform via the CONFIG variable")
 endif()
 
-# Make sure all specified architectures are valid
-if(NOT ${ARCH} IN_LIST available_architectures)
-    message(FATAL_ERROR "Hardware platform ${ARCH} is not available")
-else()
-    include(hw/${ARCH}/config.cmake)
-    set(ARCH_DIR ${CMAKE_CURRENT_SOURCE_DIR}/hw/${ARCH})
-    cmake_language(CALL set_${ARCH}_config)
-endif()
+include(${CONFIG})
+cmake_language(CALL set_hw_config)
 
 # Create a list of subdirectories in src
 file(GLOB src_paths RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/src/*)
 foreach(src_path ${src_paths})
     if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src/${src_path})
-        list(APPEND available_benchmarks ${src_path})
+        list(APPEND benchmarks ${src_path})
     endif()
 endforeach()
-
-# If a specific benchmark is requested, only build that one, otherwise build all available benchmarks
-if(BENCHMARKS)
-    set(benchmarks ${BENCHMARKS})
-else()
-    set(benchmarks ${available_benchmarks})
-endif()
-
-# Add all benchmarks to the build
-foreach(benchmark ${benchmarks})
-    # First make sure the benchmark exists
-    if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/src/${benchmark})
-        message(FATAL_ERROR "Benchmark ${benchmark} does not exist")
-        message("Available benchmarks: ${available_benchmarks}")
-    endif()
-endforeach()
-
-if (PRINT AND CHECKSUM_TEST)
-    message(FATAL_ERROR "Cannot enable both printf and checksum tests simultaneously")
-endif()
 
 if (PRINT AND CHECKSUM_TEST)
     message(FATAL_ERROR "Cannot enable both printf and checksum tests simultaneously")
@@ -60,7 +30,6 @@ if (CHECKSUM_TEST)
     message(STATUS "Enabling checksum tests")
 endif()
 
-message(STATUS "Benchmarks to build: ${benchmarks}")
 
 foreach(benchmark ${benchmarks})
     add_executable(${benchmark})
