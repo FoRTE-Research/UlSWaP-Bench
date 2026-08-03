@@ -397,7 +397,7 @@ int benchmark_main(void)
     // "Globals" must be on the stack because Mementos doesn't handle real
     // globals correctly
     uint8_t prev_pin_state = MODE_IDLE;
-    model_t model;
+    model_t model = {0};
 
     count = 0;
     seed = 1;
