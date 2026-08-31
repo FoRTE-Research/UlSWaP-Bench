@@ -90,17 +90,17 @@ SECTIONS {
 
     .heap : {
         __heap_start__ = .;
-        end = __heap_start__;
-        _end = end;
-        __end = end;
-        KEEP(*(.heap))
-        __heap_end__ = .;
-        __HeapLimit = __heap_end__;
+        __heap_end__   = .;
+        end            = .;
+        _end           = .;
+        __HeapLimit    = .;
     } > REGION_HEAP
 
     .stack : ALIGN(0x8) {
-        _stack = .;
-        __stack = .;
-        KEEP(*(.stack))
+        __stack_start__ = .;
+        . = ORIGIN(REGION_STACK) + LENGTH(REGION_STACK);
+        __stack_end__ = .;
     } > REGION_STACK
 }
+
+ENTRY(ResetISR)

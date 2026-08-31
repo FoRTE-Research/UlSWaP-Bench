@@ -50,8 +50,9 @@ extern int main(void);
 // Reserve space for the system stack.
 //
 //*****************************************************************************
-static uint32_t pui32Stack[256];	// modified, originally 128
-
+// static uint32_t pui32Stack[256];	// modified
+// No longer a fixed size - linker will determine it
+extern uint32_t __stack_end__;
 //*****************************************************************************
 //
 // External declarations for the interrupt handlers used by the application.
@@ -69,8 +70,7 @@ static uint32_t pui32Stack[256];	// modified, originally 128
 __attribute__ ((section(".intvecs")))
 void (* const g_pfnVectors[])(void) =
 {
-    (void (*)(void))((uint32_t)pui32Stack + sizeof(pui32Stack)),
-                                            // The initial stack pointer
+    (void (*)(void))&__stack_end__,         // initial SP = top of remaining SRAM
     ResetISR,                               // The reset handler
     NmiSR,                                  // The NMI handler
     FaultISR,                               // The hard fault handler
@@ -250,8 +250,7 @@ extern uint32_t __bss_end__;
 // application.
 //
 //*****************************************************************************
-void notrace
-ResetISR(void)
+void __attribute__((no_instrument_function)) ResetISR(void)
 {
     uint32_t *pui32Src, *pui32Dest;
 
@@ -292,8 +291,8 @@ ResetISR(void)
     // Note that this does not use DriverLib since it might not be included in
     // this project.
     //
-    HWREG(0xE000ED88) = ((HWREG(0xE000ED88) & ~0x00F00000) | 0x00F00000);
-    
+    HWREG(0xE000ED88) = ((HWREG(0xE000ED88) & (uint32_t)(~0x00F00000)) | 0x00F00000);
+
     //
     // Call the application's entry point.
     //
@@ -310,7 +309,7 @@ ResetISR(void)
 static void
 NmiSR(void)
 {
-	while(1);	
+	while(1);
 }
 
 //*****************************************************************************

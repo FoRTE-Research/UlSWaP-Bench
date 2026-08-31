@@ -57,6 +57,7 @@ foreach(benchmark ${benchmarks})
 
     if (PRINT)
         target_compile_definitions(${benchmark} PRIVATE -DPRINT=1 -DPICOLIBC_FLOAT_PRINTF_SCANF)
+        target_link_options(${benchmark} PRIVATE -DPICOLIBC_FLOAT_PRINTF_SCANF)
     else()
         target_compile_definitions(${benchmark} PRIVATE -DPRINT=0)
     endif()
