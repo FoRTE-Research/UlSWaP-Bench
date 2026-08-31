@@ -8,6 +8,8 @@
 #undef assert
 #define assert(...)
 
+#define ALIGN32 __attribute__((aligned(4)))
+
 #if (!defined(__PICOLIBC__) || (CHECKSUM_TEST == 1))
 #undef printf_float
 #define printf_float(_num) (_num)
