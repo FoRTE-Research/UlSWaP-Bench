@@ -1,5 +1,6 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as follows"
+message: "If you use this benchmark suite, please cite the paper below"
+type: software
 authors:
   - family-names: "Chiba"
     given-names: "Daniel"
@@ -18,28 +19,43 @@ authors:
     orcid: "https://orcid.org/0000-0002-3639-4342"
     affiliation: "Virginia Tech, Blacksburg, VA, USA"
 title: "UlSWaP Bench: A Benchmark Suite for Ultra-Low Size, Weight and Power Devices"
-preferred-citation: 
-  type: conference
+preferred-citation:
+  type: conference-paper
   authors:
-  - family-names: "Chiba"
-    given-names: "Daniel"
-    orcid: "https://orcid.org/0000-0002-3826-9115"
-    affiliation: "Virginia Tech, Blacksburg, VA, USA"
-  - family-names: "Williams"
-    given-names: "Harrison"
-    orcid: "https://orcid.org/0009-0002-4283-804X"
-    affiliation: "Efficient Computer, Pittsburgh, PA, USA"
-  - family-names: "Sathye"
-    given-names: "Rohit"
-    orcid: "https://orcid.org/0000-0002-7451-4907"
-    affiliation: "Karlsruhe Institute of Technology, Karlsruhe, Germany"
-  - family-names: "Hicks"
-    given-names: "Matthew"
-    orcid: "https://orcid.org/0000-0002-3639-4342"
-    affiliation: "Virginia Tech, Blacksburg, VA, USA"
+    - family-names: "Chiba"
+      given-names: "Daniel"
+      orcid: "https://orcid.org/0000-0002-3826-9115"
+      affiliation: "Virginia Tech, Blacksburg, VA, USA"
+    - family-names: "Williams"
+      given-names: "Harrison"
+      orcid: "https://orcid.org/0009-0002-4283-804X"
+      affiliation: "Efficient Computer, Pittsburgh, PA, USA"
+    - family-names: "Sathye"
+      given-names: "Rohit"
+      orcid: "https://orcid.org/0000-0002-7451-4907"
+      affiliation: "Karlsruhe Institute of Technology, Karlsruhe, Germany"
+    - family-names: "Hicks"
+      given-names: "Matthew"
+      orcid: "https://orcid.org/0000-0002-3639-4342"
+      affiliation: "Virginia Tech, Blacksburg, VA, USA"
   title: "UlSWaP Bench: A Benchmark Suite for Ultra-Low Size, Weight and Power Devices"
-  publisher: "International Conference on Embedded Wireless Systems and Networks (EWSN)"
-  booktitle: "Proceedings of the 2026 International Conference on Embedded Wireless Systems and Networks"
-  location: "Dresden, Germany"
-  series: "EWSN '26"
+  abstract: "The effects of Dennard scaling mean that as transistors get smaller, processors achieve the same performance in a smaller, more power efficient package. This scaling ushers in a new era of Ultra-low Size, Weight, and Power (UlSWaP) devices that show promise in transforming society. However, they come with unique challenges for system designers in that they are bare metal (i.e., they run without an operating system), lack user interfaces (e.g., a monitor and keyboard), operate at a low speed, and have little on-chip memory. These properties expose new trade-offs to system designers that require a new benchmarking platform to properly assess. The limitations of these devices also make it harder for developers to debug and test their systems. We fill this system evaluation gap with a benchmark suite targeted at this new class of devices called UlSWaP Bench. UlSWaP Bench consists of a diverse set of 28 realistic benchmarks divided into two classes that can run bare-metal on devices with as little as 8 KiB or 32 KiB of memory depending on the class. We provide RISC-V, ARM Cortex-M4, and TI MSP430 ports for each benchmark to cover a number of popular UlSWaP devices. We also provide a test framework to help bring up new devices and toolchains. We evaluate UlSWaP Bench on all three architectures and explore how it exercises the processing and memory resources of each one. Both embedded system designers and hardware architects will find it useful for predicting the performance of commercial UlSWaP devices or evaluating tradeoffs between performance, area, and power consumption."
+  collection-title: "Proceedings of the 2026 International Conference on Embedded Wireless Systems and Networks"
+  collection-type: "proceedings"
+  abbreviation: "EWSN '26"
+  conference:
+    name: "2026 International Conference on Embedded Wireless Systems and Networks"
+    city: "Dresden"
+    country: "DE"
+  publisher:
+    name: "International Conference on Embedded Wireless Systems and Networks (EWSN)"
+  keywords:
+    - "Benchmarks"
+    - "IoT"
+    - "Low-power"
+  start: 129
+  end: 140
+  pages: 12
   year: 2026
+  doi: "10.3217/9h3a-2j82"
+  url: "https://doi.org/10.3217/9h3a-2j82"
